@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Template untuk halaman regulations kosong atau error -->
+    <template id="regulations_empty_template" name="Regulations Not Available">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8 text-center">
+                            <div class="card">
+                                <div class="card-body py-5">
+                                    <i class="fa fa-exclamation-triangle fa-4x text-warning mb-4"></i>
+                                    <h2 class="mb-3">Fitur Peraturan Hukum Belum Tersedia</h2>
+                                    <p class="text-muted mb-4">
+                                        Modul peraturan hukum sedang dalam proses instalasi atau belum dikonfigurasi dengan benar.
+                                    </p>
+                                    <div class="mb-4">
+                                        <p class="small text-muted">
+                                            Silakan hubungi administrator untuk mengaktifkan fitur ini, atau coba fitur lain yang tersedia:
+                                        </p>
+                                    </div>
+                                    <div class="d-flex justify-content-center gap-3">
+                                        <a href="/" class="btn btn-primary">
+                                            <i class="fa fa-home"></i> Kembali ke Beranda
+                                        </a>
+                                        <a href="/legal/articles" class="btn btn-outline-primary">
+                                            <i class="fa fa-file-text"></i> Artikel Hukum
+                                        </a>
+                                        <a href="/legal/search" class="btn btn-outline-secondary">
+                                            <i class="fa fa-search"></i> Pencarian Web
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

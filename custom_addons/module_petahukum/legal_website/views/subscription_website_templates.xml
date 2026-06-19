@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Pricing Page Template -->
+        <template id="pricing_page" name="Pricing Plans">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <div class="container-fluid py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <div class="container">
+                            <div class="row text-center">
+                                <div class="col-lg-12">
+                                    <h1 class="display-4 mb-3">
+                                        <i class="fa fa-crown"></i> Paket Berlangganan
+                                    </h1>
+                                    <p class="lead">Pilih paket yang sesuai dengan kebutuhan hukum Anda</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container py-5">
+                        <div class="row">
+                            <t t-foreach="subscription_plans" t-as="plan">
+                                <div class="col-lg-3 col-md-6 mb-4">
+                                    <div class="card h-100 shadow-sm">
+                                        <t t-if="plan.name == 'Professional'">
+                                            <div class="card-header bg-warning text-dark text-center">
+                                                <i class="fa fa-star"></i> MOST POPULAR
+                                            </div>
+                                        </t>
+                                        <div class="card-body text-center">
+                                            <h3 class="card-title">
+                                                <t t-esc="plan.name"/>
+                                            </h3>
+                                            <div class="price mb-3">
+                                                <h2 class="text-primary">
+                                                    <t t-if="plan.price == 0">
+                                                        Gratis
+                                                    </t>
+                                                    <t t-else="">
+                                                        Rp <t t-esc="'{:,}'.format(int(plan.price)).replace(',', '.')"/>
+                                                    </t>
+                                                </h2>
+                                                <small class="text-muted">/bulan</small>
+                                            </div>
+                                            <p class="card-text">
+                                                <t t-esc="plan.description"/>
+                                            </p>
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2">
+                                                    <i class="fa fa-check text-success"></i>
+                                                    <t t-esc="plan.search_limit"/> pencarian/hari
+                                                </li>
+                                                <li class="mb-2">
+                                                    <i class="fa fa-check text-success"></i>
+                                                    <t t-if="plan.advanced_search">Pencarian Lanjutan</t>
+                                                    <t t-else="">Pencarian Basic</t>
+                                                </li>
+                                                <li class="mb-2">
+                                                    <i class="fa fa-check text-success"></i>
+                                                    <t t-if="plan.legal_consultation">Konsultasi Hukum</t>
+                                                    <t t-else="">Tanpa Konsultasi</t>
+                                                </li>
+                                                <li class="mb-2">
+                                                    <i class="fa fa-check text-success"></i>
+                                                    <t t-if="plan.priority_support">Support Prioritas</t>
+                                                    <t t-else="">Support Standard</t>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer">
+                                            <t t-if="plan.price == 0">
+                                                <a href="/legal" class="btn btn-outline-primary btn-block">
+                                                    <i class="fa fa-play"></i> Mulai Gratis
+                                                </a>
+                                            </t>
+                                            <t t-else="">
+                                                <a t-attf-href="/subscription/checkout?plan_id={{plan.id}}" 
+                                                   class="btn btn-primary btn-block">
+                                                    <i class="fa fa-shopping-cart"></i> Pilih Paket
+                                                </a>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4><i class="fa fa-info-circle"></i> Informasi Penting</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h5><i class="fa fa-shield-alt"></i> Keamanan Data</h5>
+                                                <p>Semua data Anda dienkripsi dan disimpan dengan aman sesuai standar industri.</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h5><i class="fa fa-clock"></i> Pembatalan Kapan Saja</h5>
+                                                <p>Anda dapat membatalkan langganan kapan saja tanpa biaya tambahan.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- Checkout Page Template -->
+        <template id="checkout_page" name="Checkout">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <div class="container py-5">
+                        <div class="row">
+                            <div class="col-lg-8 mx-auto">
+                                <div class="card shadow">
+                                    <div class="card-header">
+                                        <h3><i class="fa fa-shopping-cart"></i> Checkout Berlangganan</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <t t-if="subscription_plan">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h4>Detail Paket</h4>
+                                                    <div class="border rounded p-3 mb-3">
+                                                        <h5><t t-esc="subscription_plan.name"/></h5>
+                                                        <p class="text-muted"><t t-esc="subscription_plan.description"/></p>
+                                                        <h3 class="text-primary">
+                                                            Rp <t t-esc="'{:,}'.format(int(subscription_plan.price)).replace(',', '.')"/>/bulan
+                                                        </h3>
+                                                        <ul class="list-unstyled mt-3">
+                                                            <li><i class="fa fa-check text-success"></i> <t t-esc="subscription_plan.search_limit"/> pencarian/hari</li>
+                                                            <li><i class="fa fa-check text-success"></i> 
+                                                                <t t-if="subscription_plan.advanced_search">Pencarian Lanjutan</t>
+                                                                <t t-else="">Pencarian Basic</t>
+                                                            </li>
+                                                            <li><i class="fa fa-check text-success"></i> 
+                                                                <t t-if="subscription_plan.legal_consultation">Konsultasi Hukum</t>
+                                                                <t t-else="">Tanpa Konsultasi</t>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h4>Informasi Pembayaran</h4>
+                                                    <form id="checkout-form" method="post" action="/subscription/process_checkout">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                        <input type="hidden" name="plan_id" t-att-value="subscription_plan.id"/>
+                                                        
+                                                        <div class="form-group mb-3">
+                                                            <label>Nama Lengkap</label>
+                                                            <input type="text" class="form-control" name="full_name" required="required"/>
+                                                        </div>
+                                                        
+                                                        <div class="form-group mb-3">
+                                                            <label>Email</label>
+                                                            <input type="email" class="form-control" name="email" 
+                                                                   t-att-value="request.env.user.email if request.env.user.email else ''" required="required"/>
+                                                        </div>
+                                                        
+                                                        <div class="form-group mb-3">
+                                                            <label>Nomor Telepon</label>
+                                                            <input type="tel" class="form-control" name="phone" required="required"/>
+                                                        </div>
+                                                        
+                                                        <div class="form-group mb-3">
+                                                            <label>Metode Pembayaran</label>
+                                                            <select class="form-control" name="payment_method" required="required">
+                                                                <option value="">Pilih Metode Pembayaran</option>
+                                                                <option value="bank_transfer">Transfer Bank</option>
+                                                                <option value="credit_card">Kartu Kredit</option>
+                                                                <option value="e_wallet">E-Wallet</option>
+                                                            </select>
+                                                        </div>
+                                                        
+                                                        <div class="form-check mb-3">
+                                                            <input type="checkbox" class="form-check-input" id="terms" name="agree_terms" required="required"/>
+                                                            <label class="form-check-label" for="terms">
+                                                                Saya setuju dengan <a href="#" target="_blank">Syarat dan Ketentuan</a>
+                                                            </label>
+                                                        </div>
+                                                        
+                                                        <button type="submit" class="btn btn-primary btn-block btn-lg">
+                                                            <i class="fa fa-credit-card"></i> Bayar Sekarang
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="alert alert-danger">
+                                                <i class="fa fa-exclamation-triangle"></i>
+                                                Paket berlangganan tidak ditemukan.
+                                            </div>
+                                            <a href="/subscription/pricing" class="btn btn-primary">
+                                                <i class="fa fa-arrow-left"></i> Kembali ke Pricing
+                                            </a>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- Success Page Template -->
+        <template id="success_page" name="Payment Success">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <div class="container py-5">
+                        <div class="row">
+                            <div class="col-lg-8 mx-auto text-center">
+                                <div class="card shadow">
+                                    <div class="card-body py-5">
+                                        <i class="fa fa-check-circle text-success" style="font-size: 4rem;"></i>
+                                        <h2 class="mt-4 mb-3">Pembayaran Berhasil!</h2>
+                                        <p class="lead">
+                                            Terima kasih! Berlangganan Anda telah aktif dan siap digunakan.
+                                        </p>
+                                        
+                                        <t t-if="subscription">
+                                            <div class="border rounded p-4 mb-4">
+                                                <h4>Detail Berlangganan</h4>
+                                                <p><strong>Paket:</strong> <t t-esc="subscription.plan_id.name"/></p>
+                                                <p><strong>Dimulai:</strong> <t t-esc="subscription.start_date"/></p>
+                                                <p><strong>Berakhir:</strong> <t t-esc="subscription.end_date"/></p>
+                                                <p><strong>Status:</strong> <span class="badge badge-success">Aktif</span></p>
+                                            </div>
+                                        </t>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <a href="/legal" class="btn btn-primary btn-block">
+                                                    <i class="fa fa-search"></i> Mulai Pencarian
+                                                </a>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <a href="/my/subscriptions" class="btn btn-outline-primary btn-block">
+                                                    <i class="fa fa-user"></i> Kelola Berlangganan
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                        <hr class="my-4"/>
+                                        <p class="text-muted">
+                                            <i class="fa fa-envelope"></i>
+                                            Email konfirmasi telah dikirim ke alamat email Anda.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- My Subscriptions Template -->
+        <template id="my_subscriptions_page" name="My Subscriptions">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Berlangganan Saya</t>
+                </t>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <t t-if="user_subscriptions">
+                            <t t-foreach="user_subscriptions" t-as="subscription">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <h5><t t-esc="subscription.plan_id.name"/></h5>
+                                                <p class="text-muted"><t t-esc="subscription.plan_id.description"/></p>
+                                                <p>
+                                                    <strong>Periode:</strong> 
+                                                    <t t-esc="subscription.start_date"/> - <t t-esc="subscription.end_date"/>
+                                                </p>
+                                                <p>
+                                                    <strong>Usage:</strong> 
+                                                    <t t-esc="subscription.usage_count"/>/<t t-esc="subscription.plan_id.search_limit"/> pencarian hari ini
+                                                </p>
+                                            </div>
+                                            <div class="col-md-4 text-right">
+                                                <h4 class="text-primary">
+                                                    Rp <t t-esc="'{:,}'.format(int(subscription.plan_id.price)).replace(',', '.')"/>
+                                                </h4>
+                                                <t t-if="subscription.is_active">
+                                                    <span class="badge badge-success">Aktif</span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="badge badge-danger">Tidak Aktif</span>
+                                                </t>
+                                                
+                                                <div class="mt-2">
+                                                    <t t-if="subscription.is_active">
+                                                        <button class="btn btn-sm btn-outline-danger" 
+                                                                onclick="cancelSubscription({{subscription.id}})">
+                                                            <i class="fa fa-times"></i> Batalkan
+                                                        </button>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <a href="/subscription/pricing" class="btn btn-sm btn-primary">
+                                                            <i class="fa fa-refresh"></i> Perpanjang
+                                                        </a>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-info text-center">
+                                <i class="fa fa-info-circle"></i>
+                                Anda belum memiliki berlangganan aktif.
+                                <br/>
+                                <a href="/subscription/pricing" class="btn btn-primary mt-3">
+                                    <i class="fa fa-plus"></i> Pilih Paket Berlangganan
+                                </a>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</odoo>

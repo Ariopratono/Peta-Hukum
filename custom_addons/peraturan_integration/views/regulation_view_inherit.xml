@@ -1,0 +1,22 @@
+<odoo>
+  <!-- Tambahkan tab di backend legal.regulation -->
+  <record id="view_legal_regulation_form_inherit_peraturan" model="ir.ui.view">
+    <field name="name">legal.regulation.form.peraturan.inherit</field>
+    <field name="model">legal.regulation</field>
+    <field name="inherit_id" ref="legal_regulations.view_legal_regulation_form"/>
+    <field name="arch" type="xml">
+      <notebook position="inside">
+        <page string="Konsolidasi Peraturan">
+          <group>
+            <field name="consolidation_id" options="{'no_create': True}"/>
+            <field name="has_consolidation" readonly="1"/>
+          </group>
+          <div t-if="record.consolidation_id">
+            <label string="Dokumen Konsolidasi:"/>
+            <a t-att-href="record.get_consolidation_download_url()" target="_blank">Unduh Dokumen</a>
+          </div>
+        </page>
+      </notebook>
+    </field>
+  </record>
+</odoo>

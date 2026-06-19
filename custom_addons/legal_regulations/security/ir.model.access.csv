@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_legal_regulation_user,legal.regulation.user,model_legal_regulation,base.group_user,1,1,1,0
+access_legal_regulation_manager,legal.regulation.manager,model_legal_regulation,base.group_system,1,1,1,1
+access_legal_regulation_public,legal.regulation.public,model_legal_regulation,base.group_public,1,0,0,0
+access_legal_regulation_type_user,legal.regulation.type.user,model_legal_regulation_type,base.group_user,1,1,1,0
+access_legal_regulation_type_manager,legal.regulation.type.manager,model_legal_regulation_type,base.group_system,1,1,1,1
+access_legal_regulation_perubahan_user,legal.regulation.perubahan.user,model_legal_regulation_perubahan,base.group_user,1,1,1,1
+access_legal_regulation_perubahan_public,legal.regulation.perubahan.public,model_legal_regulation_perubahan,base.group_public,1,0,0,0
+access_legal_regulation_consolidation_user,legal.regulation.consolidation.user,model_legal_regulation_consolidation,base.group_user,1,1,1,1
+access_legal_regulation_consolidation_public,legal.regulation.consolidation.public,model_legal_regulation_consolidation,base.group_public,1,0,0,0
+access_legal_regulation_consolidation_v2_user,legal.regulation.consolidation.v2.user,model_legal_regulation_consolidation_v2,base.group_user,1,1,1,1
+access_legal_regulation_consolidation_v2_public,legal.regulation.consolidation.v2.public,model_legal_regulation_consolidation_v2,base.group_public,1,0,0,0
+access_consolidation_wizard_user,consolidation.wizard.user,model_consolidation_wizard,base.group_user,1,1,1,1
+access_consolidation_preview_wizard_user,consolidation.preview.wizard.user,model_consolidation_preview_wizard,base.group_user,1,1,1,1

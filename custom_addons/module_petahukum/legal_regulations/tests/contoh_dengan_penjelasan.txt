@@ -1,0 +1,61 @@
+UNDANG-UNDANG REPUBLIK INDONESIA
+NOMOR 1 TAHUN 2024
+TENTANG PENYELENGGARAAN SERTIFIKASI ELEKTRONIK DAN SISTEM ELEKTRONIK
+
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+
+PRESIDEN REPUBLIK INDONESIA,
+
+Menimbang:
+    a. bahwa untuk mewujudkan tujuan negara;
+    b. bahwa untuk melaksanakan program pemerintah;
+    c. bahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a dan huruf b, perlu membentuk Undang-Undang;
+
+Mengingat:
+    1. Pasal 1 ayat (1) Undang-Undang Dasar Negara Republik Indonesia Tahun 1945;
+    2. Pasal 2 ayat (2) Undang-Undang Dasar Negara Republik Indonesia Tahun 1945;
+
+BAB IV
+PENYELENGGARAAN SERTIFIKASI ELEKTRONIK
+DAN SISTEM ELEKTRONIK
+
+Bagian Kesatu Penyelenggaraan Sertifikasi Elektronik
+
+Pasal 13
+(1) Setiap orang berhak menggunakan jasa Penyelenggara Sertifikasi Elektronik untuk pembuatan Tanda Tangan Elektronik.
+(2) Penyelenggara Sertifikasi Elektronik harus memastikan keterkaitan suatu Tanda Tangan Elektronik dengan pemiliknya.
+(3) Penyelenggara Sertifikasi Elektronik terdiri atas:
+    a. Penyelenggara Sertifikasi Elektronik Indonesia; dan
+    b. Penyelenggara Sertifikasi Elektronik asing.
+(4) Penyelenggara Sertifikasi Elektronik yang beroperasi di Indonesia harus berbadan hukum Indonesia dan berdomisili di Indonesia.
+(5) Ketentuan sebagaimana dimaksud pada ayat (3) dikecualikan dalam hal penyelenggaraan layanan yang menggunakan Sertifikat Elektronik belum tersedia di Indonesia.
+(6) Pengakuan timbal balik (mutual recognition) untuk mengenali Sertifikat Elektronik antarnegara didasarkan pada perjanjian kerja sama.
+
+Penjelasan
+
+Pasal 13
+
+Yang dimaksud dengan "perjanjian kerja sama" antara lain adalah perjanjian antar-penyelenggara sertifikasi elektronik atau antar pemerintah yang penyelenggara sertifikasi elektroniknya akan melakukan pengakuan timbal balik, baik secara bilateral maupun multilateral.
+
+Penjelasan (3): Ketentuan lebih lanjut mengenai Penyelenggara Sertifikasi Elektronik sebagaimana dimaksud pada ayat (3) diatur dengan Peraturan Pemerintah.
+
+Penjelasan (6): Ketentuan lebih lanjut mengenai Penyelenggara Sertifikasi Elektronik sebagaimana dimaksud pada ayat (3), ayat (4), dan ayat (5) diatur dalam Peraturan Pemerintah.
+
+Pasal 14
+(1) Penyelenggara Sertifikasi Elektronik harus menyediakan informasi yang akurat, jelas, dan pasti kepada setiap pengguna jasa.
+(2) Informasi sebagaimana dimaksud pada ayat (1) paling sedikit memuat:
+    a. metode yang digunakan untuk mengidentifikasi Penanda Tangan;
+    b. hal yang dapat digunakan untuk mengetahui data pembuatan Tanda Tangan Elektronik; dan
+    c. hal yang dapat digunakan untuk menunjukkan keberlakuan dan keamanan Sertifikat Elektronik.
+
+Penjelasan
+
+Pasal 14
+
+Cukup jelas.
+
+BAB V
+KETENTUAN PENUTUP
+
+Pasal 15
+Undang-Undang ini mulai berlaku pada tanggal diundangkan.

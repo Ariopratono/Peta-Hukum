@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- List View -->
+        <record id="view_legal_regulation_list" model="ir.ui.view">
+            <field name="name">legal.regulation.list</field>
+            <field name="model">legal.regulation</field>
+            <field name="arch" type="xml">
+                <list string="Peraturan Hukum" decoration-success="status=='berlaku'" decoration-danger="status=='dicabut'" decoration-warning="status=='diubah'">
+                    <field name="tipe_dokumen"/>
+                    <field name="bentuk_singkat"/>
+                    <field name="nomor"/>
+                    <field name="tahun"/>
+                    <field name="judul"/>
+                    <field name="tanggal_penetapan"/>
+                    <field name="status"/>
+                    <field name="bidang"/>
+                    <field name="file_pdf" string="PDF" widget="binary" filename="file_name" 
+                           options="{'accepted_file_extensions': '.pdf'}" 
+                           column_invisible="True"/>
+                    <field name="file_name" column_invisible="True"/>
+                    <field name="is_berlaku_aktif" invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_legal_regulation_form" model="ir.ui.view">
+            <field name="name">legal.regulation.form</field>
+            <field name="model">legal.regulation</field>
+            <field name="arch" type="xml">
+                <form string="Peraturan Hukum">
+                    <header>
+                        <button name="action_download_pdf" type="object" string="Download PDF" 
+                                class="btn-primary" icon="fa-download"
+                                invisible="not file_pdf"/>
+                        <button name="action_reextract_pdf" type="object" string="Re-extract" 
+                                class="btn-warning" icon="fa-refresh"
+                                invisible="not file_txt and not file_docx and not file_pdf"
+                                help="Ekstrak ulang isi dari file TXT/DOCX/PDF dengan metode terbaru (layout-preserving)"/>
+                        <field name="status" widget="statusbar" statusbar_visible="berlaku,diubah,dicabut"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                            <button class="oe_stat_button" icon="fa-file-text-o" 
+                                    invisible="not file_pdf and not file_txt">
+                                <div class="o_stat_info">
+                                    <field name="file_size" widget="integer" class="o_stat_value"/>
+                                    <span class="o_stat_text">KB</span>
+                                </div>
+                            </button>
+                        </div>
+                        
+                        <div class="oe_title">
+                            <h1>
+                                <field name="judul" placeholder="Judul Peraturan..."/>
+                            </h1>
+                            <h2>
+                                <field name="nama_lengkap" readonly="1"/>
+                            </h2>
+                        </div>
+                        
+                        <group>
+                            <group string="Informasi Dasar">
+                                <field name="tipe_dokumen"/>
+                                <field name="bentuk"/>
+                                <field name="bentuk_singkat"/>
+                                <field name="nomor"/>
+                                <field name="tahun"/>
+                            </group>
+                            <group string="Penerbitan">
+                                <field name="teu" string="Badan/Pengarang (T.E.U)"/>
+                                <field name="tempat_penetapan" string="Tempat Penetapan"/>
+                                <field name="tanggal_penetapan"/>
+                                <field name="tanggal_pengundangan"/>
+                                <field name="tanggal_berlaku"/>
+                            </group>
+                        </group>
+                        
+                        <group>
+                            <group string="Klasifikasi">
+                                <field name="bidang"/>
+                                <field name="bahasa"/>
+                                <field name="lokasi"/>
+                            </group>
+                            <group string="Status">
+                                <field name="is_berlaku_aktif" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Subjek &amp; Sumber">
+                                <group>
+                                    <field name="subjek" nolabel="1" placeholder="Subjek/topik peraturan..."/>
+                                </group>
+                                <group>
+                                    <field name="sumber" nolabel="1" placeholder="Sumber dokumen (BN, dll)..."/>
+                                </group>
+                            </page>
+                            <page string="File Dokumen">
+                                <group>
+                                    <group string="Upload File (Pilih Salah Satu)">
+                                        <field name="file_txt" filename="file_name" 
+                                               widget="binary"
+                                               options="{'accepted_file_extensions': '.txt'}"
+                                               help="Upload file TXT (Plain Text) - Paling Akurat!"/>
+                                        <field name="file_docx" filename="file_name" 
+                                               widget="binary"
+                                               options="{'accepted_file_extensions': '.docx,.doc'}"
+                                               help="Upload file DOCX (Word)"/>
+                                        <field name="file_pdf" filename="file_name" 
+                                               widget="binary"
+                                               options="{'accepted_file_extensions': '.pdf'}"
+                                               help="Upload file PDF"/>
+                                        <field name="file_name" invisible="1"/>
+                                    </group>
+                                    <group string="Info File">
+                                        <field name="file_size" readonly="1" string="Ukuran File (KB)"
+                                               invisible="not file_pdf and not file_docx and not file_txt"/>
+                                    </group>
+                                </group>
+                                <div class="alert alert-success" role="alert">
+                                    <p><i class="fa fa-lightbulb-o"/> <strong>Rekomendasi Format File:</strong></p>
+                                    <ul class="mb-2">
+                                        <li><strong>TXT (Plain Text)</strong> - ✅ <strong>Paling Disarankan!</strong>
+                                            <ul>
+                                                <li>Text extract 100% akurat, tidak ada bug spacing</li>
+                                                <li>Format paling sederhana dan handal</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>DOCX (Word)</strong> - ✅ Bagus untuk formatting</li>
+                                        <li><strong>PDF</strong> - ⚠️ Bisa ada bug spacing</li>
+                                    </ul>
+                                    <p class="mb-0">
+                                        <strong>Prioritas:</strong> TXT → DOCX → PDF
+                                    </p>
+                                </div>
+                            </page>
+                            <page string="Keterangan">
+                                <field name="keterangan" nolabel="1" placeholder="Keterangan tambahan..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_legal_regulation_search" model="ir.ui.view">
+            <field name="name">legal.regulation.search</field>
+            <field name="model">legal.regulation</field>
+            <field name="arch" type="xml">
+                <search string="Cari Peraturan Hukum">
+                    <field name="judul"/>
+                    <field name="nomor"/>
+                    <field name="bentuk_singkat"/>
+                    
+                    <filter string="Berlaku" name="berlaku" domain="[('status', '=', 'berlaku')]"/>
+                    <filter string="Dicabut" name="dicabut" domain="[('status', '=', 'dicabut')]"/>
+                    
+                    <group expand="0" string="Group By">
+                        <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                        <filter string="Tahun" name="group_tahun" context="{'group_by': 'tahun'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Kanban View -->
+        <record id="view_legal_regulation_kanban" model="ir.ui.view">
+            <field name="name">legal.regulation.kanban</field>
+            <field name="model">legal.regulation</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="judul"/>
+                    <field name="bentuk_singkat"/>
+                    <field name="nomor"/>
+                    <field name="tahun"/>
+                    <field name="status"/>
+                    <field name="bidang"/>
+                    <field name="tanggal_penetapan"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <strong><t t-esc="record.bentuk_singkat.value"/> No. <t t-esc="record.nomor.value"/>/<t t-esc="record.tahun.value"/></strong>
+                                    </div>
+                                    <div class="col-4 text-right">
+                                        <span t-att-class="'badge badge-' + (record.status.raw_value === 'berlaku' ? 'success' : record.status.raw_value === 'dicabut' ? 'danger' : 'warning')">
+                                            <t t-esc="record.status.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <t t-esc="record.judul.value"/>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <small><i class="fa fa-calendar"/> <t t-esc="record.tanggal_penetapan.value"/></small>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <small><t t-esc="record.bidang.value"/></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Action Window -->
+        <record id="action_legal_regulation" model="ir.actions.act_window">
+            <field name="name">Peraturan Hukum</field>
+            <field name="res_model">legal.regulation</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="context">{'search_default_berlaku': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Buat peraturan hukum pertama Anda
+                </p>
+                <p>
+                    Tambahkan peraturan perundang-undangan, undang-undang, 
+                    peraturan pemerintah, dan dokumen hukum lainnya.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

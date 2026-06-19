@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Website Menu -->
+        <record id="legal_website_menu" model="website.menu">
+            <field name="name">Beranda</field>
+            <field name="url">/</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="legal_articles_menu" model="website.menu">
+            <field name="name">Artikel Hukum</field>
+            <field name="url">/legal/articles</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="legal_website_search_menu" model="website.menu">
+            <field name="name">Pencarian</field>
+            <field name="url">/legal/search</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="legal_regulations_menu" model="website.menu">
+            <field name="name">Peraturan Hukum</field>
+            <field name="url">/regulations</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">35</field>
+        </record>
+
+        <!-- Categories as direct children of main menu -->
+        <record id="legal_category_pidana_menu" model="website.menu">
+            <field name="name">Hukum Pidana</field>
+            <field name="url">/legal/articles?category=1</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="legal_category_perdata_menu" model="website.menu">
+            <field name="name">Hukum Perdata</field>
+            <field name="url">/legal/articles?category=2</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">41</field>
+        </record>
+
+        <record id="legal_category_tata_negara_menu" model="website.menu">
+            <field name="name">Hukum Tata Negara</field>
+            <field name="url">/legal/articles?category=3</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">42</field>
+        </record>
+
+        <record id="legal_category_bisnis_menu" model="website.menu">
+            <field name="name">Hukum Bisnis</field>
+            <field name="url">/legal/articles?category=4</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">43</field>
+        </record>
+
+        <!-- Subscription Menu -->
+        <record id="subscription_pricing_menu" model="website.menu">
+            <field name="name">Berlangganan</field>
+            <field name="url">/subscription/pricing</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">50</field>
+        </record>
+
+    </data>
+</odoo>

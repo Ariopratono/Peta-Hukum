@@ -1,0 +1,12 @@
+<!-- peraturan_merger/reports/templates.xml -->
+<odoo>
+  <template id="consolidation_report_template">
+    <t t-name="peraturan_merger.consolidation_report">
+      <t t-call="web.basic_layout">
+        <div class="page">
+          <h2><t t-esc="doc.name"/></h2>
+        </div>
+      </t>
+    </t>
+  </template>
+</odoo>

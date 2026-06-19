@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Subscription Plan Views -->
+        <record id="view_subscription_plan_tree" model="ir.ui.view">
+            <field name="name">legal.subscription.plan.tree</field>
+            <field name="model">legal.subscription.plan</field>
+            <field name="arch" type="xml">
+                <list string="Subscription Plans">
+                    <field name="name"/>
+                    <field name="price"/>
+                    <field name="search_limit"/>
+                    <field name="is_active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_subscription_plan_form" model="ir.ui.view">
+            <field name="name">legal.subscription.plan.form</field>
+            <field name="model">legal.subscription.plan</field>
+            <field name="arch" type="xml">
+                <form string="Subscription Plan">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="price"/>
+                            <field name="search_limit"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                            <field name="features"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- User Subscription Views -->
+        <record id="view_user_subscription_tree" model="ir.ui.view">
+            <field name="name">legal.user.subscription.tree</field>
+            <field name="model">legal.user.subscription</field>
+            <field name="arch" type="xml">
+                <list string="User Subscriptions">
+                    <field name="user_id"/>
+                    <field name="plan_id"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="is_active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_user_subscription_form" model="ir.ui.view">
+            <field name="name">legal.user.subscription.form</field>
+            <field name="model">legal.user.subscription</field>
+            <field name="arch" type="xml">
+                <form string="User Subscription">
+                    <sheet>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="plan_id"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="is_active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="action_subscription_plans" model="ir.actions.act_window">
+            <field name="name">Subscription Plans</field>
+            <field name="res_model">legal.subscription.plan</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_user_subscriptions" model="ir.actions.act_window">
+            <field name="name">User Subscriptions</field>
+            <field name="res_model">legal.user.subscription</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <!-- Menu -->
+        <menuitem id="menu_legal_subscription_root" name="Legal Subscription" sequence="100"/>
+        <menuitem id="menu_subscription_plans" name="Subscription Plans" parent="menu_legal_subscription_root" action="action_subscription_plans"/>
+        <menuitem id="menu_user_subscriptions" name="User Subscriptions" parent="menu_legal_subscription_root" action="action_user_subscriptions"/>
+    </data>
+</odoo>

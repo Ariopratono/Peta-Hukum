@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Subscription Plan Views -->
+        <record id="subscription_plan_tree" model="ir.ui.view">
+            <field name="name">subscription.plan.tree</field>
+            <field name="model">subscription.plan</field>
+            <field name="arch" type="xml">
+                <list string="Subscription Plans">
+                    <field name="name"/>
+                    <field name="price"/>
+                    <field name="search_limit"/>
+                    <field name="advanced_search"/>
+                    <field name="legal_consultation"/>
+                    <field name="priority_support"/>
+                    <field name="is_active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="subscription_plan_form" model="ir.ui.view">
+            <field name="name">subscription.plan.form</field>
+            <field name="model">subscription.plan</field>
+            <field name="arch" type="xml">
+                <form string="Subscription Plan">
+                    <header>
+                        <button name="toggle_active" type="object" string="Archive" class="oe_highlight" 
+                                invisible="not is_active"/>
+                        <button name="toggle_active" type="object" string="Activate" class="oe_highlight" 
+                                invisible="is_active"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Plan Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="price"/>
+                                <field name="search_limit"/>
+                                <field name="is_active"/>
+                            </group>
+                            <group>
+                                <field name="advanced_search"/>
+                                <field name="legal_consultation"/>
+                                <field name="priority_support"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Description">
+                                <field name="description"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="subscription_plan_kanban" model="ir.ui.view">
+            <field name="name">subscription.plan.kanban</field>
+            <field name="model">subscription.plan</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="name"/>
+                    <field name="price"/>
+                    <field name="search_limit"/>
+                    <field name="is_active"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card">
+                                <div class="oe_kanban_content">
+                                    <div class="o_kanban_record_title">
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                    <div class="o_kanban_record_body">
+                                        <div>Price: Rp <field name="price"/>/month</div>
+                                        <div>Search Limit: <field name="search_limit"/>/day</div>
+                                        <div>Status: 
+                                            <span t-if="record.is_active.raw_value" class="badge badge-success">Active</span>
+                                            <span t-else="" class="badge badge-secondary">Inactive</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- User Subscription Views -->
+        <record id="user_subscription_tree" model="ir.ui.view">
+            <field name="name">user.subscription.tree</field>
+            <field name="model">user.subscription</field>
+            <field name="arch" type="xml">
+                <list string="User Subscriptions">
+                    <field name="user_id"/>
+                    <field name="plan_id"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="is_active"/>
+                    <field name="usage_count"/>
+                    <field name="last_usage_date"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="user_subscription_form" model="ir.ui.view">
+            <field name="name">user.subscription.form</field>
+            <field name="model">user.subscription</field>
+            <field name="arch" type="xml">
+                <form string="User Subscription">
+                    <header>
+                        <button name="toggle_active" type="object" string="Deactivate" class="oe_highlight" 
+                                invisible="not is_active"/>
+                        <button name="toggle_active" type="object" string="Activate" class="oe_highlight" 
+                                invisible="is_active"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="user_id"/>
+                                <field name="plan_id"/>
+                                <field name="is_active"/>
+                            </group>
+                            <group>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="usage_count"/>
+                                <field name="last_usage_date"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="user_subscription_kanban" model="ir.ui.view">
+            <field name="name">user.subscription.kanban</field>
+            <field name="model">user.subscription</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="user_id"/>
+                    <field name="plan_id"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="is_active"/>
+                    <field name="usage_count"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card">
+                                <div class="oe_kanban_content">
+                                    <div class="o_kanban_record_title">
+                                        <strong><field name="user_id"/></strong>
+                                    </div>
+                                    <div class="o_kanban_record_body">
+                                        <div>Plan: <field name="plan_id"/></div>
+                                        <div>Period: <field name="start_date"/> - <field name="end_date"/></div>
+                                        <div>Usage: <field name="usage_count"/> searches</div>
+                                        <div>Status: 
+                                            <span t-if="record.is_active.raw_value" class="badge badge-success">Active</span>
+                                            <span t-else="" class="badge badge-secondary">Inactive</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="subscription_plan_action" model="ir.actions.act_window">
+            <field name="name">Subscription Plans</field>
+            <field name="res_model">subscription.plan</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first subscription plan!
+                </p>
+                <p>
+                    Define different subscription plans with various features and pricing.
+                </p>
+            </field>
+        </record>
+
+        <record id="user_subscription_action" model="ir.actions.act_window">
+            <field name="name">User Subscriptions</field>
+            <field name="res_model">user.subscription</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No user subscriptions yet!
+                </p>
+                <p>
+                    User subscriptions will appear here when users subscribe to plans.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Items -->
+        <menuitem id="legal_website_root_menu" 
+                  name="Legal Website" 
+                  web_icon="legal_website,static/description/icon.png"
+                  sequence="100"/>
+
+        <menuitem id="subscription_menu" 
+                  name="Subscriptions" 
+                  parent="legal_website_root_menu" 
+                  sequence="10"/>
+
+        <menuitem id="subscription_plan_menu" 
+                  name="Subscription Plans" 
+                  parent="subscription_menu" 
+                  action="subscription_plan_action" 
+                  sequence="10"/>
+
+        <menuitem id="user_subscription_menu" 
+                  name="User Subscriptions" 
+                  parent="subscription_menu" 
+                  action="user_subscription_action" 
+                  sequence="20"/>
+
+        <!-- Legal content menu -->
+        <menuitem id="legal_content_menu" 
+                  name="Legal Content" 
+                  parent="legal_website_root_menu" 
+                  sequence="20"/>
+
+        <menuitem id="legal_article_menu" 
+                  name="Legal Articles" 
+                  parent="legal_content_menu" 
+                  action="legal_website.legal_article_action" 
+                  sequence="10"/>
+
+        <menuitem id="legal_category_menu" 
+                  name="Categories" 
+                  parent="legal_content_menu" 
+                  action="legal_website.legal_category_action" 
+                  sequence="20"/>
+
+        <menuitem id="legal_tag_menu" 
+                  name="Tags" 
+                  parent="legal_content_menu" 
+                  action="legal_website.legal_tag_action" 
+                  sequence="30"/>
+
+    </data>
+</odoo>

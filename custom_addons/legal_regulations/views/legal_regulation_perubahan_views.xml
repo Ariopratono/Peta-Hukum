@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Inherit Form View untuk Tambah Tab Perubahan -->
+        <record id="view_legal_regulation_form_add_perubahan" model="ir.ui.view">
+            <field name="name">legal.regulation.form.add.perubahan</field>
+            <field name="model">legal.regulation</field>
+            <field name="inherit_id" ref="legal_regulations.view_legal_regulation_form"/>
+            <field name="arch" type="xml">
+                <!-- Tambah tab Perubahan di dalam notebook -->
+                <xpath expr="//notebook" position="inside">
+                    <page string="Perubahan UU" name="page_perubahan">
+                        <group>
+                            <field name="perubahan_dari_ids" nolabel="1">
+                                <list string="Daftar Perubahan" editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="nama_perubahan" placeholder="Contoh: UU No. 19/2016"/>
+                                    <field name="tahun_perubahan"/>
+                                    <field name="tanggal_perubahan"/>
+                                    <field name="file_txt_perubahan" filename="file_txt_perubahan_name" widget="binary"/>
+                                    <field name="file_txt_perubahan_name" column_invisible="1"/>
+                                    <field name="peraturan_pengubah_id" 
+                                           options="{'no_create': True}"
+                                           placeholder="(Opsional)"/>
+                                    <field name="keterangan" placeholder="Catatan..."/>
+                                </list>
+                            </field>
+                        </group>
+                        <div class="alert alert-info mt-3" role="alert">
+                            <p><strong>Cara Upload File Perubahan UU:</strong></p>
+                            <ol class="mb-0">
+                                <li>Klik <strong>"Add a line"</strong></li>
+                                <li>Isi <strong>Nama Perubahan</strong> (contoh: "UU No. 19/2016")</li>
+                                <li>Upload <strong>File TXT</strong> perubahan di kolom tersebut</li>
+                                <li>Klik <strong>Save</strong></li>
+                            </ol>
+                        </div>
+                    </page>
+                </xpath>
+                
+                <!-- Tambah tombol Buat Konsolidasi di header -->
+                <xpath expr="//header" position="inside">
+                    <button name="action_create_consolidation" type="object" 
+                            string="Buat Konsolidasi" 
+                            class="btn-success" icon="fa-compress"
+                            invisible="not perubahan_dari_ids"
+                            help="Buat naskah konsolidasi dari UU Induk + Perubahannya"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

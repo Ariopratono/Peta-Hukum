@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Subscription Plans -->
+        <record id="plan_free" model="legal.subscription.plan">
+            <field name="name">Free Plan</field>
+            <field name="description">Basic legal search with limited features</field>
+            <field name="price">0</field>
+            <field name="search_limit">5</field>
+            <field name="features">5 searches per day
+Basic search functionality
+Standard support</field>
+        </record>
+
+        <record id="plan_basic" model="legal.subscription.plan">
+            <field name="name">Basic Plan</field>
+            <field name="description">Enhanced legal search for regular users</field>
+            <field name="price">99000</field>
+            <field name="search_limit">50</field>
+            <field name="features">50 searches per day
+Advanced search filters
+Email support
+Download documents</field>
+        </record>
+
+        <record id="plan_pro" model="legal.subscription.plan">
+            <field name="name">Professional Plan</field>
+            <field name="description">Complete legal solution for professionals</field>
+            <field name="price">299000</field>
+            <field name="search_limit">200</field>
+            <field name="features">200 searches per day
+All search features
+Legal consultation
+Priority support
+Document templates</field>
+        </record>
+
+        <record id="plan_enterprise" model="legal.subscription.plan">
+            <field name="name">Enterprise Plan</field>
+            <field name="description">Unlimited access for organizations</field>
+            <field name="price">999000</field>
+            <field name="search_limit">9999</field>
+            <field name="features">Unlimited searches
+All premium features
+24/7 consultation
+Dedicated account manager
+Custom integrations</field>
+        </record>
+    </data>
+</odoo>

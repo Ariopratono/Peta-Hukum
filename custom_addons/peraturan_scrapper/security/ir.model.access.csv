@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_jdih_fetch,access_jdih_fetch,model_jdih_bpk_fetch,base.group_user,1,1,1,1

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Regulations Menu -->
+        <menuitem id="menu_legal_regulations"
+                  name="Peraturan Hukum"
+                  parent="menu_legal_regulations_root"
+                  action="action_legal_regulation"
+                  sequence="10"/>
+
+        <!-- Consolidation Menu -->
+        <menuitem id="menu_legal_consolidation"
+                  name="Konsolidasi Peraturan"
+                  parent="menu_legal_regulations_root"
+                  action="action_legal_regulation_consolidation"
+                  sequence="20"/>
+
+        <!-- Configuration Menu -->
+        <menuitem id="menu_legal_regulations_config"
+                  name="Konfigurasi"
+                  parent="menu_legal_regulations_root"
+                  sequence="100"/>
+
+    </data>
+</odoo>

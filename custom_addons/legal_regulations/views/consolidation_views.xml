@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Form View for Consolidation Wizard -->
+    <record id="view_consolidation_wizard_form" model="ir.ui.view">
+        <field name="name">consolidation.wizard.form</field>
+        <field name="model">consolidation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Konsolidasi Peraturan">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nama Konsolidasi, contoh: UU ITE Terpadu (2008-2024)"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="description" placeholder="Deskripsi singkat tentang konsolidasi ini..."/>
+                        </group>
+                        <group>
+                            <field name="display_mode" widget="radio"/>
+                            <field name="auto_save_as_new"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="📋 Peraturan yang Digabung">
+                            <field name="regulation_ids" widget="many2many_tags" nolabel="1"/>
+                            <div class="alert alert-info" role="alert">
+                                <strong>💡 Tips:</strong>
+                                <ul>
+                                    <li>Pilih <strong>UU Induk</strong> (peraturan asli/original) dan <strong>UU Perubahan</strong></li>
+                                    <li>Contoh: UU 11/2008 (Induk) + UU 19/2016 (Perubahan) + UU 1/2024 (Perubahan Kedua)</li>
+                                    <li>Peraturan akan diurutkan otomatis berdasarkan tahun</li>
+                                </ul>
+                            </div>
+                        </page>
+                        
+                        <page string="ℹ️ Panduan">
+                            <div class="alert alert-primary" role="alert">
+                                <h4>📚 Cara Menggunakan Fitur Konsolidasi</h4>
+                                <hr/>
+                                
+                                <h5>1️⃣ Pilih Peraturan</h5>
+                                <p>Pilih peraturan yang akan digabung. Minimal 2 peraturan:</p>
+                                <ul>
+                                    <li><strong>UU Induk:</strong> Peraturan asli yang pertama kali diterbitkan</li>
+                                    <li><strong>UU Perubahan:</strong> Peraturan yang mengubah/menambah UU Induk</li>
+                                </ul>
+                                
+                                <h5>2️⃣ Pilih Mode Tampilan</h5>
+                                <ul>
+                                    <li><strong>Mode Anotasi:</strong> Menampilkan versi terbaru dengan highlight perubahan (RECOMMENDED)</li>
+                                    <li><strong>Mode Final:</strong> Hanya menampilkan versi terbaru tanpa anotasi</li>
+                                    <li><strong>Mode Riwayat:</strong> Menampilkan semua versi per pasal</li>
+                                    <li><strong>Mode Perbandingan:</strong> Menampilkan side-by-side comparison</li>
+                                </ul>
+                                
+                                <h5>3️⃣ Generate &amp; Preview</h5>
+                                <ul>
+                                    <li>Klik <strong>"Preview"</strong> untuk melihat hasil sebelum disimpan</li>
+                                    <li>Klik <strong>"Generate &amp; Simpan"</strong> untuk membuat konsolidasi</li>
+                                </ul>
+                                
+                                <h5>4️⃣ Hasil</h5>
+                                <p>Hasil konsolidasi akan:</p>
+                                <ul>
+                                    <li>Menampilkan pasal-pasal yang ada di semua versi</li>
+                                    <li>Memberikan highlight untuk pasal yang ditambah (biru)</li>
+                                    <li>Memberikan highlight untuk pasal yang diubah (kuning)</li>
+                                    <li>Menampilkan pasal yang dihapus dengan strikethrough (merah)</li>
+                                </ul>
+                                
+                                <hr/>
+                                <h5>📝 Contoh Penggunaan</h5>
+                                <p><strong>Kasus: UU ITE</strong></p>
+                                <ul>
+                                    <li>UU 11/2008 tentang Informasi dan Transaksi Elektronik (Induk)</li>
+                                    <li>UU 19/2016 tentang Perubahan UU ITE (Perubahan)</li>
+                                    <li>UU 1/2024 tentang Perubahan Kedua UU ITE (Perubahan Kedua)</li>
+                                </ul>
+                                <p>Hasil: Naskah terpadu yang menggabungkan ketiga UU dengan tracking semua perubahan!</p>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+                
+                <footer>
+                    <button string="🔍 Preview" name="action_preview" type="object" class="btn-secondary"/>
+                    <button string="✅ Generate &amp; Simpan" name="action_generate_consolidation" type="object" class="btn-primary"/>
+                    <button string="Batal" special="cancel" class="btn-default"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Preview Wizard Form -->
+    <record id="view_consolidation_preview_wizard_form" model="ir.ui.view">
+        <field name="name">consolidation.preview.wizard.form</field>
+        <field name="model">consolidation.preview.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Preview Konsolidasi">
+                <sheet>
+                    <div class="alert alert-warning" role="alert">
+                        <strong>👀 Preview Mode:</strong> Ini adalah preview. Belum disimpan ke database.
+                    </div>
+                    <field name="html_preview" widget="html" nolabel="1"/>
+                    <field name="parent_wizard_id" invisible="1"/>
+                </sheet>
+                <footer>
+                    <button string="⬅️ Kembali" name="action_back" type="object" class="btn-secondary"/>
+                    <button string="✅ Generate &amp; Simpan" name="action_generate" type="object" class="btn-primary"/>
+                    <button string="Tutup" special="cancel" class="btn-default"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Consolidation Model Views -->
+    
+    <!-- Tree View -->
+    <record id="view_legal_regulation_consolidation_tree" model="ir.ui.view">
+        <field name="name">legal.regulation.consolidation.tree</field>
+        <field name="model">legal.regulation.consolidation</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'published'" decoration-info="state == 'generated'" decoration-muted="state == 'draft'">
+                <field name="name"/>
+                <field name="display_mode"/>
+                <field name="total_articles" sum="Total"/>
+                <field name="articles_added"/>
+                <field name="articles_modified"/>
+                <field name="articles_deleted"/>
+                <field name="state" widget="badge" decoration-success="state == 'published'" decoration-info="state == 'generated'"/>
+                <field name="created_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_legal_regulation_consolidation_form" model="ir.ui.view">
+        <field name="name">legal.regulation.consolidation.form</field>
+        <field name="model">legal.regulation.consolidation</field>
+        <field name="arch" type="xml">
+            <form string="Konsolidasi Peraturan">
+                <header>
+                    <button name="action_generate_consolidation" string="🔄 Generate Ulang" type="object" 
+                            invisible="state == 'published'" class="btn-primary"/>
+                    <button name="action_publish" string="📤 Publish" type="object" 
+                            invisible="state in ['draft', 'published']" class="btn-success"/>
+                    <button name="action_back_to_draft" string="✏️ Edit" type="object" 
+                            invisible="state != 'published'" class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,generated,published"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <!-- Statistics Buttons -->
+                        <button class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="total_articles" widget="statinfo" string="Total Pasal"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-plus-circle" style="color: #17a2b8;">
+                            <field name="articles_added" widget="statinfo" string="Ditambah"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-edit" style="color: #ffc107;">
+                            <field name="articles_modified" widget="statinfo" string="Diubah"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-minus-circle" style="color: #dc3545;">
+                            <field name="articles_deleted" widget="statinfo" string="Dihapus"/>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nama Konsolidasi..."/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="display_mode" widget="radio"/>
+                            <field name="created_date" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="description" placeholder="Deskripsi..."/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="📋 Peraturan Sumber">
+                            <field name="regulation_ids" widget="many2many_tags" nolabel="1"/>
+                        </page>
+                        
+                        <page string="📄 Hasil Konsolidasi">
+                            <field name="consolidated_html" widget="html" nolabel="1" 
+                                   invisible="state == 'draft'"/>
+                            <div invisible="state != 'draft'" class="alert alert-info" role="alert">
+                                <h4>ℹ️ Belum Digenerate</h4>
+                                <p>Klik tombol <strong>"Generate Ulang"</strong> untuk membuat hasil konsolidasi.</p>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+                
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_legal_regulation_consolidation_search" model="ir.ui.view">
+        <field name="name">legal.regulation.consolidation.search</field>
+        <field name="model">legal.regulation.consolidation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    
+    <!-- Consolidation Wizard Action -->
+    <record id="action_consolidation_wizard" model="ir.actions.act_window">
+        <field name="name">Konsolidasi Peraturan</field>
+        <field name="res_model">consolidation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_legal_regulation"/>
+        <field name="binding_view_types">list</field>
+    </record>
+
+    <!-- Consolidation List Action -->
+    <record id="action_legal_regulation_consolidation" model="ir.actions.act_window">
+        <field name="name">Konsolidasi Peraturan</field>
+        <field name="res_model">legal.regulation.consolidation</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Belum ada konsolidasi peraturan
+            </p>
+            <p>
+                Konsolidasi menggabungkan beberapa versi peraturan (UU Induk + UU Perubahan) 
+                menjadi satu dokumen terpadu dengan tracking perubahan.
+            </p>
+            <p>
+                Klik tombol "Buat Konsolidasi" atau pilih beberapa peraturan di menu Peraturan 
+                lalu klik "Action" → "Konsolidasi Peraturan".
+            </p>
+        </field>
+    </record>
+
+    <!-- Server Action for Multi-Select -->
+    <record id="action_create_consolidation_from_selection" model="ir.actions.server">
+        <field name="name">🔗 Buat Konsolidasi</field>
+        <field name="model_id" ref="model_legal_regulation"/>
+        <field name="binding_model_id" ref="model_legal_regulation"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Konsolidasi Peraturan',
+    'res_model': 'consolidation.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {
+        'default_regulation_ids': [(6, 0, records.ids)],
+    }
+}
+        </field>
+    </record>
+
+</odoo>

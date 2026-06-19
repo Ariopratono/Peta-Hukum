@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- System Maintenance Simple Form View -->
+    <record id="view_system_maintenance_simple_form" model="ir.ui.view">
+        <field name="name">system.maintenance.simple.form</field>
+        <field name="model">system.maintenance</field>
+        <field name="arch" type="xml">
+            <form string="System Maintenance">
+                <group>
+                    <field name="maintenance_mode"/>
+                </group>
+                <footer>
+                    <button name="apply_settings" string="Apply" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- System Maintenance Action -->
+    <record id="action_system_maintenance_simple" model="ir.actions.act_window">
+        <field name="name">System Maintenance</field>
+        <field name="res_model">system.maintenance</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_system_maintenance_simple_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_system_maintenance_simple"
+              name="System Maintenance"
+              parent="base.menu_administration"
+              action="action_system_maintenance_simple"
+              sequence="100"/>
+</odoo>

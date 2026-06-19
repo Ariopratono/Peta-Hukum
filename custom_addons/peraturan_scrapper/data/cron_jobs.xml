@@ -1,0 +1,13 @@
+<!-- jdih_bpk_connector/data/cron_jobs.xml -->
+<odoo>
+  <record id="ir_cron_jdih_bpk_fetch" model="ir.cron">
+    <field name="name">JDIH BPK: Fetch Peraturan</field>
+    <field name="model_id" ref="model_jdih_bpk_fetch"/>
+    <field name="state">code</field>
+    <field name="code">model.fetch_and_import_batch(max_pages=2, per_page=20, sleep_between=1.0)</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <field name="numbercall">-1</field>
+    <field name="active">True</field>
+  </record>
+</odoo>

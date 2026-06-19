@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Legal Homepage Template -->
+        <template id="legal_homepage" name="Legal Website Homepage">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <!-- Hero Section -->
+                    <section class="legal-hero bg-primary text-white py-5">
+                        <div class="container">
+                            <div class="row align-items-center">
+                                <div class="col-lg-6">
+                                    <h1 class="display-4 fw-bold mb-4">Portal Hukum Indonesia</h1>
+                                    <p class="lead mb-4">Temukan informasi hukum terlengkap dan terpercaya. Cari peraturan, artikel hukum, dan konsultasi dengan ahli hukum.</p>
+                                    
+                                    <!-- Search Form -->
+                                    <div class="legal-search-form">
+                                        <form action="/legal/search" method="get" class="d-flex">
+                                            <input type="text" name="q" class="form-control form-control-lg me-2" placeholder="Cari informasi hukum..." required="required"/>
+                                            <button type="submit" class="btn btn-warning btn-lg px-4">
+                                                <i class="fa fa-search me-2"></i>Cari
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 text-center">
+                                    <img src="/legal_website/static/src/img/legal-hero.svg" alt="Legal Hero" class="img-fluid" style="max-height: 300px;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Categories Section -->
+                    <section class="legal-categories py-5">
+                        <div class="container">
+                            <h2 class="text-center mb-5">Kategori Hukum</h2>
+                            <div class="row">
+                                <t t-foreach="categories" t-as="category">
+                                    <div class="col-md-6 col-lg-3 mb-4">
+                                        <div class="card legal-category-card h-100 shadow-sm">
+                                            <div class="card-body text-center">
+                                                <div t-attf-class="legal-category-icon bg-info-#{category.color} text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                    <i class="fa fa-balance-scale fa-lg"></i>
+                                                </div>
+                                                <h5 class="card-title" t-esc="category.name"/>
+                                                <p class="card-text text-muted" t-esc="category.description"/>
+                                                <div class="mt-auto">
+                                                    <a t-attf-href="/legal/category/#{category.id}" class="btn btn-outline-primary btn-sm">
+                                                        Lihat Artikel (<t t-esc="category.article_count"/>)
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Featured Articles Section -->
+                    <section class="legal-featured-articles py-5 bg-light">
+                        <div class="container">
+                            <h2 class="text-center mb-5">Artikel Terpopuler</h2>
+                            <div class="row">
+                                <t t-foreach="featured_articles" t-as="article">
+                                    <div class="col-md-6 col-lg-4 mb-4">
+                                        <div class="card legal-article-card h-100 shadow-sm">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <span t-attf-class="badge bg-primary-#{article.category_id.color} me-2" t-esc="article.category_id.name"/>
+                                                    <small class="text-muted">
+                                                        <i class="fa fa-eye me-1"></i>
+                                                        <t t-esc="article.view_count"/> views
+                                                    </small>
+                                                </div>
+                                                <h5 class="card-title">
+                                                    <a t-attf-href="/legal/article/#{article.id}" class="text-decoration-none" t-esc="article.name"/>
+                                                </h5>
+                                                <p class="card-text text-muted" t-esc="article.summary[:100] + '...' if article.summary and len(article.summary) > 100 else article.summary"/>
+                                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                                    <small class="text-muted">
+                                                        <i class="fa fa-calendar me-1"></i>
+                                                        <t t-esc="article.publish_date.strftime('%d %b %Y')"/>
+                                                    </small>
+                                                    <a t-attf-href="/legal/article/#{article.id}" class="btn btn-outline-primary btn-sm">
+                                                        Baca Selengkapnya
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <a href="/legal/articles" class="btn btn-primary">Lihat Semua Artikel</a>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Features Section -->
+                    <section class="legal-features py-5">
+                        <div class="container">
+                            <h2 class="text-center mb-5">Fitur Unggulan</h2>
+                            <div class="row">
+                                <div class="col-md-4 text-center mb-4">
+                                    <div class="legal-feature-icon bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <i class="fa fa-search fa-2x"></i>
+                                    </div>
+                                    <h4>Pencarian Cerdas</h4>
+                                    <p class="text-muted">Cari informasi hukum dari berbagai sumber dengan teknologi pencarian canggih SearXNG.</p>
+                                </div>
+                                <div class="col-md-4 text-center mb-4">
+                                    <div class="legal-feature-icon bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <i class="fa fa-book fa-2x"></i>
+                                    </div>
+                                    <h4>Database Lengkap</h4>
+                                    <p class="text-muted">Akses ke database hukum terlengkap termasuk KUHP, KUHAP, dan peraturan terbaru.</p>
+                                    <a href="/regulations" class="btn btn-outline-success btn-sm mt-2">
+                                        <i class="fa fa-gavel me-1"></i>Lihat Peraturan
+                                    </a>
+                                </div>
+                                <div class="col-md-4 text-center mb-4">
+                                    <div class="legal-feature-icon bg-warning text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <i class="fa fa-users fa-2x"></i>
+                                    </div>
+                                    <h4>Konsultasi Ahli</h4>
+                                    <p class="text-muted">Konsultasi langsung dengan para ahli hukum berpengalaman untuk kasus Anda.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+        
+        <!-- Legal Search Page Template -->
+        <template id="legal_search_page" name="Legal Search Page">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container my-5">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <!-- Search Form -->
+                                <div class="legal-search-header mb-4">
+                                    <form action="/legal/search" method="get" class="d-flex">
+                                        <input type="text" name="q" class="form-control form-control-lg me-2" t-att-value="query" placeholder="Cari informasi hukum..." required="required"/>
+                                        <input type="hidden" name="type" t-att-value="search_type"/>
+                                        <button type="submit" class="btn btn-primary btn-lg px-4">
+                                            <i class="fa fa-search me-2"></i>Cari
+                                        </button>
+                                    </form>
+                                    
+                                    <!-- Search Type Tabs -->
+                                    <ul class="nav nav-tabs mt-3">
+                                        <li class="nav-item">
+                                            <a t-attf-class="nav-link #{search_type == 'web' and 'active' or ''}" t-attf-href="/legal/search?q=#{query}&amp;type=web">
+                                                <i class="fa fa-globe me-1"></i>Pencarian Web
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a t-attf-class="nav-link #{search_type == 'articles' and 'active' or ''}" t-attf-href="/legal/articles?search=#{query}">
+                                                <i class="fa fa-file-text me-1"></i>Artikel Lokal
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <!-- Search Results -->
+                                <t t-if="query">
+                                    <div class="search-results">
+                                        <h5 class="mb-3">
+                                            Hasil pencarian untuk: "<strong t-esc="query"/>"
+                                            <t t-if="results.get('total')">
+                                                (<t t-esc="results['total']"/> hasil)
+                                            </t>
+                                        </h5>
+                                        
+                                        <!-- Local Articles Results -->
+                                        <t t-if="local_articles">
+                                            <div class="local-results mb-4">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="fa fa-home me-1"></i>Artikel dari situs ini
+                                                </h6>
+                                                <t t-foreach="local_articles" t-as="article">
+                                                    <div class="card mb-3">
+                                                        <div class="card-body">
+                                                            <h6>
+                                                                <a t-attf-href="/legal/article/#{article.id}" class="text-decoration-none" t-esc="article.name"/>
+                                                            </h6>
+                                                            <p class="text-muted mb-2" t-esc="article.summary"/>
+                                                            <small class="text-success">
+                                                                <i class="fa fa-tag me-1"></i><t t-esc="article.category_id.name"/>
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+                                        
+                                        <!-- Web Search Results -->
+                                        <t t-if="results.get('results')">
+                                            <div class="web-results">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="fa fa-globe me-1"></i>Hasil dari web
+                                                </h6>
+                                                <t t-foreach="results['results']" t-as="result">
+                                                    <div class="search-result-item mb-4">
+                                                        <h6>
+                                                            <a t-att-href="result['url']" target="_blank" class="text-decoration-none" t-esc="result['title']"/>
+                                                        </h6>
+                                                        <p class="text-success small mb-1" t-esc="result['url']"/>
+                                                        <p class="text-muted" t-esc="result['content']"/>
+                                                        <small class="text-muted">
+                                                            Sumber: <t t-esc="result['engine']"/>
+                                                            | Skor: <t t-esc="result['score']"/>
+                                                        </small>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+                                        
+                                        <!-- Error Message -->
+                                        <t t-if="results.get('error')">
+                                            <div class="alert alert-warning">
+                                                <i class="fa fa-exclamation-triangle me-2"></i>
+                                                <strong>Error:</strong> <t t-esc="results['error']"/>
+                                            </div>
+                                        </t>
+                                        
+                                        <!-- No Results -->
+                                        <t t-if="not results.get('results') and not results.get('error') and not local_articles">
+                                            <div class="alert alert-info">
+                                                <i class="fa fa-info-circle me-2"></i>
+                                                Tidak ada hasil yang ditemukan untuk pencarian "<strong t-esc="query"/>".
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                                
+                                <!-- Search Suggestions -->
+                                <t t-if="not query">
+                                    <div class="search-suggestions">
+                                        <h5 class="mb-3">Pencarian Populer</h5>
+                                        <div class="d-flex flex-wrap">
+                                            <a href="/legal/search?q=tindak+pidana+korupsi" class="btn btn-outline-secondary btn-sm me-2 mb-2">Tindak Pidana Korupsi</a>
+                                            <a href="/legal/search?q=hukum+perdata" class="btn btn-outline-secondary btn-sm me-2 mb-2">Hukum Perdata</a>
+                                            <a href="/legal/search?q=kuhp" class="btn btn-outline-secondary btn-sm me-2 mb-2">KUHP</a>
+                                            <a href="/legal/search?q=UUD+1945" class="btn btn-outline-secondary btn-sm me-2 mb-2">UUD 1945</a>
+                                            <a href="/legal/search?q=hukum+bisnis" class="btn btn-outline-secondary btn-sm me-2 mb-2">Hukum Bisnis</a>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            
+                            <!-- Sidebar -->
+                            <div class="col-lg-4">
+                                <div class="legal-search-sidebar">
+                                    <!-- Search Tips -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">
+                                                <i class="fa fa-lightbulb-o me-2"></i>Tips Pencarian
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="list-unstyled small">
+                                                <li class="mb-2">• Gunakan kata kunci yang spesifik</li>
+                                                <li class="mb-2">• Tambahkan tanda kutip untuk pencarian frasa exact</li>
+                                                <li class="mb-2">• Gunakan operator AND, OR untuk pencarian lanjutan</li>
+                                                <li class="mb-2">• Coba sinonim jika hasil tidak sesuai</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Popular Articles -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">
+                                                <i class="fa fa-fire me-2"></i>Artikel Populer
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <t t-set="popular_articles" t-value="request.env['legal.article'].sudo().search([('website_published', '=', True)], limit=5, order='view_count desc')"/>
+                                            <t t-foreach="popular_articles" t-as="article">
+                                                <div class="mb-3">
+                                                    <h6 class="small">
+                                                        <a t-attf-href="/legal/article/#{article.id}" class="text-decoration-none" t-esc="article.name"/>
+                                                    </h6>
+                                                    <small class="text-muted">
+                                                        <i class="fa fa-eye me-1"></i><t t-esc="article.view_count"/> views
+                                                    </small>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        
+        <!-- Legal Articles List Template -->
+        <template id="legal_articles" name="Legal Articles">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container my-5">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="legal-articles-header mb-4">
+                                    <h2>
+                                        <t t-if="current_category">
+                                            Artikel <t t-esc="current_category.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            Semua Artikel Hukum
+                                        </t>
+                                    </h2>
+                                    <p class="text-muted">
+                                        Menampilkan <t t-esc="articles_count"/> artikel
+                                        <t t-if="search">untuk pencarian "<strong t-esc="search"/>"</t>
+                                    </p>
+                                    
+                                    <!-- Search Form -->
+                                    <form action="/legal/articles" method="get" class="d-flex mb-3">
+                                        <input type="text" name="search" class="form-control me-2" t-att-value="search" placeholder="Cari artikel..."/>
+                                        <button type="submit" class="btn btn-outline-primary">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                                <!-- Articles Grid -->
+                                <div class="legal-articles-grid">
+                                    <div class="row">
+                                        <t t-foreach="articles" t-as="article">
+                                            <div class="col-md-6 mb-4">
+                                                <div class="card legal-article-card h-100">
+                                                    <div class="card-body">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <span t-attf-class="badge bg-primary-#{article.category_id.color} me-2" t-esc="article.category_id.name"/>
+                                                            <small class="text-muted">
+                                                                <i class="fa fa-eye me-1"></i>
+                                                                <t t-esc="article.view_count"/>
+                                                            </small>
+                                                        </div>
+                                                        <h5 class="card-title">
+                                                            <a t-attf-href="/legal/article/#{article.id}" class="text-decoration-none" t-esc="article.name"/>
+                                                        </h5>
+                                                        <p class="card-text text-muted" t-esc="article.summary"/>
+                                                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                                                            <small class="text-muted">
+                                                                <t t-esc="article.publish_date.strftime('%d %b %Y')"/>
+                                                            </small>
+                                                            <a t-attf-href="/legal/article/#{article.id}" class="btn btn-outline-primary btn-sm">
+                                                                Baca
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <t t-if="total_pages > 1">
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination justify-content-center">
+                                            <t t-if="current_page > 1">
+                                                <li class="page-item">
+                                                    <a t-attf-href="/legal/articles?page=#{current_page - 1}" class="page-link">Sebelumnya</a>
+                                                </li>
+                                            </t>
+                                            
+                                            <t t-foreach="range(max(1, current_page - 2), min(total_pages + 1, current_page + 3))" t-as="page_num">
+                                                <li t-attf-class="page-item #{current_page == page_num and 'active' or ''}">
+                                                    <a t-attf-href="/legal/articles?page=#{page_num}" class="page-link" t-esc="page_num"/>
+                                                </li>
+                                            </t>
+                                            
+                                            <t t-if="current_page &lt; total_pages">
+                                                <li class="page-item">
+                                                    <a t-attf-href="/legal/articles?page=#{current_page + 1}" class="page-link">Selanjutnya</a>
+                                                </li>
+                                            </t>
+                                        </ul>
+                                    </nav>
+                                </t>
+                            </div>
+                            
+                            <!-- Sidebar -->
+                            <div class="col-lg-4">
+                                <div class="legal-articles-sidebar">
+                                    <!-- Categories -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Kategori</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="list-group list-group-flush">
+                                                <a href="/legal/articles" t-attf-class="list-group-item list-group-item-action #{not current_category and 'active' or ''}">
+                                                    Semua Kategori
+                                                </a>
+                                                <t t-foreach="categories" t-as="category">
+                                                    <a t-attf-href="/legal/category/#{category.id}" t-attf-class="list-group-item list-group-item-action #{current_category and current_category.id == category.id and 'active' or ''}">
+                                                        <t t-esc="category.name"/>
+                                                        <span class="badge bg-secondary float-end" t-esc="category.article_count"/>
+                                                    </a>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Popular Tags -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Tag Populer</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex flex-wrap">
+                                                <t t-foreach="popular_tags" t-as="tag">
+                                                    <a t-attf-href="/legal/articles?tag=#{tag.id}" class="btn btn-outline-secondary btn-sm me-2 mb-2">
+                                                        <t t-esc="tag.name"/>
+                                                    </a>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        
+        <!-- Legal Article Detail Template -->
+        <template id="legal_article_detail" name="Legal Article Detail">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container my-5">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <article class="legal-article-detail">
+                                    <!-- Article Header -->
+                                    <header class="article-header mb-4">
+                                        <div class="mb-3">
+                                            <span t-attf-class="badge bg-primary-#{article.category_id.color} me-2" t-esc="article.category_id.name"/>
+                                            <t t-foreach="article.tag_ids" t-as="tag">
+                                                <span class="badge bg-secondary me-1" t-esc="tag.name"/>
+                                            </t>
+                                        </div>
+                                        <h1 t-esc="article.name"/>
+                                        <div class="article-meta text-muted mb-3">
+                                            <small>
+                                                <i class="fa fa-user me-1"></i>
+                                                <t t-esc="article.author_id.name"/>
+                                                |
+                                                <i class="fa fa-calendar me-1"></i>
+                                                <t t-esc="article.publish_date.strftime('%d %B %Y')"/>
+                                                |
+                                                <i class="fa fa-eye me-1"></i>
+                                                <t t-esc="article.view_count"/> views
+                                            </small>
+                                        </div>
+                                        <div class="article-summary bg-light p-3 rounded">
+                                            <p class="mb-0" t-esc="article.summary"/>
+                                        </div>
+                                    </header>
+                                    
+                                    <!-- Article Content -->
+                                    <div class="article-content" t-raw="article.content"/>
+                                    
+                                    <!-- Article Footer -->
+                                    <footer class="article-footer mt-5 pt-4 border-top">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h6>Bagikan Artikel:</h6>
+                                                <div class="social-share">
+                                                    <a href="#" class="btn btn-outline-primary btn-sm me-2">
+                                                        <i class="fa fa-facebook"></i> Facebook
+                                                    </a>
+                                                    <a href="#" class="btn btn-outline-info btn-sm me-2">
+                                                        <i class="fa fa-twitter"></i> Twitter
+                                                    </a>
+                                                    <a href="#" class="btn btn-outline-success btn-sm">
+                                                        <i class="fa fa-whatsapp"></i> WhatsApp
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 text-md-end">
+                                                <h6>Kategori:</h6>
+                                                <a t-attf-href="/legal/category/#{article.category_id.id}" class="btn btn-outline-secondary btn-sm">
+                                                    <t t-esc="article.category_id.name"/>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </footer>
+                                </article>
+                                
+                                <!-- Related Articles -->
+                                <t t-if="related_articles">
+                                    <section class="related-articles mt-5">
+                                        <h4 class="mb-4">Artikel Terkait</h4>
+                                        <div class="row">
+                                            <t t-foreach="related_articles" t-as="related">
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h6>
+                                                                <a t-attf-href="/legal/article/#{related.id}" class="text-decoration-none" t-esc="related.name"/>
+                                                            </h6>
+                                                            <p class="card-text small text-muted" t-esc="related.summary[:100] + '...' if related.summary and len(related.summary) > 100 else related.summary"/>
+                                                            <small class="text-muted">
+                                                                <i class="fa fa-eye me-1"></i><t t-esc="related.view_count"/>
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </section>
+                                </t>
+                            </div>
+                            
+                            <!-- Sidebar -->
+                            <div class="col-lg-4">
+                                <div class="legal-article-sidebar">
+                                    <!-- Search -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Pencarian</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <form action="/legal/search" method="get">
+                                                <div class="input-group">
+                                                    <input type="text" name="q" class="form-control" placeholder="Cari artikel..."/>
+                                                    <button class="btn btn-outline-primary" type="submit">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Popular Articles -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Artikel Populer</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <t t-set="popular_articles" t-value="request.env['legal.article'].sudo().search([('website_published', '=', True), ('id', '!=', article.id)], limit=5, order='view_count desc')"/>
+                                            <t t-foreach="popular_articles" t-as="popular">
+                                                <div class="mb-3">
+                                                    <h6 class="small">
+                                                        <a t-attf-href="/legal/article/#{popular.id}" class="text-decoration-none" t-esc="popular.name"/>
+                                                    </h6>
+                                                    <small class="text-muted">
+                                                        <i class="fa fa-eye me-1"></i><t t-esc="popular.view_count"/>
+                                                    </small>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

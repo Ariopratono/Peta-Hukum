@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Legal Categories Data -->
+        <record id="legal_category_pidana" model="legal.category">
+            <field name="name">Hukum Pidana</field>
+            <field name="description">Artikel dan informasi tentang hukum pidana</field>
+            <field name="sequence">1</field>
+            <field name="color">1</field>
+        </record>
+        
+        <record id="legal_category_perdata" model="legal.category">
+            <field name="name">Hukum Perdata</field>
+            <field name="description">Artikel dan informasi tentang hukum perdata</field>
+            <field name="sequence">2</field>
+            <field name="color">2</field>
+        </record>
+        
+        <record id="legal_category_tata_negara" model="legal.category">
+            <field name="name">Hukum Tata Negara</field>
+            <field name="description">Artikel dan informasi tentang hukum tata negara</field>
+            <field name="sequence">3</field>
+            <field name="color">3</field>
+        </record>
+        
+        <record id="legal_category_bisnis" model="legal.category">
+            <field name="name">Hukum Bisnis</field>
+            <field name="description">Artikel dan informasi tentang hukum bisnis</field>
+            <field name="sequence">4</field>
+            <field name="color">4</field>
+        </record>
+        
+        <!-- Legal Tags Data -->
+        <record id="legal_tag_kuhp" model="legal.tag">
+            <field name="name">KUHP</field>
+            <field name="color">1</field>
+        </record>
+        
+        <record id="legal_tag_kuhap" model="legal.tag">
+            <field name="name">KUHAP</field>
+            <field name="color">2</field>
+        </record>
+        
+        <record id="legal_tag_uud" model="legal.tag">
+            <field name="name">UUD 1945</field>
+            <field name="color">3</field>
+        </record>
+        
+        <!-- Sample Legal Articles -->
+        <record id="legal_article_sample_1" model="legal.article">
+            <field name="name">Pengantar Hukum Pidana Indonesia</field>
+            <field name="content"><![CDATA[
+                <h2>Pengertian Hukum Pidana</h2>
+                <p>Hukum pidana adalah bagian dari hukum publik yang mengatur perbuatan-perbuatan yang dilarang oleh undang-undang dan memberikan sanksi berupa pidana bagi barang siapa yang melanggar larangan tersebut.</p>
+                
+                <h3>Sumber Hukum Pidana</h3>
+                <ul>
+                    <li>Kitab Undang-Undang Hukum Pidana (KUHP)</li>
+                    <li>Undang-undang pidana khusus</li>
+                    <li>Hukum pidana adat yang masih berlaku</li>
+                </ul>
+                
+                <h3>Asas-Asas Hukum Pidana</h3>
+                <p>Beberapa asas penting dalam hukum pidana:</p>
+                <ol>
+                    <li><strong>Asas Legalitas</strong> - Tidak ada perbuatan pidana tanpa undang-undang</li>
+                    <li><strong>Asas Tiada Pidana Tanpa Kesalahan</strong> - Tidak ada pidana tanpa kesalahan</li>
+                    <li><strong>Asas Praduga Tidak Bersalah</strong> - Setiap orang dianggap tidak bersalah sampai terbukti sebaliknya</li>
+                </ol>
+            ]]></field>
+            <field name="summary">Artikel pengantar tentang hukum pidana Indonesia, mencakup pengertian, sumber hukum, dan asas-asas fundamental.</field>
+            <field name="category_id" ref="legal_category_pidana"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('legal_tag_kuhp')])]"/>
+            <field name="website_published">True</field>
+        </record>
+        
+        <record id="legal_article_sample_2" model="legal.article">
+            <field name="name">Memahami Tindak Pidana Korupsi</field>
+            <field name="content"><![CDATA[
+                <h2>Definisi Korupsi</h2>
+                <p>Korupsi adalah tindakan pejabat publik, baik politisi maupun pegawai negeri, serta pihak lain yang terlibat dalam tindakan itu yang secara tidak wajar dan tidak legal menyalahgunakan kepercayaan publik yang dikuasakan kepada mereka untuk mendapatkan keuntungan sepihak.</p>
+                
+                <h3>Jenis-Jenis Tindak Pidana Korupsi</h3>
+                <ul>
+                    <li>Kerugian keuangan negara</li>
+                    <li>Suap-menyuap</li>
+                    <li>Penggelapan dalam jabatan</li>
+                    <li>Pemerasan</li>
+                    <li>Perbuatan curang</li>
+                    <li>Benturan kepentingan dalam pengadaan</li>
+                    <li>Gratifikasi</li>
+                </ul>
+                
+                <h3>Sanksi Pidana</h3>
+                <p>Berdasarkan UU No. 31 Tahun 1999 jo UU No. 20 Tahun 2001, sanksi pidana korupsi dapat berupa:</p>
+                <ul>
+                    <li>Pidana penjara minimal 4 tahun maksimal 20 tahun</li>
+                    <li>Pidana denda minimal Rp 200 juta maksimal Rp 1 miliar</li>
+                    <li>Pidana tambahan berupa pencabutan hak politik</li>
+                </ul>
+            ]]></field>
+            <field name="summary">Panduan lengkap tentang tindak pidana korupsi, jenis-jenisnya, dan sanksi hukum yang berlaku di Indonesia.</field>
+            <field name="category_id" ref="legal_category_pidana"/>
+            <field name="website_published">True</field>
+        </record>
+        
+        <!-- Default Search Configuration -->
+        <record id="legal_search_default_config" model="legal.search">
+            <field name="name">Konfigurasi Pencarian Default</field>
+            <field name="searxng_url">https://search.brave4u.com</field>
+            <field name="search_engines">google,bing,duckduckgo</field>
+            <field name="categories">general</field>
+            <field name="language">id</field>
+            <field name="safe_search">1</field>
+            <field name="active">False</field>
+        </record>
+        
+        <!-- Enhanced Demo Search Configuration -->
+        <record id="legal_search_enhanced_demo_config" model="legal.search.enhanced">
+            <field name="name">Demo Search (Mock Data)</field>
+            <field name="search_type">mock</field>
+            <field name="language">id</field>
+            <field name="safe_search">1</field>
+            <field name="timeout">5.0</field>
+            <field name="max_results">20</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

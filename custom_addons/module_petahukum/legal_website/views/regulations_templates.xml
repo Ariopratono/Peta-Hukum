@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Regulations List Template -->
+        <template id="regulations_list_template" name="Regulations List">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container my-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <h1 class="display-6 fw-bold text-uppercase">Peraturan Hukum Indonesia</h1>
+                            <p class="text-muted">Akses mudah ke ribuan peraturan hukum Indonesia yang selalu up-to-date</p>
+                        </div>
+                        
+                        <!-- Filter & Search Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-white">
+                                <a class="text-decoration-none text-dark fw-bold" data-bs-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false">
+                                    <i class="fa fa-filter me-2"></i>FILTER &amp; PENCARIAN
+                                </a>
+                            </div>
+                            <div class="collapse show" id="filterCollapse">
+                                <div class="card-body">
+                                    <form action="/regulations" method="get">
+                                        <div class="row g-3">
+                                            <!-- Kata Kunci -->
+                                            <div class="col-md-4">
+                                                <label class="form-label small">Kata Kunci</label>
+                                                <input type="text" name="search" class="form-control" t-att-value="search" placeholder="Cari peraturan..."/>
+                                            </div>
+                                            
+                                            <!-- Bidang Hukum -->
+                                            <div class="col-md-4">
+                                                <label class="form-label small">Bidang Hukum</label>
+                                                <select name="bidang" class="form-select">
+                                                    <option value="">Semua Bidang</option>
+                                                    <t t-foreach="bidang_options" t-as="bidang">
+                                                        <option t-att-value="bidang[0]" t-att-selected="'selected' if selected_bidang == bidang[0] else None">
+                                                            <t t-esc="bidang[1]"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Tipe Dokumen -->
+                                            <div class="col-md-4">
+                                                <label class="form-label small">Tipe Dokumen</label>
+                                                <select name="tipe" class="form-select">
+                                                    <option value="">Semua Tipe</option>
+                                                    <t t-foreach="tipe_options" t-as="tipe">
+                                                        <option t-att-value="tipe[0]" t-att-selected="'selected' if selected_tipe == tipe[0] else None">
+                                                            <t t-esc="tipe[1]"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Tahun -->
+                                            <div class="col-md-4">
+                                                <label class="form-label small">Tahun</label>
+                                                <select name="tahun" class="form-select">
+                                                    <option value="">Semua Tahun</option>
+                                                    <t t-foreach="year_options" t-as="year">
+                                                        <option t-att-value="year" t-att-selected="'selected' if int(selected_tahun or 0) == year else None">
+                                                            <t t-esc="year"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Status -->
+                                            <div class="col-md-4">
+                                                <label class="form-label small">Status</label>
+                                                <select name="status" class="form-select">
+                                                    <option value="">Semua Status</option>
+                                                    <option value="berlaku" t-att-selected="'selected' if selected_status == 'berlaku' else None">Berlaku</option>
+                                                    <option value="dicabut" t-att-selected="'selected' if selected_status == 'dicabut' else None">Dicabut</option>
+                                                    <option value="diubah" t-att-selected="'selected' if selected_status == 'diubah' else None">Diubah</option>
+                                                    <option value="tidak_berlaku" t-att-selected="'selected' if selected_status == 'tidak_berlaku' else None">Tidak Berlaku</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Buttons -->
+                                            <div class="col-md-4 d-flex align-items-end gap-2">
+                                                <button type="submit" class="btn btn-info text-white flex-grow-1">
+                                                    <i class="fa fa-search me-1"></i>Cari
+                                                </button>
+                                                <a href="/regulations" class="btn btn-warning flex-grow-1">
+                                                    <i class="fa fa-refresh me-1"></i>Reset
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Result Count -->
+                        <div class="mb-3">
+                            <p class="text-muted">
+                                Menampilkan <strong><t t-esc="total_count"/></strong> peraturan hukum dengan kata kunci "<strong><t t-esc="search or '-'"/></strong>"
+                            </p>
+                        </div>
+                        
+                        <!-- Regulations List -->
+                        <div class="regulations-list">
+                            <t t-foreach="regulations" t-as="regulation">
+                                <div class="card mb-3 border-start border-info border-4 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <h5 class="card-title text-primary mb-2">
+                                                    <a t-attf-href="/regulations/#{regulation.id}" class="text-decoration-none">
+                                                        <t t-esc="regulation.judul"/>
+                                                    </a>
+                                                </h5>
+                                                <p class="mb-2">
+                                                    <strong>
+                                                        <t t-esc="regulation.bentuk_singkat"/> No. <t t-esc="regulation.nomor"/> Tahun <t t-esc="regulation.tahun"/>
+                                                    </strong>
+                                                </p>
+                                                <div class="mb-2">
+                                                    <span t-attf-class="badge bg-#{regulation.status == 'berlaku' and 'success' or regulation.status == 'dicabut' and 'danger' or 'warning'} me-2">
+                                                        <t t-esc="dict(regulation._fields['status'].selection).get(regulation.status, regulation.status).upper()"/>
+                                                    </span>
+                                                    <span class="badge bg-info me-2">
+                                                        <t t-esc="dict(regulation._fields['tipe_dokumen'].selection).get(regulation.tipe_dokumen, regulation.tipe_dokumen)"/>
+                                                    </span>
+                                                </div>
+                                                <p class="small text-muted mb-0">
+                                                    <strong>Subjek:</strong> <t t-esc="regulation.subjek or '-'"/>
+                                                </p>
+                                                <p class="small text-muted mb-0">
+                                                    <strong>Sumber:</strong> <t t-esc="regulation.sumber or '-'"/>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center justify-content-end">
+                                                <a t-attf-href="/regulations/#{regulation.id}" class="btn btn-outline-primary btn-sm">
+                                                    <i class="fa fa-eye me-1"></i>Lihat Detail
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <t t-if="total_pages > 1">
+                            <nav aria-label="Page navigation" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    <t t-if="current_page > 1">
+                                        <li class="page-item">
+                                            <a t-attf-href="/regulations?page=#{current_page - 1}&amp;search=#{search}&amp;bidang=#{selected_bidang}&amp;tipe=#{selected_tipe}&amp;tahun=#{selected_tahun}&amp;status=#{selected_status}" 
+                                               class="page-link">
+                                                <i class="fa fa-chevron-left"></i>
+                                            </a>
+                                        </li>
+                                    </t>
+                                    
+                                    <t t-foreach="range(max(1, current_page - 2), min(total_pages + 1, current_page + 3))" t-as="page_num">
+                                        <li t-attf-class="page-item #{current_page == page_num and 'active' or ''}">
+                                            <a t-attf-href="/regulations?page=#{page_num}&amp;search=#{search}&amp;bidang=#{selected_bidang}&amp;tipe=#{selected_tipe}&amp;tahun=#{selected_tahun}&amp;status=#{selected_status}" 
+                                               class="page-link" t-esc="page_num"/>
+                                        </li>
+                                    </t>
+                                    
+                                    <t t-if="current_page &lt; total_pages">
+                                        <li class="page-item">
+                                            <a t-attf-href="/regulations?page=#{current_page + 1}&amp;search=#{search}&amp;bidang=#{selected_bidang}&amp;tipe=#{selected_tipe}&amp;tahun=#{selected_tahun}&amp;status=#{selected_status}" 
+                                               class="page-link">
+                                                <i class="fa fa-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </nav>
+                        </t>
+                        
+                        <!-- Social Share -->
+                        <div class="text-center mt-4">
+                            <a href="#" class="btn btn-outline-primary btn-sm rounded-circle me-2"><i class="fa fa-facebook"></i></a>
+                            <a href="#" class="btn btn-outline-info btn-sm rounded-circle me-2"><i class="fa fa-twitter"></i></a>
+                            <a href="#" class="btn btn-outline-primary btn-sm rounded-circle"><i class="fa fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        
+        <!-- Regulation Detail Template -->
+        <template id="regulation_detail_template" name="Detail Peraturan Hukum">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure oe_empty">
+                    <div class="container mt-3">
+                        <!-- Breadcrumb -->
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/regulations">Peraturan Hukum</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Detail</li>
+                            </ol>
+                        </nav>
+
+                        <!-- Main Content -->
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <!-- Regulation Header -->
+                                <div class="card mb-4">
+                                    <div class="card-header bg-primary text-white">
+                                        <h1 class="h3 mb-0">
+                                            <i class="fa fa-gavel"></i> <t t-esc="regulation.judul"/>
+                                        </h1>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h5>📋 Informasi Dasar</h5>
+                                                <table class="table table-sm">
+                                                    <tr>
+                                                        <th width="40%">Bentuk Peraturan:</th>
+                                                        <td><t t-esc="regulation.bentuk"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Nomor:</th>
+                                                        <td><strong><t t-esc="regulation.nomor"/></strong></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tahun:</th>
+                                                        <td><t t-esc="regulation.tahun"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>T.E.U.:</th>
+                                                        <td><t t-esc="regulation.teu"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Status:</th>
+                                                        <td>
+                                                            <t t-if="regulation.status == 'berlaku'">
+                                                                <span class="badge bg-success">BERLAKU</span>
+                                                            </t>
+                                                            <t t-elif="regulation.status == 'dicabut'">
+                                                                <span class="badge bg-danger">DICABUT</span>
+                                                            </t>
+                                                            <t t-elif="regulation.status == 'tidak_berlaku'">
+                                                                <span class="badge bg-warning text-dark">TIDAK BERLAKU</span>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <span class="badge bg-secondary">UNKNOWN</span>
+                                                            </t>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h5>🏛️ Klasifikasi</h5>
+                                                <table class="table table-sm">
+                                                    <tr>
+                                                        <th width="40%">Bidang Hukum:</th>
+                                                        <td>
+                                                            <span class="badge bg-info">
+                                                                <t t-set="bidang_display" t-value="regulation.bidang"/>
+                                                                <t t-if="bidang_display and str(bidang_display) not in ['True', 'False', '1', '0']">
+                                                                    <t t-esc="str(bidang_display).replace('_', ' ').title()"/>
+                                                                </t>
+                                                                <t t-else="">
+                                                                    Bidang Tidak Diketahui
+                                                                </t>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tipe Dokumen:</th>
+                                                        <td>
+                                                            <t t-set="tipe_display" t-value="regulation.tipe_dokumen"/>
+                                                            <t t-if="tipe_display and str(tipe_display) not in ['True', 'False', '1', '0']">
+                                                                <t t-esc="str(tipe_display).replace('_', ' ').title()"/>
+                                                            </t>
+                                                            <t t-else="">
+                                                                Tipe Tidak Diketahui
+                                                            </t>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tempat Penetapan:</th>
+                                                        <td><t t-esc="regulation.tempat_penetapan or '-'"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tanggal Penetapan:</th>
+                                                        <td><t t-esc="regulation.tanggal_penetapan or '-'"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Tanggal Pengundangan:</th>
+                                                        <td><t t-esc="regulation.tanggal_pengundangan or '-'"/></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Subject & Content -->
+                                <div class="card mb-4" t-if="regulation.subjek">
+                                    <div class="card-header">
+                                        <h5><i class="fa fa-tag"></i> Subjek</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><t t-esc="regulation.subjek"/></p>
+                                    </div>
+                                </div>
+
+                                <!-- Ringkasan -->
+                                <div class="card mb-4" t-if="regulation.ringkasan">
+                                    <div class="card-header">
+                                        <h5><i class="fa fa-file-text-o"></i> Ringkasan</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><t t-esc="regulation.ringkasan"/></p>
+                                    </div>
+                                </div>
+
+                                <!-- Isi Peraturan -->
+                                <div class="card mb-4" t-if="regulation.isi_peraturan">
+                                    <div class="card-header">
+                                        <h5><i class="fa fa-book"></i> Isi Peraturan</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="regulation-content" style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; padding: 15px; border-radius: 5px; overflow-wrap: break-word; word-wrap: break-word;">
+                                            <t t-raw="regulation.isi_peraturan"/>
+                                        </div>
+                                        <div class="mt-3">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="toggleContent()" id="toggleBtn">
+                                                <i class="fa fa-expand"></i> Tampilkan Penuh
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <template id="template_regulation_detail_enhanced" inherit_id="legal_website.regulation_detail">
+                                    <xpath expr="//div[@class='regulation-content']" position="replace">
+                                        <div class="regulation-content">
+                                            
+                                            <div t-if="regulation.regulation_type == 'consolidated'" class="alert alert-info">
+                                                <h4><i class="fa fa-book"/> Naskah Kompilasi</h4>
+                                                <p>Dokumen ini adalah penggabungan dari:</p>
+                                                <ul>
+                                                    <li t-foreach="regulation.source_regulation_ids" t-as="source">
+                                                        <span t-field="source.name"/>
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                            <t t-foreach="structures" t-as="struct">
+                                                <div t-att-class="'article-container ' + (struct.change_status if struct.change_status else '')">
+                                                    
+                                                    <div class="article-header">
+                                                        <h5 t-if="struct.level == 'pasal'">
+                                                            <b>Pasal <span t-field="struct.number_char"/></b>
+                                                            
+                                                            <span t-if="struct.change_status == 'amended'" class="badge badge-warning">Diubah</span>
+                                                            <span t-if="struct.change_status == 'inserted'" class="badge badge-success">Baru/Sisipan</span>
+                                                            <span t-if="struct.change_status == 'deleted'" class="badge badge-danger">Dihapus</span>
+                                                        </h5>
+                                                    </div>
+
+                                                    <div class="article-body">
+                                                        <span t-field="struct.content"/>
+                                                    </div>
+
+                                                    <div t-if="struct.change_reference" class="text-muted small font-italic mt-1">
+                                                        <i class="fa fa-info-circle"/> <span t-field="struct.change_reference"/>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </xpath>
+                                </template>
+
+                                <!-- Kata Kunci -->
+                                <div class="card mb-4" t-if="regulation.kata_kunci">
+                                    <div class="card-header">
+                                        <h5><i class="fa fa-tags"></i> Kata Kunci</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <t t-set="keywords" t-value="regulation.kata_kunci.split(',')"/>
+                                        <t t-foreach="keywords" t-as="keyword">
+                                            <span class="badge bg-secondary me-1 mb-1"><t t-esc="keyword.strip()"/></span>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Keterangan -->
+                                <div class="card mb-4" t-if="regulation.keterangan">
+                                    <div class="card-header">
+                                        <h5><i class="fa fa-comment"></i> Keterangan Tambahan</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><t t-esc="regulation.keterangan"/></p>
+                                    </div>
+                                </div>
+
+                                <!-- Source Information -->
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5><i class="fa fa-info-circle"></i> Informasi Sumber</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Sumber:</strong> <t t-esc="regulation.sumber or '-'"/></p>
+                                                <p><strong>Bahasa:</strong> <t t-esc="regulation.bahasa or '-'"/></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Lokasi:</strong> <t t-esc="regulation.lokasi or '-'"/></p>
+                                                <p><strong>Bentuk Singkat:</strong> <t t-esc="regulation.bentuk_singkat or '-'"/></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Documents & Links -->
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5><i class="fa fa-download"></i> Dokumen &amp; Tautan</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="alert alert-info">
+                                                    <h6><i class="fa fa-info-circle"></i> Akses Dokumen</h6>
+                                                    <p class="mb-2">Untuk mengakses dokumen lengkap peraturan ini, silakan kunjungi:</p>
+                                                    <ul class="mb-0">
+                                                        <li><a href="https://peraturan.bpk.go.id/" target="_blank">Portal Peraturan BPK</a></li>
+                                                        <li><a href="https://jdih.kemenkumham.go.id/" target="_blank">JDIH Kemenkumham</a></li>
+                                                        <li><a href="https://peraturan.go.id/" target="_blank">Peraturan.go.id</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sidebar -->
+                            <div class="col-lg-4">
+                                <!-- Quick Actions -->
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5><i class="fa fa-cog"></i> Aksi Cepat</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <a href="/regulations" class="btn btn-outline-secondary">
+                                                <i class="fa fa-arrow-left"></i> Kembali ke Daftar
+                                            </a>
+                                            <t t-if="regulation.file_pdf">
+                                                <a t-attf-href="/web/content?model=legal.regulation&amp;id=#{regulation.id}&amp;field=file_pdf&amp;filename_field=file_name&amp;download=true" 
+                                                   class="btn btn-danger" target="_blank">
+                                                    <i class="fa fa-download"></i> Download PDF (<t t-esc="regulation.file_size"/> KB)
+                                                </a>
+                                            </t>
+                                            <button class="btn btn-outline-info" onclick="window.print()">
+                                                <i class="fa fa-print"></i> Print Halaman
+                                            </button>
+                                            <button class="btn btn-outline-success" onclick="shareRegulation()">
+                                                <i class="fa fa-share"></i> Bagikan
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Regulation Statistics -->
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5><i class="fa fa-bar-chart"></i> Statistik</h5>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <h4 class="text-primary"><t t-esc="regulation.tahun"/></h4>
+                                                <small class="text-muted">Tahun</small>
+                                            </div>
+                                            <div class="col-6">
+                                                <h4 class="text-success"><t t-esc="regulation.nomor"/></h4>
+                                                <small class="text-muted">Nomor</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Related Regulations -->
+                                <div class="card" t-if="related_regulations">
+                                    <div class="card-header">
+                                        <h5><i class="fa fa-link"></i> Peraturan Terkait</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <t t-foreach="related_regulations" t-as="related">
+                                            <div class="mb-3">
+                                                <h6 class="mb-1">
+                                                    <a t-attf-href="/regulations/#{related.id}" class="text-decoration-none">
+                                                        <t t-esc="related.judul[:60]"/>...
+                                                    </a>
+                                                </h6>
+                                                <small class="text-muted">
+                                                    <t t-esc="related.bentuk_singkat"/> No. <t t-esc="related.nomor"/>/<t t-esc="related.tahun"/>
+                                                </small>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JavaScript -->
+                <script>
+                    function shareRegulation() {
+                        if (navigator.share) {
+                            navigator.share({
+                                title: document.title,
+                                text: 'Lihat peraturan ini',
+                                url: window.location.href
+                            });
+                        } else {
+                            // Fallback: copy to clipboard
+                            navigator.clipboard.writeText(window.location.href).then(function() {
+                                alert('URL berhasil disalin ke clipboard!');
+                            });
+                        }
+                    }
+
+                    // Toggle content expand/collapse
+                    function toggleContent() {
+                        var content = document.querySelector('.regulation-content');
+                        var btn = document.getElementById('toggleBtn');
+                        
+                        if (content.style.maxHeight === '500px' || content.style.maxHeight === '') {
+                            content.style.maxHeight = 'none';
+                            btn.innerHTML = '<i class="fa fa-compress"></i> Ciutkan';
+                        } else {
+                            content.style.maxHeight = '500px';
+                            btn.innerHTML = '<i class="fa fa-expand"></i> Tampilkan Penuh';
+                        }
+                    }
+                </script>
+            </t>
+        </template>
+        
+        <!-- Empty Regulations Template (when model not available) -->
+        <template id="regulations_empty_template" name="Regulations Empty">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container my-5 text-center">
+                        <h2>Modul Peraturan Hukum Tidak Tersedia</h2>
+                        <p class="text-muted">Silakan hubungi administrator.</p>
+                    </div>
+                </div>
+            </t>
+        </template>
+        
+    </data>
+</odoo>

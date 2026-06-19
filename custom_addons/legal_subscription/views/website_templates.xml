@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Homepage -->
+        <template id="homepage" name="Legal Website Homepage">
+            <t t-call="website.layout">
+                <div class="oe_structure">
+                    <!-- Hero Section -->
+                    <section class="legal-hero text-white py-5">
+                        <div class="container text-center">
+                            <h1 class="display-4 mb-4">Legal Search Platform</h1>
+                            <p class="lead mb-4">Comprehensive legal database with powerful search capabilities</p>
+                            <a href="/pricing" class="btn btn-light btn-lg me-3">View Pricing</a>
+                            <a href="/pricing" class="btn btn-outline-light btn-lg">Start Searching</a>
+                        </div>
+                    </section>
+
+                    <!-- Features -->
+                    <section class="py-5">
+                        <div class="container">
+                            <div class="row text-center">
+                                <div class="col-md-4 mb-4">
+                                    <div class="feature-icon mb-3">
+                                        <i class="fa fa-search fa-3x"></i>
+                                    </div>
+                                    <h4>Advanced Search</h4>
+                                    <p>Powerful search engine to find legal documents quickly and accurately.</p>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="feature-icon mb-3">
+                                        <i class="fa fa-balance-scale fa-3x"></i>
+                                    </div>
+                                    <h4>Legal Database</h4>
+                                    <p>Comprehensive collection of laws, regulations, and legal precedents.</p>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="feature-icon mb-3">
+                                        <i class="fa fa-users fa-3x"></i>
+                                    </div>
+                                    <h4>Expert Support</h4>
+                                    <p>Get help from legal experts and professional consultation services.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <!-- Pricing Page -->
+        <template id="pricing_page" name="Subscription Pricing">
+            <t t-call="website.layout">
+                <div class="oe_structure">
+                    <section class="py-5">
+                        <div class="container">
+                            <div class="text-center mb-5">
+                                <h1>Choose Your Plan</h1>
+                                <p class="lead">Select the perfect subscription for your legal research needs</p>
+                            </div>
+
+                            <div class="row">
+                                <t t-foreach="plans" t-as="plan">
+                                    <div class="col-lg-3 col-md-6 mb-4">
+                                        <div class="card h-100 shadow subscription-card">
+                                            <t t-if="plan.name == 'Professional Plan'">
+                                                <div class="card-header bg-warning text-center">
+                                                    <strong>MOST POPULAR</strong>
+                                                </div>
+                                            </t>
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title"><t t-esc="plan.name"/></h5>
+                                                <h2 class="text-primary mb-3">
+                                                    <t t-if="plan.price == 0">Free</t>
+                                                    <t t-else="">Rp <t t-esc="'{:,}'.format(int(plan.price))"/></t>
+                                                </h2>
+                                                <p class="text-muted mb-3">
+                                                    <t t-if="plan.price > 0">/month</t>
+                                                </p>
+                                                <p class="mb-4"><t t-esc="plan.description"/></p>
+                                                <div class="text-start">
+                                                    <t t-foreach="plan.features.split('\n')" t-as="feature">
+                                                        <div class="mb-2"><i class="fa fa-check text-success me-2"></i><t t-esc="feature"/></div>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer text-center">
+                                                <t t-if="plan.price == 0">
+                                                    <a href="/" class="btn btn-outline-primary w-100">Get Started</a>
+                                                </t>
+                                                <t t-else="">
+                                                    <a t-attf-href="/subscribe/{{plan.id}}" class="btn btn-gradient w-100">Subscribe Now</a>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <!-- Success Page -->
+        <template id="success_page" name="Subscription Success">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container py-5 text-center">
+                        <i class="fa fa-check-circle text-success" style="font-size: 4rem;"></i>
+                        <h1 class="mt-4">Subscription Successful!</h1>
+                        <p class="lead">You have successfully subscribed to <strong><t t-esc="plan.name"/></strong></p>
+                        <div class="mt-4">
+                            <a href="/my-subscription" class="btn btn-primary me-3">View My Subscriptions</a>
+                            <a href="/" class="btn btn-outline-primary">Back to Home</a>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- My Subscription -->
+        <template id="my_subscription" name="My Subscriptions">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container py-5">
+                        <h1>My Subscriptions</h1>
+                        
+                        <t t-if="subscriptions">
+                            <t t-foreach="subscriptions" t-as="sub">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <h5><t t-esc="sub.plan_id.name"/></h5>
+                                                <p><t t-esc="sub.plan_id.description"/></p>
+                                                <p><strong>Active from:</strong> <t t-esc="sub.start_date"/> to <t t-esc="sub.end_date"/></p>
+                                            </div>
+                                            <div class="col-md-4 text-right">
+                                                <h4 class="text-primary">
+                                                    <t t-if="sub.plan_id.price == 0">Free</t>
+                                                    <t t-else="">Rp <t t-esc="'{:,}'.format(int(sub.plan_id.price))"/>/mo</t>
+                                                </h4>
+                                                <span t-if="sub.is_active" class="badge badge-success">Active</span>
+                                                <span t-else="" class="badge badge-secondary">Inactive</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-info">
+                                No active subscriptions. <a href="/pricing">Choose a plan</a>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

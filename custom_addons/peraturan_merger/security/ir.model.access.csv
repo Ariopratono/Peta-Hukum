@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_peraturan_rule,access_peraturan_rule,model_peraturan_rule,base.group_user,1,1,1,1
+access_peraturan_version,access_peraturan_version,model_peraturan_version,base.group_user,1,1,1,1
+access_peraturan_article,access_peraturan_article,model_peraturan_article,base.group_user,1,1,1,1
+access_peraturan_paragraph,access_peraturan_paragraph,model_peraturan_paragraph,base.group_user,1,1,1,1
+access_peraturan_consolidation,access_peraturan_consolidation,model_peraturan_consolidation,base.group_user,1,1,1,1
+access_peraturan_merge_wizard,access_peraturan_merge_wizard,model_peraturan_merge_wizard,base.group_user,1,1,1,1

@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_legal_subscription_plan_public,legal.subscription.plan.public,model_legal_subscription_plan,base.group_public,1,0,0,0
+access_legal_subscription_plan_user,legal.subscription.plan.user,model_legal_subscription_plan,base.group_user,1,1,1,1
+access_legal_user_subscription_public,legal.user.subscription.public,model_legal_user_subscription,base.group_public,0,0,0,0
+access_legal_user_subscription_portal,legal.user.subscription.portal,model_legal_user_subscription,base.group_portal,1,1,1,0
+access_legal_user_subscription_user,legal.user.subscription.user,model_legal_user_subscription,base.group_user,1,1,1,1

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Template Daftar Peraturan Hukum -->
+    <template id="regulations_list_template" name="Daftar Peraturan Hukum">
+        <t t-call="website.layout">
+            <style>
+                /* Custom Pagination Styles */
+                .pagination-nav-btn {
+                    transition: all 0.3s ease;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .pagination-nav-btn:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                }
+                
+                .pagination-page-btn {
+                    transition: all 0.3s ease;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .pagination-page-btn:hover {
+                    transform: scale(1.1);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                }
+                
+                .pagination-page-active {
+                    animation: pulse 1.5s infinite;
+                }
+                
+                @keyframes pulse {
+                    0% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7); }
+                    70% { box-shadow: 0 0 0 5px rgba(13, 110, 253, 0); }
+                    100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
+                }
+                
+                @media (max-width: 576px) {
+                    .pagination-container {
+                        gap: 10px !important;
+                    }
+                    .pagination-page-btn {
+                        width: 35px !important;
+                        height: 35px !important;
+                        font-size: 0.9rem;
+                    }
+                }
+            </style>
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container mt-3">
+                    <!-- Header -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h1 class="text-center mb-4">Peraturan Hukum Indonesia</h1>
+                            <p class="text-center text-muted">
+                                Akses mudah ke ribuan peraturan hukum Indonesia yang selalu up-to-date
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Filter & Search -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fa fa-filter"></i> Filter &amp; Pencarian</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form method="get" action="/regulations" class="row g-3">
+                                        <!-- Search -->
+                                        <div class="col-md-6">
+                                            <label class="form-label">Kata Kunci</label>
+                                            <input type="text" class="form-control" name="search" 
+                                                   t-att-value="search" placeholder="Cari berdasarkan judul, nomor, atau subjek..."/>
+                                        </div>
+
+                                        <!-- Bidang Filter -->
+                                        <div class="col-md-3">
+                                            <label class="form-label">Bidang Hukum</label>
+                                            <select name="bidang" class="form-select">
+                                                <option value="">Semua Bidang</option>
+                                                <t t-foreach="bidang_options" t-as="option">
+                                                    <option t-att-value="option[0]" 
+                                                            t-att-selected="'selected' if option[0] == selected_bidang else None">
+                                                        <t t-esc="option[1]"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+
+                                        <!-- Tipe Filter -->
+                                        <div class="col-md-3">
+                                            <label class="form-label">Tipe Dokumen</label>
+                                            <select name="tipe" class="form-select">
+                                                <option value="">Semua Tipe</option>
+                                                <t t-foreach="tipe_options" t-as="option">
+                                                    <option t-att-value="option[0]" 
+                                                            t-att-selected="'selected' if option[0] == selected_tipe else None">
+                                                        <t t-esc="option[1]"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+
+                                        <!-- Year Filter -->
+                                        <div class="col-md-4">
+                                            <label class="form-label">Tahun</label>
+                                            <select name="tahun" class="form-select">
+                                                <option value="">Semua Tahun</option>
+                                                <t t-foreach="year_options" t-as="year">
+                                                    <option t-att-value="year" 
+                                                            t-att-selected="'selected' if str(year) == selected_tahun else None">
+                                                        <t t-esc="year"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+
+                                        <!-- Status Filter -->
+                                        <div class="col-md-4">
+                                            <label class="form-label">Status</label>
+                                            <select name="status" class="form-select">
+                                                <option value="">Semua Status</option>
+                                                <option value="berlaku" t-att-selected="'selected' if selected_status == 'berlaku' else None">Berlaku</option>
+                                                <option value="dicabut" t-att-selected="'selected' if selected_status == 'dicabut' else None">Dicabut</option>
+                                                <option value="tidak_berlaku" t-att-selected="'selected' if selected_status == 'tidak_berlaku' else None">Tidak Berlaku</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Submit Button -->
+                                        <div class="col-md-4">
+                                            <label class="form-label">&amp;nbsp;</label>
+                                            <div>
+                                                <button type="submit" class="btn btn-primary me-2">
+                                                    <i class="fa fa-search"></i> Cari
+                                                </button>
+                                                <a href="/regulations" class="btn btn-outline-secondary">
+                                                    <i class="fa fa-refresh"></i> Reset
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Count -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <p class="text-muted">
+                                Menampilkan <strong><t t-esc="total_count"/></strong> peraturan hukum
+                                <t t-if="search">dengan kata kunci "<strong><t t-esc="search"/></strong>"</t>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Regulations List -->
+                    <div class="row">
+                        <div class="col-12">
+                            <t t-if="regulations">
+                                <t t-foreach="regulations" t-as="regulation">
+                                    <div class="card mb-3 regulation-card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <h5 class="card-title">
+                                                        <a t-att-href="'/regulations/' + str(regulation.id)" 
+                                                           class="text-decoration-none">
+                                                            <t t-esc="regulation.judul"/>
+                                                        </a>
+                                                    </h5>
+                                                    
+                                                    <p class="text-muted mb-2">
+                                                        <strong><t t-esc="regulation.bentuk_singkat"/> No. <t t-esc="regulation.nomor"/>/<t t-esc="regulation.tahun"/></strong>
+                                                    </p>
+                                                    
+                                                    <p class="card-text" t-if="regulation.subjek">
+                                                        <small class="text-muted">
+                                                            <strong>Subjek:</strong> <t t-esc="regulation.subjek"/>
+                                                        </small>
+                                                    </p>
+                                                    
+                                                    <p class="card-text" t-if="regulation.sumber">
+                                                        <small class="text-muted">
+                                                            <strong>Sumber:</strong> <t t-esc="regulation.sumber"/>
+                                                        </small>
+                                                    </p>
+                                                </div>
+                                                
+                                                <div class="col-md-4 text-end">
+                                                    <t t-if="regulation.status == 'berlaku'">
+                                                        <span class="badge bg-success">BERLAKU</span>
+                                                    </t>
+                                                    <t t-elif="regulation.status == 'dicabut'">
+                                                        <span class="badge bg-danger">DICABUT</span>
+                                                    </t>
+                                                    <t t-elif="regulation.status == 'tidak_berlaku'">
+                                                        <span class="badge bg-warning text-dark">TIDAK BERLAKU</span>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span class="badge bg-secondary">UNKNOWN</span>
+                                                    </t>
+                                                    
+                                                    <div class="mt-2">
+                                                        <span class="badge bg-info">
+                                                            <t t-set="bidang_display" t-value="regulation.bidang"/>
+                                                            <t t-if="bidang_display and str(bidang_display) not in ['True', 'False', '1', '0']">
+                                                                <t t-esc="str(bidang_display).replace('_', ' ').title()"/>
+                                                            </t>
+                                                            <t t-else="">
+                                                                Bidang Tidak Diketahui
+                                                            </t>
+                                                        </span>
+                                                    </div>
+                                                    
+                                                    <div class="mt-3">
+                                                        <a t-att-href="'/regulations/' + str(regulation.id)" 
+                                                           class="btn btn-outline-primary btn-sm">
+                                                            <i class="fa fa-eye"></i> Lihat Detail
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <div class="text-center py-5">
+                                    <i class="fa fa-search fa-3x text-muted mb-3"></i>
+                                    <h4>Tidak ada peraturan ditemukan</h4>
+                                    <p class="text-muted">Coba ubah filter pencarian Anda</p>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <t t-if="regulations and total_count &gt; 20">
+                        <t t-set="current_page" t-value="int(request.httprequest.args.get('page', 1))"/>
+                        <t t-set="total_pages" t-value="int((total_count - 1) // 20 + 1)"/>
+                        <t t-set="prev_page" t-value="current_page - 1 if current_page &gt; 1 else 1"/>
+                        <t t-set="start_page" t-value="current_page - 2 if current_page &gt; 2 else 1"/>
+                        <t t-set="end_page" t-value="current_page + 2 if current_page + 2 &lt; total_pages else total_pages"/>
+                        <t t-set="next_page" t-value="current_page + 1 if current_page &lt; total_pages else total_pages"/>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <!-- Custom Pagination Layout -->
+                                <div class="d-flex justify-content-center align-items-center flex-wrap pagination-container" style="gap: 20px;">
+                                    
+                                    <!-- Previous Button (Rectangular) -->
+                                    <div>
+                                        <t t-if="current_page &gt; 1">
+                                            <a class="btn btn-primary pagination-nav-btn" 
+                                               style="padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 0.95rem;"
+                                               t-att-href="'/regulations?page=' + str(prev_page) + ('&amp;search=' + (search or '') if search else '') + ('&amp;bidang=' + (selected_bidang or '') if selected_bidang else '') + ('&amp;tipe=' + (selected_tipe or '') if selected_tipe else '') + ('&amp;tahun=' + (selected_tahun or '') if selected_tahun else '')">
+                                                ← Sebelumnya
+                                            </a>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="btn btn-secondary disabled" 
+                                                  style="padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 0.95rem;">
+                                                ← Sebelumnya
+                                            </span>
+                                        </t>
+                                    </div>
+                                    
+                                    <!-- Page Numbers Container (Circular) -->
+                                    <div class="d-flex align-items-center" style="gap: 10px;">
+                                        <t t-foreach="range(start_page, end_page + 1)" t-as="page_num">
+                                            <t t-if="page_num == current_page">
+                                                <span class="btn btn-primary pagination-page-btn pagination-page-active" 
+                                                      style="width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; padding: 0; font-size: 1rem;">
+                                                    <t t-esc="page_num"/>
+                                                </span>
+                                            </t>
+                                            <t t-else="">
+                                                <a class="btn btn-outline-primary pagination-page-btn" 
+                                                   style="width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; padding: 0; text-decoration: none; font-size: 1rem;"
+                                                   t-att-href="'/regulations?page=' + str(page_num) + ('&amp;search=' + (search or '') if search else '') + ('&amp;bidang=' + (selected_bidang or '') if selected_bidang else '') + ('&amp;tipe=' + (selected_tipe or '') if selected_tipe else '') + ('&amp;tahun=' + (selected_tahun or '') if selected_tahun else '')">
+                                                    <t t-esc="page_num"/>
+                                                </a>
+                                            </t>
+                                        </t>
+                                    </div>
+                                    
+                                    <!-- Next Button (Rectangular) -->
+                                    <div>
+                                        <t t-if="current_page &lt; total_pages">
+                                            <a class="btn btn-primary pagination-nav-btn" 
+                                               style="padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 0.95rem;"
+                                               t-att-href="'/regulations?page=' + str(next_page) + ('&amp;search=' + (search or '') if search else '') + ('&amp;bidang=' + (selected_bidang or '') if selected_bidang else '') + ('&amp;tipe=' + (selected_tipe or '') if selected_tipe else '') + ('&amp;tahun=' + (selected_tahun or '') if selected_tahun else '')">
+                                                Selanjutnya →
+                                            </a>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="btn btn-secondary disabled" 
+                                                  style="padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 0.95rem;">
+                                                Selanjutnya →
+                                            </span>
+                                        </t>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <!-- Page info -->
+                                <div class="text-center text-muted small mt-3">
+                                    <t t-set="start_item" t-value="(current_page - 1) * 20 + 1"/>
+                                    <t t-set="max_item" t-value="current_page * 20"/>
+                                    <t t-set="end_item" t-value="max_item if max_item &lt; total_count else total_count"/>
+                                    Menampilkan <t t-esc="start_item"/> - <t t-esc="end_item"/> dari <t t-esc="total_count"/> peraturan
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

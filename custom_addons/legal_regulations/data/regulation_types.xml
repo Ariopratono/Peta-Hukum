@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Default Regulation Types -->
+        <record id="regulation_type_uu" model="legal.regulation.type">
+            <field name="name">Undang-Undang</field>
+            <field name="code">UU</field>
+            <field name="description">Undang-Undang Republik Indonesia</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="regulation_type_pp" model="legal.regulation.type">
+            <field name="name">Peraturan Pemerintah</field>
+            <field name="code">PP</field>
+            <field name="description">Peraturan Pemerintah Republik Indonesia</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="regulation_type_perpres" model="legal.regulation.type">
+            <field name="name">Peraturan Presiden</field>
+            <field name="code">PERPRES</field>
+            <field name="description">Peraturan Presiden Republik Indonesia</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="regulation_type_permen" model="legal.regulation.type">
+            <field name="name">Peraturan Menteri</field>
+            <field name="code">PERMEN</field>
+            <field name="description">Peraturan Menteri</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="regulation_type_perda" model="legal.regulation.type">
+            <field name="name">Peraturan Daerah</field>
+            <field name="code">PERDA</field>
+            <field name="description">Peraturan Daerah</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- Sample Data -->
+        <record id="sample_regulation_1" model="legal.regulation">
+            <field name="tipe_dokumen">peraturan_perundang_undangan</field>
+            <field name="judul">Peraturan Menteri Pemberdayaan Perempuan Dan Perlindungan Anak Republik Indonesia Nomor 3 Tahun 2025 Tentang Pedoman Umum Penyusunan Kebijakan Responsif Gender</field>
+            <field name="teu">Indonesia, Kementerian Pemberdayaan Perempuan dan Perlindungan Anak</field>
+            <field name="nomor">3</field>
+            <field name="bentuk">Peraturan Menteri Pemberdayaan Perempuan Dan Perlindungan Anak</field>
+            <field name="bentuk_singkat">Permen PPPA</field>
+            <field name="tahun">2025</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2025-04-25</field>
+            <field name="tanggal_pengundangan">2025-05-09</field>
+            <field name="tanggal_berlaku">2025-05-09</field>
+            <field name="sumber">BN 2025 (314); 70 hlm</field>
+            <field name="subjek">KELUARGA, PERLINDUNGAN ANAK, PEREMPUAN / WANITA</field>
+            <field name="status">berlaku</field>
+            <field name="bahasa">bahasa_indonesia</field>
+            <field name="lokasi">Kementerian Pemberdayaan Perempuan dan Perlindungan Anak</field>
+            <field name="bidang">hukum_administrasi_negara</field>
+        </record>
+
+    </data>
+</odoo>

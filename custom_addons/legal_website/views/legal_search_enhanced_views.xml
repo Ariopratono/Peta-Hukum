@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Legal Search Enhanced Views -->
+        <record id="legal_search_enhanced_view_tree" model="ir.ui.view">
+            <field name="name">legal.search.enhanced.tree</field>
+            <field name="model">legal.search.enhanced</field>
+            <field name="arch" type="xml">
+                <list string="Enhanced Search Configurations">
+                    <field name="name"/>
+                    <field name="search_type"/>
+                    <field name="searxng_url"/>
+                    <field name="duckduckgo_api"/>
+                    <field name="language"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="legal_search_enhanced_view_form" model="ir.ui.view">
+            <field name="name">legal.search.enhanced.form</field>
+            <field name="model">legal.search.enhanced</field>
+            <field name="arch" type="xml">
+                <form string="Enhanced Search Configuration">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="search_type"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                                <field name="language"/>
+                                <field name="safe_search"/>
+                                <field name="timeout"/>
+                                <field name="max_results"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="SearXNG Configuration" invisible="search_type != 'searxng'">
+                                <group>
+                                    <field name="searxng_url"/>
+                                    <field name="search_engines"/>
+                                    <field name="categories"/>
+                                </group>
+                            </page>
+                            
+                            <page string="DuckDuckGo Configuration" invisible="search_type != 'duckduckgo'">
+                                <group>
+                                    <field name="duckduckgo_api"/>
+                                </group>
+                            </page>
+                            
+                            <page string="Testing">
+                                <div class="alert alert-info">
+                                    <p><strong>Test Your Configuration:</strong></p>
+                                    <p>Setelah menyimpan konfigurasi, Anda dapat menguji pencarian di halaman website atau menggunakan API endpoint.</p>
+                                    <p><strong>Mock Search:</strong> Untuk demo tanpa internet, pilih "Mock Search (Demo)"</p>
+                                    <p><strong>SearXNG:</strong> Memerlukan instance SearXNG yang aktif</p>
+                                    <p><strong>DuckDuckGo:</strong> Menggunakan API gratis DuckDuckGo</p>
+                                </div>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="legal_search_enhanced_action" model="ir.actions.act_window">
+            <field name="name">Konfigurasi Pencarian Enhanced</field>
+            <field name="res_model">legal.search.enhanced</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Buat konfigurasi pencarian pertama Anda!
+                </p>
+                <p>
+                    Konfigurasi pencarian menentukan bagaimana sistem akan mencari informasi dari web.
+                    Pilih "Mock Search" untuk demo atau konfigurasi SearXNG/DuckDuckGo untuk pencarian real.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Items -->
+        <menuitem id="legal_search_enhanced_menu" name="Konfigurasi Enhanced" 
+                  parent="legal_search_menu" 
+                  action="legal_search_enhanced_action" sequence="5"/>
+
+    </data>
+</odoo>

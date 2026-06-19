@@ -1,0 +1,87 @@
+<!-- peraturan_merger/views/peraturan_views.xml -->
+<odoo>
+  <record id="view_peraturan_rule_tree" model="ir.ui.view">
+    <field name="name">peraturan.rule.tree</field>
+    <field name="model">peraturan.rule</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="nomor"/>
+        <field name="tahun"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_peraturan_rule_form" model="ir.ui.view">
+    <field name="name">peraturan.rule.form</field>
+    <field name="model">peraturan.rule</field>
+    <field name="arch" type="xml">
+      <form string="Peraturan">
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="nomor"/>
+            <field name="tahun"/>
+            <field name="description"/>
+          </group>
+          <notebook>
+            <page string="Versi">
+              <field name="version_ids">
+                <tree editable="bottom">
+                  <field name="name"/>
+                  <field name="sumber"/>
+                  <field name="tanggal"/>
+                  <field name="file_name"/>
+                </tree>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Peraturan Version form (quick) -->
+  <record id="view_peraturan_version_form" model="ir.ui.view">
+    <field name="name">peraturan.version.form</field>
+    <field name="model">peraturan.version</field>
+    <field name="arch" type="xml">
+      <form string="Versi Peraturan">
+        <sheet>
+          <group>
+            <field name="rule_id"/>
+            <field name="name"/>
+            <field name="sumber"/>
+            <field name="tanggal"/>
+            <field name="file" filename="file_name"/>
+            <field name="file_name"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Menu -->
+  <menuitem id="menu_peraturan_root" name="Peraturan"/>
+  <menuitem id="menu_peraturan" name="Peraturan" parent="menu_peraturan_root"/>
+  <menuitem id="menu_peraturan_versions" name="Versi Peraturan" parent="menu_peraturan_root"/>
+
+  <record id="action_peraturan_rule" model="ir.actions.act_window">
+    <field name="name">Peraturan</field>
+    <field name="res_model">peraturan.rule</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <record id="action_peraturan_version" model="ir.actions.act_window">
+    <field name="name">Versi Peraturan</field>
+    <field name="res_model">peraturan.version</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <act_window id="act_peraturan_rule" name="Peraturan" res_model="peraturan.rule" view_mode="tree,form"/>
+  <act_window id="act_peraturan_version" name="Versi Peraturan" res_model="peraturan.version" view_mode="tree,form"/>
+
+  <menuitem id="menu_action_peraturan_rule" name="Daftar Peraturan" parent="menu_peraturan_root" action="action_peraturan_rule"/>
+  <menuitem id="menu_action_peraturan_version" name="Daftar Versi" parent="menu_peraturan_root" action="action_peraturan_version"/>
+
+</odoo>

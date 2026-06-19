@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Legal Article Views -->
+        <record id="legal_article_view_tree" model="ir.ui.view">
+            <field name="name">legal.article.tree</field>
+            <field name="model">legal.article</field>
+            <field name="arch" type="xml">
+                <list string="Legal Articles">
+                    <field name="name"/>
+                    <field name="category_id"/>
+                    <field name="author_id"/>
+                    <field name="publish_date"/>
+                    <field name="view_count"/>
+                    <field name="website_published"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="legal_article_view_form" model="ir.ui.view">
+            <field name="name">legal.article.form</field>
+            <field name="model">legal.article</field>
+            <field name="arch" type="xml">
+                <form string="Legal Article">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" placeholder="Judul artikel..."/>
+                                <field name="category_id"/>
+                                <field name="tag_ids" widget="many2many_tags"/>
+                                <field name="author_id"/>
+                            </group>
+                            <group>
+                                <field name="publish_date"/>
+                                <field name="view_count" readonly="1"/>
+                                <field name="website_published"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Konten">
+                                <field name="summary" placeholder="Ringkasan artikel..."/>
+                                <field name="content" widget="html"/>
+                            </page>
+                            <page string="SEO">
+                                <group>
+                                    <field name="website_meta_title"/>
+                                    <field name="website_meta_description"/>
+                                    <field name="website_meta_keywords"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Legal Category Views -->
+        <record id="legal_category_view_tree" model="ir.ui.view">
+            <field name="name">legal.category.tree</field>
+            <field name="model">legal.category</field>
+            <field name="arch" type="xml">
+                <list string="Legal Categories">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="article_count"/>
+                    <field name="color" widget="color"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="legal_category_view_form" model="ir.ui.view">
+            <field name="name">legal.category.form</field>
+            <field name="model">legal.category</field>
+            <field name="arch" type="xml">
+                <form string="Legal Category">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="sequence"/>
+                            <field name="color" widget="color"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Legal Tag Views -->
+        <record id="legal_tag_view_tree" model="ir.ui.view">
+            <field name="name">legal.tag.tree</field>
+            <field name="model">legal.tag</field>
+            <field name="arch" type="xml">
+                <list string="Legal Tags">
+                    <field name="name"/>
+                    <field name="article_count"/>
+                    <field name="color" widget="color"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="legal_tag_view_form" model="ir.ui.view">
+            <field name="name">legal.tag.form</field>
+            <field name="model">legal.tag</field>
+            <field name="arch" type="xml">
+                <form string="Legal Tag">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="color" widget="color"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="legal_article_action" model="ir.actions.act_window">
+            <field name="name">Artikel Hukum</field>
+            <field name="res_model">legal.article</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Buat artikel hukum pertama Anda!
+                </p>
+                <p>
+                    Artikel hukum membantu pengunjung website memahami berbagai aspek hukum.
+                </p>
+            </field>
+        </record>
+
+        <record id="legal_category_action" model="ir.actions.act_window">
+            <field name="name">Kategori Hukum</field>
+            <field name="res_model">legal.category</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="legal_tag_action" model="ir.actions.act_window">
+            <field name="name">Tag Hukum</field>
+            <field name="res_model">legal.tag</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <!-- Menu Items -->
+        <menuitem id="legal_website_main_menu" name="Website Hukum" sequence="10"/>
+        
+        <menuitem id="legal_content_menu" name="Konten" parent="legal_website_main_menu" sequence="10"/>
+        
+        <menuitem id="legal_article_menu" name="Artikel" 
+                  parent="legal_content_menu" 
+                  action="legal_article_action" sequence="10"/>
+        
+        <menuitem id="legal_category_menu" name="Kategori" 
+                  parent="legal_content_menu" 
+                  action="legal_category_action" sequence="20"/>
+        
+        <menuitem id="legal_tag_menu" name="Tag" 
+                  parent="legal_content_menu" 
+                  action="legal_tag_action" sequence="30"/>
+
+    </data>
+</odoo>

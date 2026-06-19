@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Subscription Plans -->
+        <record id="subscription_plan_free" model="subscription.plan">
+            <field name="name">Free</field>
+            <field name="description">Paket gratis untuk pengguna baru dengan akses terbatas</field>
+            <field name="price">0</field>
+            <field name="search_limit">5</field>
+            <field name="advanced_search">False</field>
+            <field name="legal_consultation">False</field>
+            <field name="priority_support">False</field>
+        </record>
+
+        <record id="subscription_plan_basic" model="subscription.plan">
+            <field name="name">Basic</field>
+            <field name="description">Paket basic dengan akses pencarian lebih banyak dan fitur dasar</field>
+            <field name="price">99000</field>
+            <field name="search_limit">50</field>
+            <field name="advanced_search">True</field>
+            <field name="legal_consultation">False</field>
+            <field name="priority_support">False</field>
+        </record>
+
+        <record id="subscription_plan_professional" model="subscription.plan">
+            <field name="name">Professional</field>
+            <field name="description">Paket professional dengan konsultasi hukum dan support prioritas</field>
+            <field name="price">299000</field>
+            <field name="search_limit">200</field>
+            <field name="advanced_search">True</field>
+            <field name="legal_consultation">True</field>
+            <field name="priority_support">True</field>
+        </record>
+
+        <record id="subscription_plan_enterprise" model="subscription.plan">
+            <field name="name">Enterprise</field>
+            <field name="description">Paket enterprise dengan akses unlimited dan semua fitur premium</field>
+            <field name="price">999000</field>
+            <field name="search_limit">9999</field>
+            <field name="advanced_search">True</field>
+            <field name="legal_consultation">True</field>
+            <field name="priority_support">True</field>
+        </record>
+    </data>
+</odoo>

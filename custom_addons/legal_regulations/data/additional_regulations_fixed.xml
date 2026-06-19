@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Additional Sample Legal Regulations Data for Pagination Testing -->
+        
+        <record id="sample_regulation_6" model="legal.regulation">
+            <field name="judul">Ketentuan Umum dan Tata Cara Perpajakan</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">6</field>
+            <field name="tahun">1983</field>
+            <field name="teu">T.L.N. No. 3262</field>
+            <field name="bidang">hukum_pajak</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Perpajakan, Ketentuan Umum, Tata Cara</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">1983-12-31</field>
+            <field name="tanggal_pengundangan">1983-12-31</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_7" model="legal.regulation">
+            <field name="judul">Pajak Penghasilan</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">7</field>
+            <field name="tahun">1983</field>
+            <field name="teu">T.L.N. No. 3263</field>
+            <field name="bidang">hukum_pajak</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Pajak Penghasilan, PPh</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">1983-12-31</field>
+            <field name="tanggal_pengundangan">1983-12-31</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_8" model="legal.regulation">
+            <field name="judul">Pajak Pertambahan Nilai Barang dan Jasa dan Pajak Penjualan atas Barang Mewah</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">8</field>
+            <field name="tahun">1983</field>
+            <field name="teu">T.L.N. No. 3264</field>
+            <field name="bidang">hukum_pajak</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">PPN, PPnBM, Pajak Pertambahan Nilai</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">1983-12-31</field>
+            <field name="tanggal_pengundangan">1983-12-31</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_9" model="legal.regulation">
+            <field name="judul">Ketenagakerjaan</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">13</field>
+            <field name="tahun">2003</field>
+            <field name="teu">T.L.N. No. 4279</field>
+            <field name="bidang">hukum_tenaga_kerja</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Ketenagakerjaan, Buruh, Pekerja</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2003-03-25</field>
+            <field name="tanggal_pengundangan">2003-03-25</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_10" model="legal.regulation">
+            <field name="judul">Sistem Pendidikan Nasional</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">20</field>
+            <field name="tahun">2003</field>
+            <field name="teu">T.L.N. No. 4301</field>
+            <field name="bidang">hukum_administrasi_negara</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Pendidikan Nasional, Sistem Pendidikan</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2003-07-08</field>
+            <field name="tanggal_pengundangan">2003-07-08</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_11" model="legal.regulation">
+            <field name="judul">Perlindungan dan Pengelolaan Lingkungan Hidup</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">32</field>
+            <field name="tahun">2009</field>
+            <field name="teu">T.L.N. No. 5059</field>
+            <field name="bidang">hukum_lingkungan</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Lingkungan Hidup, Perlindungan Lingkungan</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2009-10-03</field>
+            <field name="tanggal_pengundangan">2009-10-03</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_12" model="legal.regulation">
+            <field name="judul">Kesehatan</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">36</field>
+            <field name="tahun">2009</field>
+            <field name="teu">T.L.N. No. 5063</field>
+            <field name="bidang">hukum_administrasi_negara</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Kesehatan Masyarakat, Pelayanan Kesehatan</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2009-10-13</field>
+            <field name="tanggal_pengundangan">2009-10-13</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_13" model="legal.regulation">
+            <field name="judul">Pemerintahan Daerah</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">23</field>
+            <field name="tahun">2014</field>
+            <field name="teu">T.L.N. No. 5587</field>
+            <field name="bidang">hukum_tata_negara</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Pemerintahan Daerah, Otonomi Daerah</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2014-09-30</field>
+            <field name="tanggal_pengundangan">2014-09-30</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_14" model="legal.regulation">
+            <field name="judul">Desa</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">6</field>
+            <field name="tahun">2014</field>
+            <field name="teu">T.L.N. No. 5495</field>
+            <field name="bidang">hukum_tata_negara</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Desa, Pemerintahan Desa</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2014-01-15</field>
+            <field name="tanggal_pengundangan">2014-01-15</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_15" model="legal.regulation">
+            <field name="judul">Aparatur Sipil Negara</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">5</field>
+            <field name="tahun">2014</field>
+            <field name="teu">T.L.N. No. 5494</field>
+            <field name="bidang">hukum_administrasi_negara</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">ASN, Aparatur Sipil Negara, PNS</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2014-01-15</field>
+            <field name="tanggal_pengundangan">2014-01-15</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <!-- Peraturan Pemerintah sampel -->
+        <record id="sample_regulation_16" model="legal.regulation">
+            <field name="judul">Pelaksanaan Undang-Undang Nomor 8 Tahun 1999 tentang Perlindungan Konsumen</field>
+            <field name="bentuk">Peraturan Pemerintah Republik Indonesia</field>
+            <field name="bentuk_singkat">PP</field>
+            <field name="nomor">58</field>
+            <field name="tahun">2001</field>
+            <field name="teu">T.L.N. No. 4123</field>
+            <field name="bidang">hukum_perdata</field>
+            <field name="tipe_dokumen">peraturan_pemerintah</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Perlindungan Konsumen, Hak Konsumen</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2001-09-26</field>
+            <field name="tanggal_pengundangan">2001-09-26</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_17" model="legal.regulation">
+            <field name="judul">Pedoman Pembentukan Peraturan Perundang-undangan</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">12</field>
+            <field name="tahun">2011</field>
+            <field name="teu">T.L.N. No. 5234</field>
+            <field name="bidang">hukum_tata_negara</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Pembentukan Peraturan, Perundang-undangan</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2011-07-12</field>
+            <field name="tanggal_pengundangan">2011-07-12</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_18" model="legal.regulation">
+            <field name="judul">Keuangan Negara</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">17</field>
+            <field name="tahun">2003</field>
+            <field name="teu">T.L.N. No. 4286</field>
+            <field name="bidang">hukum_pajak</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Keuangan Negara, APBN</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2003-04-05</field>
+            <field name="tanggal_pengundangan">2003-04-05</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_19" model="legal.regulation">
+            <field name="judul">Perbendaharaan Negara</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">1</field>
+            <field name="tahun">2004</field>
+            <field name="teu">T.L.N. No. 4355</field>
+            <field name="bidang">hukum_pajak</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Perbendaharaan Negara, Kas Negara</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2004-01-15</field>
+            <field name="tanggal_pengundangan">2004-01-15</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_20" model="legal.regulation">
+            <field name="judul">Pemeriksaan Pengelolaan dan Tanggung Jawab Keuangan Negara</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">15</field>
+            <field name="tahun">2006</field>
+            <field name="teu">T.L.N. No. 4374</field>
+            <field name="bidang">hukum_pajak</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">BPK, Pemeriksaan Keuangan Negara</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2006-04-05</field>
+            <field name="tanggal_pengundangan">2006-04-05</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_21" model="legal.regulation">
+            <field name="judul">Bank Indonesia</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">23</field>
+            <field name="tahun">1999</field>
+            <field name="teu">T.L.N. No. 3843</field>
+            <field name="bidang">hukum_pajak</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Bank Indonesia, Bank Sentral, Moneter</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">1999-05-17</field>
+            <field name="tanggal_pengundangan">1999-05-17</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_22" model="legal.regulation">
+            <field name="judul">Perbankan</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">10</field>
+            <field name="tahun">1998</field>
+            <field name="teu">T.L.N. No. 3790</field>
+            <field name="bidang">hukum_pajak</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Perbankan, Bank Umum, Bank Perkreditan</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">1998-11-10</field>
+            <field name="tanggal_pengundangan">1998-11-10</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_23" model="legal.regulation">
+            <field name="judul">Pasar Modal</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">8</field>
+            <field name="tahun">1995</field>
+            <field name="teu">T.L.N. No. 3608</field>
+            <field name="bidang">hukum_pajak</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Pasar Modal, Bursa Efek, Investasi</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">1995-11-10</field>
+            <field name="tanggal_pengundangan">1995-11-10</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_24" model="legal.regulation">
+            <field name="judul">Hak Cipta</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">28</field>
+            <field name="tahun">2014</field>
+            <field name="teu">T.L.N. No. 5599</field>
+            <field name="bidang">hukum_bisnis</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Hak Cipta, Kekayaan Intelektual</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2014-10-16</field>
+            <field name="tanggal_pengundangan">2014-10-16</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+        <record id="sample_regulation_25" model="legal.regulation">
+            <field name="judul">Merek dan Indikasi Geografis</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">20</field>
+            <field name="tahun">2016</field>
+            <field name="teu">T.L.N. No. 5953</field>
+            <field name="bidang">hukum_bisnis</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Merek, Indikasi Geografis, Kekayaan Intelektual</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2016-11-25</field>
+            <field name="tanggal_pengundangan">2016-11-25</field>
+            <field name="bahasa">bahasa_indonesia</field>
+        </record>
+
+    </data>
+</odoo>

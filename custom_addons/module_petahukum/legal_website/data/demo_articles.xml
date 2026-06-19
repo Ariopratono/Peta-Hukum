@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Demo Legal Articles -->
+        <record id="demo_article_korupsi" model="legal.article">
+            <field name="title">Tindak Pidana Korupsi</field>
+            <field name="content">
+                <![CDATA[
+                <h3>Pengertian Tindak Pidana Korupsi</h3>
+                <p>Korupsi adalah tindakan pejabat publik, baik politisi maupun pegawai negeri, serta pihak lain yang terlibat dalam tindakan tersebut yang secara tidak wajar dan tidak legal menyalahgunakan kepercayaan publik yang dikuasakan kepada mereka untuk mendapatkan keuntungan sepihak.</p>
+                
+                <h4>Jenis-jenis Tindak Pidana Korupsi:</h4>
+                <ol>
+                    <li>Kerugian keuangan negara</li>
+                    <li>Suap-menyuap</li>
+                    <li>Penggelapan dalam jabatan</li>
+                    <li>Pemerasan</li>
+                    <li>Perbuatan curang</li>
+                    <li>Benturan kepentingan dalam pengadaan</li>
+                    <li>Gratifikasi</li>
+                </ol>
+                
+                <h4>Sanksi Pidana Korupsi:</h4>
+                <p>Berdasarkan UU No. 31 Tahun 1999 jo UU No. 20 Tahun 2001, sanksi pidana korupsi dapat berupa:</p>
+                <ul>
+                    <li>Pidana penjara seumur hidup atau pidana penjara paling singkat 4 tahun dan paling lama 20 tahun</li>
+                    <li>Pidana denda paling sedikit Rp 200.000.000 dan paling banyak Rp 1.000.000.000</li>
+                    <li>Pidana tambahan berupa pencabutan hak politik</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="legal_category_pidana"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('legal_tag_pidana_khusus')])]"/>
+            <field name="is_published" eval="True"/>
+        </record>
+
+        <record id="demo_article_wanprestasi" model="legal.article">
+            <field name="title">Wanprestasi dalam Hukum Kontrak</field>
+            <field name="content">
+                <![CDATA[
+                <h3>Pengertian Wanprestasi</h3>
+                <p>Wanprestasi adalah tidak memenuhi atau lalai melaksanakan kewajiban sebagaimana yang telah ditentukan dalam perjanjian yang dibuat antara kreditur dengan debitur.</p>
+                
+                <h4>Bentuk-bentuk Wanprestasi:</h4>
+                <ol>
+                    <li>Tidak melakukan apa yang disanggupi akan dilakukannya</li>
+                    <li>Melaksanakan apa yang diperjanjikan, tetapi tidak sebagaimana diperjanjikan</li>
+                    <li>Melakukan apa yang diperjanjikan tetapi terlambat</li>
+                    <li>Melakukan sesuatu yang menurut perjanjian tidak boleh dilakukannya</li>
+                </ol>
+                
+                <h4>Akibat Hukum Wanprestasi:</h4>
+                <ul>
+                    <li>Pembayaran ganti rugi</li>
+                    <li>Pembatalan perjanjian</li>
+                    <li>Peralihan risiko</li>
+                    <li>Pembayaran biaya perkara</li>
+                </ul>
+                
+                <h4>Cara Menghindari Wanprestasi:</h4>
+                <ul>
+                    <li>Membuat kontrak yang jelas dan detail</li>
+                    <li>Menetapkan sanksi dalam kontrak</li>
+                    <li>Melakukan monitoring pelaksanaan kontrak</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="legal_category_perdata"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('legal_tag_kontrak')])]"/>
+            <field name="is_published" eval="True"/>
+        </record>
+
+        <record id="demo_article_hak_warga_negara" model="legal.article">
+            <field name="title">Hak dan Kewajiban Warga Negara</field>
+            <field name="content">
+                <![CDATA[
+                <h3>Hak dan Kewajiban Warga Negara Indonesia</h3>
+                <p>Sebagai warga negara Indonesia, setiap individu memiliki hak dan kewajiban yang diatur dalam UUD 1945 dan peraturan perundang-undangan lainnya.</p>
+                
+                <h4>Hak-hak Warga Negara:</h4>
+                <ol>
+                    <li>Hak atas perlakuan yang sama di hadapan hukum</li>
+                    <li>Hak atas pekerjaan dan penghidupan yang layak</li>
+                    <li>Hak atas pendidikan</li>
+                    <li>Hak atas kesehatan</li>
+                    <li>Hak untuk memeluk agama dan beribadat</li>
+                    <li>Hak untuk berserikat dan berkumpul</li>
+                    <li>Hak untuk mengeluarkan pendapat</li>
+                </ol>
+                
+                <h4>Kewajiban Warga Negara:</h4>
+                <ol>
+                    <li>Taat pada hukum dan pemerintahan</li>
+                    <li>Ikut serta dalam upaya pembelaan negara</li>
+                    <li>Menghormati hak asasi manusia orang lain</li>
+                    <li>Tunduk kepada pembatasan yang ditetapkan dengan undang-undang</li>
+                </ol>
+                ]]>
+            </field>
+            <field name="category_id" ref="legal_category_tata_negara"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('legal_tag_konstitusi'), ref('legal_tag_pemerintahan')])]"/>
+            <field name="is_published" eval="True"/>
+        </record>
+
+        <record id="demo_article_hki" model="legal.article">
+            <field name="title">Hak Kekayaan Intelektual (HKI)</field>
+            <field name="content">
+                <![CDATA[
+                <h3>Pengertian Hak Kekayaan Intelektual</h3>
+                <p>Hak Kekayaan Intelektual (HKI) adalah hak eksklusif yang diberikan suatu hukum atau peraturan kepada seseorang atau sekelompok orang atas karya ciptaannya.</p>
+                
+                <h4>Jenis-jenis HKI:</h4>
+                <ol>
+                    <li><strong>Hak Cipta</strong> - melindungi karya seni, sastra, dan ilmu pengetahuan</li>
+                    <li><strong>Paten</strong> - melindungi invensi/penemuan teknologi</li>
+                    <li><strong>Merek</strong> - melindungi tanda yang membedakan barang/jasa</li>
+                    <li><strong>Desain Industri</strong> - melindungi penampilan produk</li>
+                    <li><strong>Rahasia Dagang</strong> - melindungi informasi tidak terbuka yang bernilai ekonomis</li>
+                </ol>
+                
+                <h4>Manfaat HKI:</h4>
+                <ul>
+                    <li>Memberikan perlindungan hukum</li>
+                    <li>Meningkatkan nilai ekonomis</li>
+                    <li>Mendorong inovasi dan kreativitas</li>
+                    <li>Mencegah pembajakan dan peniruan</li>
+                </ul>
+                
+                <h4>Jangka Waktu Perlindungan:</h4>
+                <ul>
+                    <li>Hak Cipta: 70 tahun setelah pencipta meninggal</li>
+                    <li>Paten: 20 tahun sejak filing date</li>
+                    <li>Merek: 10 tahun dapat diperpanjang</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="legal_category_bisnis"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('legal_tag_investasi')])]"/>
+            <field name="is_published" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,14 @@
+<!-- peraturan_merger/data/cron_jobs.xml -->
+<odoo>
+  <!-- contoh cron untuk memeriksa sumber eksternal (scaffold) -->
+  <record id="ir_cron_fetch_external_peraturan" model="ir.cron">
+    <field name="name">Fetch External Peraturan</field>
+    <field name="model_id" ref="model_peraturan_version"/>
+    <field name="state">code</field>
+    <field name="code">model._cron_fetch_external_versions()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <field name="numbercall">-1</field>
+    <field name="doall" eval="False"/>
+  </record>
+</odoo>

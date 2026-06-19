@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- ============================================ -->
+        <!-- CONSOLIDATION V2 - Form View -->
+        <!-- ============================================ -->
+        <record id="view_legal_regulation_consolidation_v2_form" model="ir.ui.view">
+            <field name="name">legal.regulation.consolidation.v2.form</field>
+            <field name="model">legal.regulation.consolidation.v2</field>
+            <field name="arch" type="xml">
+                <form string="Konsolidasi Peraturan">
+                    <header>
+                        <button name="action_generate_consolidation" type="object" 
+                                string="Generate Konsolidasi" 
+                                class="btn-primary" icon="fa-cogs"
+                                invisible="state == 'generated'"/>
+                        <button name="action_generate_consolidation" type="object" 
+                                string="Re-Generate" 
+                                class="btn-warning" icon="fa-refresh"
+                                invisible="state != 'generated'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,generated"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Nama Konsolidasi..."/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group string="Peraturan Induk">
+                                <field name="peraturan_induk_id" 
+                                       options="{'no_create': True}"
+                                       domain="[('file_txt', '!=', False)]"/>
+                                <field name="file_txt_induk" filename="file_txt_induk" invisible="1"/>
+                            </group>
+                            <group string="Pengaturan">
+                                <field name="display_mode"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Perubahan yang Digabung" name="page_perubahan">
+                                <field name="perubahan_ids" nolabel="1"
+                                       domain="[('peraturan_induk_id', '=', peraturan_induk_id)]"
+                                       options="{'no_create': True}">
+                                    <list>
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="nama_perubahan"/>
+                                        <field name="tahun_perubahan"/>
+                                        <field name="file_txt_perubahan_name"/>
+                                        <field name="peraturan_pengubah_id"/>
+                                    </list>
+                                </field>
+                                <div class="alert alert-info mt-3" role="alert">
+                                    <strong>Petunjuk:</strong>
+                                    <ol class="mb-0 mt-2">
+                                        <li>Pilih <strong>Peraturan Induk</strong> (yang memiliki file TXT)</li>
+                                        <li>Tambahkan <strong>Perubahan</strong> yang ingin digabung</li>
+                                        <li>Pilih <strong>Mode Tampilan</strong> sesuai kebutuhan</li>
+                                        <li>Klik <strong>Generate Konsolidasi</strong></li>
+                                    </ol>
+                                </div>
+                            </page>
+                            
+                            <page string="Hasil Konsolidasi" name="page_hasil" invisible="state != 'generated'">
+                                <group>
+                                    <group string="Statistik">
+                                        <field name="total_pasal"/>
+                                        <field name="pasal_berubah"/>
+                                        <field name="pasal_ditambah"/>
+                                        <field name="pasal_dihapus"/>
+                                    </group>
+                                </group>
+                                <field name="consolidated_html" nolabel="1" class="oe_edit_only" widget="html"/>
+                                <div class="mt-3">
+                                    <field name="consolidated_html" nolabel="1" class="oe_read_only" widget="html"/>
+                                </div>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        
+        <!-- ============================================ -->
+        <!-- CONSOLIDATION V2 - List View -->
+        <!-- ============================================ -->
+        <record id="view_legal_regulation_consolidation_v2_list" model="ir.ui.view">
+            <field name="name">legal.regulation.consolidation.v2.list</field>
+            <field name="model">legal.regulation.consolidation.v2</field>
+            <field name="arch" type="xml">
+                <list string="Konsolidasi Peraturan">
+                    <field name="name"/>
+                    <field name="peraturan_induk_id"/>
+                    <field name="display_mode"/>
+                    <field name="total_pasal"/>
+                    <field name="pasal_berubah"/>
+                    <field name="state" widget="badge" 
+                           decoration-info="state == 'draft'"
+                           decoration-success="state == 'generated'"/>
+                    <field name="create_date"/>
+                </list>
+            </field>
+        </record>
+        
+        <!-- ============================================ -->
+        <!-- CONSOLIDATION V2 - Action -->
+        <!-- ============================================ -->
+        <record id="action_legal_regulation_consolidation_v2" model="ir.actions.act_window">
+            <field name="name">Konsolidasi Peraturan</field>
+            <field name="res_model">legal.regulation.consolidation.v2</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Buat konsolidasi pertama Anda!
+                </p>
+                <p>
+                    Konsolidasi menggabungkan UU Induk dengan perubahannya menjadi satu naskah terpadu.
+                </p>
+            </field>
+        </record>
+        
+        <!-- Menu -->
+        <menuitem id="menu_consolidation_v2"
+                  name="Konsolidasi (V2)"
+                  parent="legal_regulations.menu_legal_regulations_root"
+                  action="action_legal_regulation_consolidation_v2"
+                  sequence="25"/>
+
+    </data>
+</odoo>

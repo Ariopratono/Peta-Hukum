@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Legal Search Configuration Views -->
+        <record id="legal_search_view_tree" model="ir.ui.view">
+            <field name="name">legal.search.tree</field>
+            <field name="model">legal.search</field>
+            <field name="arch" type="xml">
+                <list string="Search Configurations">
+                    <field name="name"/>
+                    <field name="searxng_url"/>
+                    <field name="language"/>
+                    <field name="safe_search"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="legal_search_view_form" model="ir.ui.view">
+            <field name="name">legal.search.form</field>
+            <field name="model">legal.search</field>
+            <field name="arch" type="xml">
+                <form string="Search Configuration">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="searxng_url"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                                <field name="language"/>
+                                <field name="safe_search"/>
+                                <field name="timeout"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="search_engines"/>
+                            <field name="categories"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Legal Search History Views -->
+        <record id="legal_search_history_view_tree" model="ir.ui.view">
+            <field name="name">legal.search.history.tree</field>
+            <field name="model">legal.search.history</field>
+            <field name="arch" type="xml">
+                <list string="Search History" default_order="create_date desc">
+                    <field name="query"/>
+                    <field name="user_id"/>
+                    <field name="results_count"/>
+                    <field name="ip_address"/>
+                    <field name="create_date"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="legal_search_history_view_form" model="ir.ui.view">
+            <field name="name">legal.search.history.form</field>
+            <field name="model">legal.search.history</field>
+            <field name="arch" type="xml">
+                <form string="Search History" create="false" edit="false">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="query"/>
+                                <field name="user_id"/>
+                                <field name="results_count"/>
+                            </group>
+                            <group>
+                                <field name="ip_address"/>
+                                <field name="create_date"/>
+                            </group>
+                        </group>
+                        <field name="user_agent"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search Analytics View -->
+        <record id="legal_search_history_view_graph" model="ir.ui.view">
+            <field name="name">legal.search.history.graph</field>
+            <field name="model">legal.search.history</field>
+            <field name="arch" type="xml">
+                <graph string="Search Analytics" type="bar">
+                    <field name="create_date" type="row" interval="day"/>
+                    <field name="query" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="legal_search_history_view_pivot" model="ir.ui.view">
+            <field name="name">legal.search.history.pivot</field>
+            <field name="model">legal.search.history</field>
+            <field name="arch" type="xml">
+                <pivot string="Search Pivot">
+                    <field name="create_date" type="row" interval="day"/>
+                    <field name="query" type="col"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="legal_search_action" model="ir.actions.act_window">
+            <field name="name">Konfigurasi Pencarian</field>
+            <field name="res_model">legal.search</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="legal_search_history_action" model="ir.actions.act_window">
+            <field name="name">Riwayat Pencarian</field>
+            <field name="res_model">legal.search.history</field>
+            <field name="view_mode">list,form,graph,pivot</field>
+        </record>
+
+        <!-- Menu Items -->
+        <menuitem id="legal_search_menu" name="Pencarian" parent="legal_website_main_menu" sequence="20"/>
+        
+        <menuitem id="legal_search_config_menu" name="Konfigurasi" 
+                  parent="legal_search_menu" 
+                  action="legal_search_action" sequence="10"/>
+        
+        <menuitem id="legal_search_history_menu" name="Riwayat &amp; Analitik" 
+                  parent="legal_search_menu" 
+                  action="legal_search_history_action" sequence="20"/>
+
+    </data>
+</odoo>

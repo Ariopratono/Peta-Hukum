@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Compatible sample data tanpa field yang bermasalah -->
+        
+        <!-- KUHP - Data Basic -->
+        <record id="compatible_regulation_1" model="legal.regulation">
+            <field name="judul">Kitab Undang-Undang Hukum Pidana</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">1</field>
+            <field name="tahun">2023</field>
+            <field name="teu">T.L.N. No. 6846</field>
+            <field name="bidang">hukum_pidana</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Hukum Pidana, Tindak Pidana, Sanksi Pidana</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2022-12-06</field>
+            <field name="tanggal_pengundangan">2022-12-06</field>
+            <field name="bahasa">bahasa_indonesia</field>
+            <field name="keterangan">Kitab Undang-Undang Hukum Pidana yang baru mengatur tentang ketentuan umum hukum pidana, tindak pidana, dan pemidanaan di Indonesia.</field>
+            <field name="lokasi">DPR RI</field>
+        </record>
+
+        <!-- UU Cipta Kerja - Data Basic -->
+        <record id="compatible_regulation_2" model="legal.regulation">
+            <field name="judul">Cipta Kerja</field>
+            <field name="bentuk">Undang-Undang Republik Indonesia</field>
+            <field name="bentuk_singkat">UU</field>
+            <field name="nomor">11</field>
+            <field name="tahun">2020</field>
+            <field name="teu">T.L.N. No. 6573</field>
+            <field name="bidang">hukum_bisnis</field>
+            <field name="tipe_dokumen">undang_undang</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Cipta Kerja, Kemudahan Berusaha, Investasi, Perizinan</field>
+            <field name="sumber">Lembaran Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">2020-11-02</field>
+            <field name="tanggal_pengundangan">2020-11-02</field>
+            <field name="bahasa">bahasa_indonesia</field>
+            <field name="keterangan">Undang-undang yang bertujuan untuk menciptakan dan meningkatkan lapangan kerja melalui kemudahan, perlindungan, dan pemberdayaan koperasi dan usaha mikro, kecil, dan menengah.</field>
+            <field name="lokasi">DPR RI</field>
+        </record>
+
+        <!-- UUD 1945 - Data Basic -->
+        <record id="compatible_regulation_3" model="legal.regulation">
+            <field name="judul">Undang-Undang Dasar Negara Republik Indonesia Tahun 1945</field>
+            <field name="bentuk">Undang-Undang Dasar</field>
+            <field name="bentuk_singkat">UUD</field>
+            <field name="nomor">1945</field>
+            <field name="tahun">1945</field>
+            <field name="teu">Konstitusi Indonesia</field>
+            <field name="bidang">hukum_tata_negara</field>
+            <field name="tipe_dokumen">uud_1945</field>
+            <field name="status">berlaku</field>
+            <field name="subjek">Konstitusi, Hak Asasi Manusia, Pemerintahan Negara</field>
+            <field name="sumber">Sekretariat Negara Republik Indonesia</field>
+            <field name="tempat_penetapan">Jakarta</field>
+            <field name="tanggal_penetapan">1945-08-18</field>
+            <field name="tanggal_pengundangan">1945-08-18</field>
+            <field name="bahasa">bahasa_indonesia</field>
+            <field name="keterangan">Konstitusi atau Undang-Undang Dasar Negara Republik Indonesia adalah hukum tertinggi di Indonesia.</field>
+            <field name="lokasi">PPKI</field>
+        </record>
+
+    </data>
+</odoo>

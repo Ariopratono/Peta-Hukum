@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Success Page Template -->
+        <template id="subscription_success_template" name="Subscription Success Page">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <div class="container py-5">
+                        <div class="row">
+                            <div class="col-lg-8 mx-auto text-center">
+                                <div class="card shadow-lg">
+                                    <div class="card-body py-5">
+                                        <i class="fa fa-check-circle text-success" style="font-size: 4rem;"></i>
+                                        <h2 class="mt-4 mb-3">Berlangganan Berhasil!</h2>
+                                        <p class="lead text-muted">
+                                            Selamat! Anda telah berhasil berlangganan dan dapat menikmati semua fitur premium kami.
+                                        </p>
+                                        
+                                        <t t-if="subscription">
+                                            <div class="border rounded bg-light p-4 mb-4">
+                                                <h4 class="text-primary">Detail Berlangganan Anda</h4>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <p><strong>Paket:</strong> <span class="text-primary"><t t-esc="subscription.plan_id.name"/></span></p>
+                                                        <p><strong>Harga:</strong> Rp <t t-esc="'{:,}'.format(int(subscription.plan_id.price)).replace(',', '.')"/>/bulan</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p><strong>Mulai:</strong> <t t-esc="subscription.start_date"/></p>
+                                                        <p><strong>Berakhir:</strong> <t t-esc="subscription.end_date"/></p>
+                                                    </div>
+                                                </div>
+                                                <p><strong>Status:</strong> <span class="badge badge-success">Aktif</span></p>
+                                            </div>
+
+                                            <div class="alert alert-info">
+                                                <h5><i class="fa fa-gift"></i> Fitur yang Tersedia</h5>
+                                                <ul class="list-unstyled mb-0">
+                                                    <li><i class="fa fa-check text-success"></i> <t t-esc="subscription.plan_id.search_limit"/> pencarian per hari</li>
+                                                    <li t-if="subscription.plan_id.advanced_search">
+                                                        <i class="fa fa-check text-success"></i> Pencarian lanjutan
+                                                    </li>
+                                                    <li t-if="subscription.plan_id.legal_consultation">
+                                                        <i class="fa fa-check text-success"></i> Konsultasi hukum
+                                                    </li>
+                                                    <li t-if="subscription.plan_id.priority_support">
+                                                        <i class="fa fa-check text-success"></i> Support prioritas
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </t>
+                                        
+                                        <div class="row mt-4">
+                                            <div class="col-md-6 mb-3">
+                                                <a href="/legal" class="btn btn-primary btn-lg btn-block">
+                                                    <i class="fa fa-search"></i> Mulai Pencarian
+                                                </a>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <a href="/my/subscriptions" class="btn btn-outline-primary btn-lg btn-block">
+                                                    <i class="fa fa-user-cog"></i> Kelola Berlangganan
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                        <hr class="my-4"/>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="card border-0 bg-transparent">
+                                                    <div class="card-body text-center">
+                                                        <i class="fa fa-envelope fa-2x text-primary mb-3"></i>
+                                                        <h6>Email Konfirmasi</h6>
+                                                        <small class="text-muted">Telah dikirim ke email Anda</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="card border-0 bg-transparent">
+                                                    <div class="card-body text-center">
+                                                        <i class="fa fa-shield-alt fa-2x text-success mb-3"></i>
+                                                        <h6>Pembayaran Aman</h6>
+                                                        <small class="text-muted">Transaksi terenkripsi</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="card border-0 bg-transparent">
+                                                    <div class="card-body text-center">
+                                                        <i class="fa fa-headset fa-2x text-info mb-3"></i>
+                                                        <h6>Dukungan 24/7</h6>
+                                                        <small class="text-muted">Siap membantu Anda</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-4">
+                                            <p class="text-muted">
+                                                <small>
+                                                    Jika Anda memiliki pertanyaan, silakan hubungi tim support kami.
+                                                    <br/>
+                                                    Terima kasih telah mempercayai layanan hukum kami!
+                                                </small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- Alternative Success Template (Simpler Version) -->
+        <template id="subscription_success_simple" name="Simple Success Page">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <div class="container py-5">
+                        <div class="row">
+                            <div class="col-lg-6 mx-auto text-center">
+                                <div class="card">
+                                    <div class="card-body py-4">
+                                        <i class="fa fa-check-circle text-success" style="font-size: 3rem;"></i>
+                                        <h3 class="mt-3 mb-3">Pembayaran Berhasil!</h3>
+                                        <p>Berlangganan Anda telah aktif dan siap digunakan.</p>
+                                        
+                                        <div class="mt-4">
+                                            <a href="/legal" class="btn btn-primary mr-2">
+                                                <i class="fa fa-search"></i> Mulai Pencarian
+                                            </a>
+                                            <a href="/my/subscriptions" class="btn btn-outline-secondary">
+                                                <i class="fa fa-user"></i> Dashboard
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</odoo>

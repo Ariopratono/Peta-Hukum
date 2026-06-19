@@ -1,0 +1,31 @@
+<!-- peraturan_merger/views/wizard_merge_views.xml -->
+<odoo>
+  <record id="view_peraturan_merge_wizard_form" model="ir.ui.view">
+    <field name="name">peraturan.merge.wizard.form</field>
+    <field name="model">peraturan.merge.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Merge Peraturan">
+        <sheet>
+          <group>
+            <field name="rule_id"/>
+            <field name="version_ids" widget="many2many_tags"/>
+            <field name="mode"/>
+          </group>
+          <footer>
+            <button string="Merge & Download" type="object" name="action_merge" class="btn-primary"/>
+            <button string="Cancel" class="btn-default" special="cancel"/>
+          </footer>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_peraturan_merge_wizard" model="ir.actions.act_window">
+    <field name="name">Merge Peraturan</field>
+    <field name="res_model">peraturan.merge.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+  <menuitem id="menu_peraturan_merge" name="Merge Peraturan" parent="menu_peraturan_root" action="action_peraturan_merge_wizard"/>
+</odoo>

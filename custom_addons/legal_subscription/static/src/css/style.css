@@ -1,0 +1,28 @@
+/* Legal Subscription CSS */
+
+.legal-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.subscription-card {
+    transition: transform 0.3s ease;
+}
+
+.subscription-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    color: #667eea;
+}
+
+.btn-gradient {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border: none;
+    color: white;
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(45deg, #764ba2, #667eea);
+    color: white;
+}
