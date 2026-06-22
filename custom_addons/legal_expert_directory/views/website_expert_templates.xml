@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- =============================================
+             Expert Directory Page (List/Grid)
+             ============================================= -->
+        <template id="website_expert_directory" name="Legal Expert Directory">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <!-- Hero Header -->
+                    <section class="expert-directory-header">
+                        <div class="container">
+                            <h1>Legal Expert Directory</h1>
+                            <p>Temukan ahli hukum terpercaya untuk kebutuhan hukum Anda.</p>
+                        </div>
+                    </section>
+
+                    <!-- Filter Bar -->
+                    <div class="container">
+                        <div class="expert-filter-bar text-center">
+                            <a href="/legal/experts"
+                               t-attf-class="btn #{'btn-filter-active' if not current_role else 'btn-filter'} mb-2">
+                                Semua
+                            </a>
+                            <t t-foreach="roles.items()" t-as="role_item">
+                                <a t-attf-href="/legal/experts?role=#{role_item[0]}"
+                                   t-attf-class="btn #{'btn-filter-active' if current_role == role_item[0] else 'btn-filter'} mb-2">
+                                   <t t-esc="role_item[1]"/>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Expert Grid -->
+                    <div class="container mt-4 mb-5">
+                        <t t-if="not experts">
+                            <div class="text-center py-5">
+                                <i class="fa fa-users fa-3x text-muted mb-3" style="display:block;"></i>
+                                <p class="text-muted lead">Belum ada legal expert untuk kategori ini.</p>
+                            </div>
+                        </t>
+                        <div class="expert-grid">
+                            <t t-foreach="experts" t-as="expert">
+                                <div class="expert-card">
+                                    <a t-attf-href="/legal/expert/#{expert.id}">
+                                        <div class="expert-photo-wrapper">
+                                            <div class="expert-photo-circle">
+                                                <t t-if="expert.profile_picture">
+                                                    <img t-att-src="image_data_uri(expert.profile_picture)"
+                                                         t-attf-alt="#{expert.name}"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <img src="/web/static/img/user_placeholder.jpg"
+                                                         t-attf-alt="#{expert.name}"/>
+                                                </t>
+                                            </div>
+                                        </div>
+                                        <div class="expert-card-name">
+                                            <t t-esc="expert.name"/>
+                                            <t t-if="expert.gelar">,
+                                                <t t-esc="expert.gelar"/>
+                                            </t>
+                                        </div>
+                                        <div class="expert-card-spec">
+                                            <t t-if="expert.specialization">
+                                                <t t-esc="expert.specialization"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-esc="dict(expert._fields['role'].selection).get(expert.role)"/>
+                                            </t>
+                                        </div>
+                                    </a>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- =============================================
+             Expert Detail Page
+             ============================================= -->
+        <template id="website_expert_detail" name="Legal Expert Detail">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <!-- Blue Hero Header with Breadcrumb -->
+                    <section class="expert-detail-hero">
+                        <div class="container">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="/">Home</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="/legal/experts">Legal Experts</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">
+                                        <t t-esc="expert.name"/>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </section>
+
+                    <!-- Profile Section (overlapping hero) -->
+                    <div class="container expert-detail-profile">
+                        <div class="d-flex align-items-start">
+                            <!-- Photo -->
+                            <div class="expert-detail-photo-wrapper">
+                                <div class="expert-detail-photo">
+                                    <t t-if="expert.profile_picture">
+                                        <img t-att-src="image_data_uri(expert.profile_picture)"
+                                             t-attf-alt="#{expert.name}"/>
+                                    </t>
+                                    <t t-else="">
+                                        <img src="/web/static/img/user_placeholder.jpg"
+                                             t-attf-alt="#{expert.name}"/>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <!-- Info -->
+                            <div class="expert-detail-info">
+                                <h1>
+                                    <t t-esc="expert.name"/>
+                                    <t t-if="expert.gelar">, <t t-esc="expert.gelar"/></t>
+                                </h1>
+
+                                <!-- Specialization Tags -->
+                                <div class="expert-detail-specializations">
+                                    <t t-if="expert.specialization">
+                                        <t t-foreach="expert.specialization.split(',')" t-as="spec">
+                                            <t t-if="not spec_first">
+                                                <span class="spec-divider">|</span>
+                                            </t>
+                                            <span class="spec-tag"><t t-esc="spec.strip()"/></span>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="spec-tag"><t t-esc="role_label"/></span>
+                                    </t>
+                                </div>
+
+                                <!-- Share Button -->
+                                <button class="btn-share" title="Share"
+                                        onclick="if(navigator.share){navigator.share({title:document.title,url:window.location.href})}else{navigator.clipboard.writeText(window.location.href);alert('Link copied!')}">
+                                    <i class="fa fa-share-alt"></i>
+                                </button>
+
+                                <!-- Availability -->
+                                <div class="mt-3">
+                                    <span t-if="expert.availability"
+                                          class="availability-badge available">
+                                        <span class="dot"></span> Available
+                                    </span>
+                                    <span t-else=""
+                                          class="availability-badge unavailable">
+                                        <span class="dot"></span> Not Available
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail Content -->
+                    <div class="container mb-5">
+                        <div class="row">
+                            <!-- Left Column: Stats + Description -->
+                            <div class="col-lg-8">
+                                <!-- Stat Cards -->
+                                <div class="expert-stat-cards">
+                                    <div class="expert-stat-card">
+                                        <div class="stat-icon"><i class="fa fa-briefcase"></i></div>
+                                        <span class="stat-value"><t t-esc="expert.experience"/></span>
+                                        <span class="stat-label">Tahun Pengalaman</span>
+                                    </div>
+                                    <div class="expert-stat-card">
+                                        <div class="stat-icon"><i class="fa fa-star"></i></div>
+                                        <span class="stat-value"><t t-esc="expert.ranking"/>/5.0</span>
+                                        <span class="stat-label">Rating</span>
+                                    </div>
+                                    <div class="expert-stat-card">
+                                        <div class="stat-icon"><i class="fa fa-users"></i></div>
+                                        <span class="stat-value"><t t-esc="expert.handled_client"/></span>
+                                        <span class="stat-label">Klien Ditangani</span>
+                                    </div>
+                                </div>
+
+                                <!-- Description -->
+                                <t t-if="expert.description">
+                                    <div class="expert-info-card">
+                                        <h5>Tentang</h5>
+                                        <p style="white-space: pre-line; color: #495057; line-height: 1.8;">
+                                            <t t-esc="expert.description"/>
+                                        </p>
+                                    </div>
+                                </t>
+
+                                <!-- Education -->
+                                <t t-if="expert.education">
+                                    <div class="expert-info-card">
+                                        <h5>Pendidikan</h5>
+                                        <p style="white-space: pre-line; color: #495057; line-height: 1.8;">
+                                            <t t-esc="expert.education"/>
+                                        </p>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- Right Column: Contact Info -->
+                            <div class="col-lg-4">
+                                <div class="expert-info-card">
+                                    <h5>Informasi</h5>
+                                    <div class="expert-info-row">
+                                        <span class="expert-info-label">Role</span>
+                                        <span class="expert-info-value"><t t-esc="role_label"/></span>
+                                    </div>
+                                    <t t-if="expert.specialization">
+                                        <div class="expert-info-row">
+                                            <span class="expert-info-label">Spesialisasi</span>
+                                            <span class="expert-info-value"><t t-esc="expert.specialization"/></span>
+                                        </div>
+                                    </t>
+                                    <t t-if="expert.phone">
+                                        <div class="expert-info-row">
+                                            <span class="expert-info-label">Telepon</span>
+                                            <span class="expert-info-value"><t t-esc="expert.phone"/></span>
+                                        </div>
+                                    </t>
+                                    <t t-if="expert.email">
+                                        <div class="expert-info-row">
+                                            <span class="expert-info-label">Email</span>
+                                            <span class="expert-info-value"><t t-esc="expert.email"/></span>
+                                        </div>
+                                    </t>
+                                    <div class="expert-info-row">
+                                        <span class="expert-info-label">Pengalaman</span>
+                                        <span class="expert-info-value"><t t-esc="expert.experience"/> Tahun</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Related Experts -->
+                        <t t-if="other_experts">
+                            <div class="mt-5">
+                                <h4 class="mb-4 text-center" style="font-weight: 600; color: #2c3e50;">
+                                    Legal Expert Lainnya
+                                </h4>
+                                <div class="expert-grid" style="grid-template-columns: repeat(5, 1fr);">
+                                    <t t-foreach="other_experts" t-as="other">
+                                        <div class="expert-card">
+                                            <a t-attf-href="/legal/expert/#{other.id}">
+                                                <div class="expert-photo-wrapper" style="width:120px;height:120px;">
+                                                    <div class="expert-photo-circle" style="width:120px;height:120px;">
+                                                        <t t-if="other.profile_picture">
+                                                            <img t-att-src="image_data_uri(other.profile_picture)"
+                                                                 t-attf-alt="#{other.name}"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <img src="/web/static/img/user_placeholder.jpg"
+                                                                 t-attf-alt="#{other.name}"/>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                                <div class="expert-card-name" style="font-size:0.85rem;">
+                                                    <t t-esc="other.name"/>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- Menu for Website -->
+        <record id="menu_legal_experts" model="website.menu">
+            <field name="name">Legal Experts</field>
+            <field name="url">/legal/experts</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">45</field>
+        </record>
+
+    </data>
+</odoo>

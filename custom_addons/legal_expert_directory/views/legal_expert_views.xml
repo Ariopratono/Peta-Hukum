@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form View -->
+        <record id="view_legal_expert_form" model="ir.ui.view">
+            <field name="name">legal.expert.form</field>
+            <field name="model">legal.expert</field>
+            <field name="arch" type="xml">
+                <form string="Legal Expert">
+                    <sheet>
+                        <field name="profile_picture" widget="image" class="oe_avatar" options="{'size': [90, 90]}"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Name" required="1"/>
+                            </h1>
+                            <field name="gelar" placeholder="Gelar (contoh: S.H., M.Hum.)"/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="role"/>
+                                <field name="specialization" placeholder="Contoh: Filsafat Hukum, Penalaran Hukum"/>
+                                <field name="experience"/>
+                                <field name="ranking"/>
+                            </group>
+                            <group>
+                                <field name="handled_client"/>
+                                <field name="availability"/>
+                                <field name="phone"/>
+                                <field name="email"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Description">
+                                <field name="description" placeholder="Description of the Legal Expert"/>
+                            </page>
+                            <page string="Education">
+                                <field name="education" placeholder="Riwayat pendidikan"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- list View -->
+        <record id="view_legal_expert_list" model="ir.ui.view">
+            <field name="name">legal.expert.list</field>
+            <field name="model">legal.expert</field>
+            <field name="arch" type="xml">
+                <list string="Legal Experts">
+                    <field name="name"/>
+                    <field name="gelar"/>
+                    <field name="role"/>
+                    <field name="specialization"/>
+                    <field name="experience"/>
+                    <field name="ranking"/>
+                    <field name="handled_client"/>
+                    <field name="availability"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_legal_expert_search" model="ir.ui.view">
+            <field name="name">legal.expert.search</field>
+            <field name="model">legal.expert</field>
+            <field name="arch" type="xml">
+                <search string="Search Legal Experts">
+                    <field name="name"/>
+                    <field name="role"/>
+                    <field name="specialization"/>
+                    <filter string="Available" name="available" domain="[('availability','=',True)]"/>
+                    <group name="groupby">
+                        <filter string="Role" name="group_by_role" context="{'group_by':'role'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_legal_expert" model="ir.actions.act_window">
+            <field name="name">Legal Experts</field>
+            <field name="res_model">legal.expert</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_legal_expert_search"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new Legal Expert
+              </p>
+            </field>
+        </record>
+
+        <!-- Menus -->
+        <menuitem id="menu_legal_expert_root" name="Legal Experts" sequence="10" web_icon="legal_expert_directory,static/description/icon.png"/>
+
+        <menuitem id="menu_legal_expert" name="Legal Experts" parent="menu_legal_expert_root" action="action_legal_expert" sequence="10"/>
+
+    </data>
+</odoo>

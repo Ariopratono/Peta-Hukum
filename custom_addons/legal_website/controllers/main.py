@@ -138,9 +138,19 @@ class LegalWebsiteController(http.Controller):
         # Get categories
         categories = request.env['legal.category'].sudo().search([])
         
+        # Get legal experts for homepage section
+        legal_experts = []
+        try:
+            legal_experts = request.env['legal.expert'].sudo().search(
+                [('availability', '=', True)], limit=5, order='ranking desc, experience desc'
+            )
+        except Exception:
+            pass
+        
         return request.render('legal_website.legal_homepage', {
             'featured_articles': featured_articles,
             'categories': categories,
+            'legal_experts': legal_experts,
         })
     
     @http.route('/legal/search', type='http', auth='public', website=True)

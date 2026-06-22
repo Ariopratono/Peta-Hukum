@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tambahkan kolom signup_role di tampilan List (Tree) -->
+    <record id="view_users_tree_inherit_signup_role" model="ir.ui.view">
+        <field name="name">res.users.tree.signup.role</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='login']" position="after">
+                <!-- Kita letakkan setelah kolom Login -->
+                <field name="signup_role"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Tambahkan field signup_role di tampilan Detail (Form) -->
+    <record id="view_users_form_inherit_signup_role" model="ir.ui.view">
+        <field name="name">res.users.form.signup.role</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <!-- Kita buatkan tab khusus "Signup Information" sebeIum Tab "Access Rights" -->
+            <xpath expr="//page[@name='access_rights']" position="before">
+                <page string="Signup Information" name="signup_info">
+                    <group>
+                        <field name="signup_role"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

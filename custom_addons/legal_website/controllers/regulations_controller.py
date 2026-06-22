@@ -1,13 +1,188 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
+import re
+import html as html_lib
+import logging
+from markupsafe import Markup
+
+_logger = logging.getLogger(__name__)
 
 
 class LegalRegulationWebsiteController(http.Controller):
 
+    def _strip_html_tags(self, text):
+        """Remove HTML tags from text, returning plain text"""
+        if not text:
+            return ''
+        return re.sub(r'<[^>]+>', ' ', str(text)).strip()
+
+    def _highlight_keyword(self, text, keyword):
+        """Highlight keyword in text with <mark> tag (case-insensitive)"""
+        if not text or not keyword:
+            return text
+        escaped = re.escape(keyword)
+        return re.sub(
+            f'({escaped})',
+            r'<mark class="bg-warning text-dark px-1 rounded">\1</mark>',
+            str(text),
+            flags=re.IGNORECASE
+        )
+
+    def _get_snippet_around_keyword(self, text, keyword, context_chars=200):
+        """Extract a snippet of text around the keyword with context"""
+        if not text or not keyword:
+            return ''
+        plain = self._strip_html_tags(text)
+        lower_plain = plain.lower()
+        lower_kw = keyword.lower()
+        idx = lower_plain.find(lower_kw)
+        if idx == -1:
+            return ''
+        start = max(0, idx - context_chars)
+        end = min(len(plain), idx + len(keyword) + context_chars)
+        snippet = plain[start:end].strip()
+        if start > 0:
+            snippet = '...' + snippet
+        if end < len(plain):
+            snippet = snippet + '...'
+        return snippet
+
+    def _search_pasal_matches(self, regulation_ids, search_term, limit_per_reg=5):
+        """
+        Search inside pasal, ayat, huruf for a keyword.
+        Returns dict: { regulation_id: [ {pasal_info}, ... ] }
+        Uses savepoint to prevent SQL errors from corrupting the transaction.
+        """
+        matches = {}
+        if not search_term or not regulation_ids:
+            return matches
+
+        # Fallback to isi_peraturan if pasal model doesn't exist
+        has_pasal = 'legal.regulation.pasal' in request.env
+
+        if has_pasal:
+            cr = request.env.cr
+            cr.execute("SAVEPOINT pasal_match_sp")
+            try:
+                Pasal = request.env['legal.regulation.pasal'].sudo()
+                Ayat = request.env['legal.regulation.ayat'].sudo()
+                Huruf = request.env['legal.regulation.huruf'].sudo()
+
+                # 1) Search in pasal (isi_pasal, judul_pasal)
+                pasal_domain = [
+                    ('regulation_id', 'in', regulation_ids),
+                    '|', '|',
+                    ('isi_pasal', 'ilike', search_term),
+                    ('judul_pasal', 'ilike', search_term),
+                    ('nomor_pasal', 'ilike', search_term),
+                ]
+                found_pasals = Pasal.search(pasal_domain, order='regulation_id, sequence, nomor_pasal')
+                for pasal in found_pasals:
+                    reg_id = pasal.regulation_id.id
+                    if reg_id not in matches:
+                        matches[reg_id] = []
+                    if len(matches[reg_id]) >= limit_per_reg:
+                        continue
+                    plain_isi = self._strip_html_tags(pasal.isi_pasal)
+                    snippet = self._get_snippet_around_keyword(plain_isi, search_term)
+                    matches[reg_id].append({
+                        'type': 'pasal',
+                        'bab': pasal.bab or '',
+                        'pasal_nomor': pasal.nomor_pasal,
+                        'pasal_judul': pasal.judul_pasal or '',
+                        'ayat_nomor': '',
+                        'huruf': '',
+                        'snippet': snippet,
+                        'display': f"Pasal {pasal.nomor_pasal}" + (f" - {pasal.judul_pasal}" if pasal.judul_pasal else ''),
+                    })
+
+                # 2) Search in ayat (isi_ayat)
+                ayat_domain = [
+                    ('regulation_id', 'in', regulation_ids),
+                    ('isi_ayat', 'ilike', search_term),
+                ]
+                found_ayats = Ayat.search(ayat_domain, order='regulation_id, pasal_id, sequence, nomor_ayat')
+                for ayat in found_ayats:
+                    reg_id = ayat.regulation_id.id
+                    if reg_id not in matches:
+                        matches[reg_id] = []
+                    if len(matches[reg_id]) >= limit_per_reg:
+                        continue
+                    pasal = ayat.pasal_id
+                    plain_isi = self._strip_html_tags(ayat.isi_ayat)
+                    snippet = self._get_snippet_around_keyword(plain_isi, search_term)
+                    matches[reg_id].append({
+                        'type': 'ayat',
+                        'bab': pasal.bab or '',
+                        'pasal_nomor': pasal.nomor_pasal,
+                        'pasal_judul': pasal.judul_pasal or '',
+                        'ayat_nomor': ayat.nomor_ayat,
+                        'huruf': '',
+                        'snippet': snippet,
+                        'display': f"Pasal {pasal.nomor_pasal} Ayat {ayat.nomor_ayat}",
+                    })
+
+                # 3) Search in huruf (isi)
+                huruf_domain = [
+                    ('regulation_id', 'in', regulation_ids),
+                    ('isi', 'ilike', search_term),
+                ]
+                found_hurufs = Huruf.search(huruf_domain, order='regulation_id, pasal_id, ayat_id, sequence, huruf')
+                for h in found_hurufs:
+                    reg_id = h.regulation_id.id
+                    if reg_id not in matches:
+                        matches[reg_id] = []
+                    if len(matches[reg_id]) >= limit_per_reg:
+                        continue
+                    pasal = h.pasal_id
+                    ayat = h.ayat_id
+                    plain_isi = self._strip_html_tags(h.isi)
+                    snippet = self._get_snippet_around_keyword(plain_isi, search_term)
+                    matches[reg_id].append({
+                        'type': 'huruf',
+                        'bab': pasal.bab or '' if pasal else '',
+                        'pasal_nomor': pasal.nomor_pasal if pasal else '',
+                        'pasal_judul': pasal.judul_pasal or '' if pasal else '',
+                        'ayat_nomor': ayat.nomor_ayat if ayat else '',
+                        'huruf': h.huruf,
+                        'snippet': snippet,
+                        'display': f"Pasal {pasal.nomor_pasal} Ayat {ayat.nomor_ayat} huruf {h.huruf}" if ayat else f"Pasal {pasal.nomor_pasal} huruf {h.huruf}",
+                    })
+                cr.execute("RELEASE SAVEPOINT pasal_match_sp")
+            except Exception as e:
+                cr.execute("ROLLBACK TO SAVEPOINT pasal_match_sp")
+                _logger.warning(f"Structured search inside pasal/ayat failed (rolled back): {e}")
+
+        # Fallback/Unstructured search:
+        # Check if any regulation lacks matches, and look in its `isi_peraturan`
+        remaining_ids = [rid for rid in regulation_ids if rid not in matches]
+        if remaining_ids:
+            try:
+                regs = request.env['legal.regulation'].sudo().browse(remaining_ids)
+                for reg in regs:
+                    if reg.isi_peraturan and search_term.lower() in str(reg.isi_peraturan).lower():
+                        plain_isi = self._strip_html_tags(reg.isi_peraturan)
+                        snippet = self._get_snippet_around_keyword(plain_isi, search_term)
+                        if snippet:
+                            matches[reg.id] = [{
+                                'type': 'regulation',
+                                'bab': '',
+                                'pasal_nomor': '',
+                                'pasal_judul': '',
+                                'ayat_nomor': '',
+                                'huruf': '',
+                                'snippet': snippet,
+                                'display': 'Dokumen',
+                            }]
+            except Exception as e:
+                _logger.error(f"Fallback search in isi_peraturan failed: {e}")
+
+        return matches
+
     @http.route('/regulations', type='http', auth='public', website=True)
     def regulations_list(self, **kw):
-        """Halaman daftar peraturan hukum"""
+        """Halaman daftar peraturan hukum dengan pencarian mendalam ke pasal/ayat"""
         try:
             # Cek apakah model legal.regulation tersedia
             if 'legal.regulation' not in request.env:
@@ -15,6 +190,8 @@ class LegalRegulationWebsiteController(http.Controller):
             
             # Filter dan search
             domain = []
+            search_term = kw.get('search', '').strip()
+            pasal_matches = {}
             
             # Filter berdasarkan parameter
             if kw.get('bidang'):
@@ -32,9 +209,10 @@ class LegalRegulationWebsiteController(http.Controller):
             if kw.get('status'):
                 domain.append(('status', '=', kw.get('status')))
                 
-            if kw.get('search'):
-                search_term = kw.get('search')
-                # cek field yang tersedia
+            # --- Deep search: regulation fields + pasal/ayat/huruf ---
+            regulation_ids_from_pasal = set()
+            if search_term:
+                # 1) Standard regulation-level search fields
                 search_fields = [
                     ('judul', 'ilike', search_term),
                     ('nomor', 'ilike', search_term), 
@@ -44,7 +222,6 @@ class LegalRegulationWebsiteController(http.Controller):
                     ('bentuk', 'ilike', search_term)
                 ]
                 
-                # Tambahkan field enhanced jika ada
                 try:
                     model_fields = request.env['legal.regulation']._fields
                     if 'isi_peraturan' in model_fields:
@@ -53,23 +230,90 @@ class LegalRegulationWebsiteController(http.Controller):
                         search_fields.append(('kata_kunci', 'ilike', search_term))
                     if 'ringkasan' in model_fields:
                         search_fields.append(('ringkasan', 'ilike', search_term))
-                except:
+                except Exception:
                     pass
                 
-                # Build domain dengan OR conditions
+                # 2) Deep search inside pasal/ayat/huruf to find regulation IDs
+                if 'legal.regulation.pasal' in request.env:
+                    try:
+                        # Use savepoint to isolate potential SQL errors
+                        # (e.g., table doesn't exist yet)
+                        cr = request.env.cr
+                        cr.execute("SAVEPOINT deep_search_sp")
+                        try:
+                            Pasal = request.env['legal.regulation.pasal'].sudo()
+                            Ayat = request.env['legal.regulation.ayat'].sudo()
+                            Huruf = request.env['legal.regulation.huruf'].sudo()
+                            
+                            pasal_reg_ids = Pasal.search([
+                                '|', '|',
+                                ('isi_pasal', 'ilike', search_term),
+                                ('judul_pasal', 'ilike', search_term),
+                                ('nomor_pasal', 'ilike', search_term),
+                            ]).mapped('regulation_id.id')
+                            
+                            ayat_reg_ids = Ayat.search([
+                                ('isi_ayat', 'ilike', search_term),
+                            ]).mapped('regulation_id.id')
+                            
+                            huruf_reg_ids = Huruf.search([
+                                ('isi', 'ilike', search_term),
+                            ]).mapped('regulation_id.id')
+                            
+                            regulation_ids_from_pasal = set(pasal_reg_ids) | set(ayat_reg_ids) | set(huruf_reg_ids)
+                            cr.execute("RELEASE SAVEPOINT deep_search_sp")
+                        except Exception as e:
+                            cr.execute("ROLLBACK TO SAVEPOINT deep_search_sp")
+                            _logger.warning(f"Deep search in pasal/ayat failed (rolled back): {e}")
+                    except Exception as e:
+                        _logger.warning(f"Deep search setup failed: {e}")
+                
+                # 3) Build combined domain: regulation fields OR regulation ID in pasal matches
                 if len(search_fields) > 1:
                     or_conditions = ['|'] * (len(search_fields) - 1)
-                    domain.extend(or_conditions + search_fields)
+                    reg_field_domain = or_conditions + search_fields
+                else:
+                    reg_field_domain = list(search_fields)
+                
+                if regulation_ids_from_pasal:
+                    # Combine: '|' + (id in pasal_ids) + (reg_field_domain...)
+                    # In Odoo prefix notation, '|' takes 2 operands
+                    # reg_field_domain is already a complete sub-expression
+                    domain.append('|')
+                    domain.append(('id', 'in', list(regulation_ids_from_pasal)))
+                    domain.extend(reg_field_domain)
+                else:
+                    domain.extend(reg_field_domain)
 
             # Pagination
             limit = 20
             page = int(kw.get('page', 1))
             offset = (page - 1) * limit
 
-            regulations = request.env['legal.regulation'].sudo().search(domain, limit=limit, offset=offset, order='hierarchy_order, tahun desc, nomor')
+            regulations = request.env['legal.regulation'].sudo().search(
+                domain, limit=limit, offset=offset, 
+                order='hierarchy_order, tahun desc, nomor'
+            )
             total_count = request.env['legal.regulation'].sudo().search_count(domain)
             
-            # Pagination info (manual pagination instead of Odoo pager to avoid debug output)
+            # --- Get pasal matches for displayed regulations ---
+            if search_term and regulations:
+                try:
+                    pasal_matches = self._search_pasal_matches(
+                        regulations.ids, search_term, limit_per_reg=5
+                    )
+                except Exception as e:
+                    _logger.warning(f"Pasal match search failed: {e}")
+                    pasal_matches = {}
+                # Highlight keyword in snippets
+                for reg_id, match_list in pasal_matches.items():
+                    for m in match_list:
+                        if m.get('snippet'):
+                            m['snippet'] = Markup(self._highlight_keyword(
+                                html_lib.escape(m['snippet']), search_term
+                            ))
+            
+            # Pagination info
             total_pages = (total_count - 1) // limit + 1 if total_count > 0 else 1
             current_page = page
 
@@ -78,7 +322,6 @@ class LegalRegulationWebsiteController(http.Controller):
                 bidang_options = request.env['legal.regulation']._fields['bidang'].selection
                 tipe_options = request.env['legal.regulation']._fields['tipe_dokumen'].selection
             except (KeyError, AttributeError):
-                # Fallback options jika field tidak ditemukan
                 bidang_options = [
                     ('hukum_pidana', 'HUKUM PIDANA'),
                     ('hukum_perdata', 'HUKUM PERDATA'),
@@ -111,7 +354,7 @@ class LegalRegulationWebsiteController(http.Controller):
 
             values = {
                 'regulations': regulations,
-                'search': kw.get('search', ''),
+                'search': search_term,
                 'selected_bidang': kw.get('bidang', ''),
                 'selected_tipe': kw.get('tipe', ''),
                 'selected_tahun': kw.get('tahun', ''),
@@ -122,15 +365,13 @@ class LegalRegulationWebsiteController(http.Controller):
                 'total_count': total_count,
                 'total_pages': total_pages,
                 'current_page': current_page,
+                'pasal_matches': pasal_matches,
             }
             
             return request.render('legal_website.regulations_list_template', values)
         
         except Exception as e:
-            # Log error and return 404 if something goes wrong
-            import logging
-            _logger = logging.getLogger(__name__)
-            _logger.error(f"Error in regulations_list: {str(e)}")
+            _logger.error(f"Error in regulations_list: {str(e)}", exc_info=True)
             return request.render('website.404')
 
     @http.route('/regulations/<int:regulation_id>', type='http', auth='public', website=True)
@@ -698,13 +939,13 @@ class LegalRegulationWebsiteController(http.Controller):
 
     @http.route('/regulations/search', type='json', auth='public', website=True)
     def regulations_search_ajax(self, **kw):
-        """AJAX search untuk autocomplete"""
+        """AJAX search untuk autocomplete - termasuk pencarian dalam pasal/ayat"""
         try:
             # Cek apakah model legal.regulation tersedia
             if 'legal.regulation' not in request.env:
                 return {'results': []}
                 
-            query = kw.get('query', '')
+            query = kw.get('query', '').strip()
             if len(query) < 3:
                 return {'results': []}
 
@@ -727,32 +968,80 @@ class LegalRegulationWebsiteController(http.Controller):
                     search_fields.append(('kata_kunci', 'ilike', query))
                 if 'ringkasan' in model_fields:
                     search_fields.append(('ringkasan', 'ilike', query))
-            except:
+            except Exception:
+                pass
+            
+            # Deep search in pasal/ayat/huruf
+            regulation_ids_from_pasal = set()
+            try:
+                Pasal = request.env['legal.regulation.pasal'].sudo()
+                Ayat = request.env['legal.regulation.ayat'].sudo()
+                Huruf = request.env['legal.regulation.huruf'].sudo()
+                
+                pasal_reg_ids = Pasal.search([
+                    '|', '|',
+                    ('isi_pasal', 'ilike', query),
+                    ('judul_pasal', 'ilike', query),
+                    ('nomor_pasal', 'ilike', query),
+                ]).mapped('regulation_id.id')
+                
+                ayat_reg_ids = Ayat.search([
+                    ('isi_ayat', 'ilike', query),
+                ]).mapped('regulation_id.id')
+                
+                huruf_reg_ids = Huruf.search([
+                    ('isi', 'ilike', query),
+                ]).mapped('regulation_id.id')
+                
+                regulation_ids_from_pasal = set(pasal_reg_ids) | set(ayat_reg_ids) | set(huruf_reg_ids)
+            except Exception:
                 pass
             
             # Build domain
             if len(search_fields) > 1:
                 or_conditions = ['|'] * (len(search_fields) - 1)
-                domain = or_conditions + search_fields
+                reg_field_domain = or_conditions + search_fields
             else:
-                domain = search_fields
+                reg_field_domain = list(search_fields)
+            
+            if regulation_ids_from_pasal:
+                domain = ['|', ('id', 'in', list(regulation_ids_from_pasal))]
+                domain.extend(reg_field_domain)
+            else:
+                domain = reg_field_domain
 
             regulations = request.env['legal.regulation'].sudo().search(domain, limit=10)
             
+            # Get pasal matches for each result
+            pasal_matches = {}
+            if regulations:
+                pasal_matches = self._search_pasal_matches(
+                    regulations.ids, query, limit_per_reg=3
+                )
+            
             results = []
             for reg in regulations:
-                results.append({
+                result = {
                     'id': reg.id,
                     'title': reg.judul,
                     'number': f"{reg.bentuk_singkat} No. {reg.nomor}/{reg.tahun}",
-                    'url': f"/regulations/{reg.id}"
-                })
+                    'url': f"/regulations/{reg.id}",
+                    'pasal_matches': [],
+                }
+                # Add pasal match info
+                if reg.id in pasal_matches:
+                    for m in pasal_matches[reg.id]:
+                        result['pasal_matches'].append({
+                            'display': m.get('display', ''),
+                            'bab': m.get('bab', ''),
+                            'snippet': self._get_snippet_around_keyword(
+                                m.get('snippet', ''), query, context_chars=80
+                            ),
+                        })
+                results.append(result)
 
             return {'results': results}
             
         except Exception as e:
-            # Log error and return empty results
-            import logging
-            _logger = logging.getLogger(__name__)
             _logger.error(f"Error in regulations_search_ajax: {str(e)}")
             return {'results': []}

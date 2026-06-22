@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="verdicts_page" name="Putusan Hukum">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="oe_structure">
+                    <section class="s_title pt48 pb24 text-center">
+                        <div class="container">
+                            <h1>Direktori Putusan</h1>
+                            <p class="lead">Cari dan temukan Putusan Mahkamah Konstitusi dan Mahkamah Agung</p>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="container mb64">
+                    <!-- Search Bar -->
+                    <div class="row mb-4">
+                        <div class="col-lg-8 mx-auto">
+                            <form action="/verdicts" method="get" class="d-flex">
+                                <div class="input-group">
+                                    <input type="text" name="search" t-att-value="search" class="form-control" placeholder="Cari nomor atau judul putusan..."/>
+                                    <select name="institution" class="form-select" style="max-width: 200px;">
+                                        <option value="">Semua Lembaga</option>
+                                        <option value="mk" t-att-selected="institution == 'mk'">Mahkamah Konstitusi</option>
+                                        <option value="ma" t-att-selected="institution == 'ma'">Mahkamah Agung</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-search"/> Cari
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Results List -->
+                    <div class="row">
+                        <div class="col-12">
+                            <t t-if="not verdicts">
+                                <div class="alert alert-info text-center">
+                                    Tidak ada putusan yang ditemukan.
+                                </div>
+                            </t>
+
+                            <t t-foreach="verdicts" t-as="v">
+                                <div class="card mb-3 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span t-attf-class="badge #{'bg-primary' if v.institution == 'mk' else 'bg-success'}">
+                                                <t t-esc="dict(v.fields_get(allfields=['institution'])['institution']['selection'])[v.institution]"/>
+                                            </span>
+                                            <span class="text-muted small">
+                                                <i class="fa fa-calendar"/> <t t-esc="v.tanggal_putusan" t-options="{'widget': 'date'}"/>
+                                            </span>
+                                        </div>
+                                        <h4 class="card-title mt-2">
+                                            <a t-attf-href="/verdict/#{slug(v)}" class="text-decoration-none text-dark">
+                                                <t t-esc="v.name"/>
+                                            </a>
+                                        </h4>
+                                        <p class="card-text text-muted mb-2">
+                                            <t t-esc="v.judul"/>
+                                        </p>
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <span t-if="v.kategori" class="badge bg-secondary me-1"><t t-esc="v.kategori"/></span>
+                                                <span t-if="v.status" class="badge bg-info"><t t-esc="v.status"/></span>
+                                            </div>
+                                            <a t-attf-href="/verdict/#{slug(v)}" class="btn btn-sm btn-outline-primary">Lihat Detail</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Pager -->
+                    <div class="d-flex justify-content-center mt-4">
+                        <t t-call="website.pager"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="verdict_detail_page" name="Detail Putusan">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container py-5">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item"><a href="/verdicts">Direktori Putusan</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><t t-esc="verdict.name"/></li>
+                        </ol>
+                    </nav>
+
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-light py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h3 class="mb-0"><t t-esc="verdict.name"/></h3>
+                                <span t-attf-class="badge fs-6 #{'bg-primary' if verdict.institution == 'mk' else 'bg-success'}">
+                                    <t t-esc="dict(verdict.fields_get(allfields=['institution'])['institution']['selection'])[verdict.institution]"/>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h4 class="mb-4 text-center border-bottom pb-3"><t t-esc="verdict.judul"/></h4>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <table class="table table-borderless table-sm">
+                                        <tr>
+                                            <th class="text-muted" width="40%">Nomor Putusan</th>
+                                            <td><t t-esc="verdict.name"/></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-muted">Tanggal Putusan</th>
+                                            <td><t t-esc="verdict.tanggal_putusan" t-options="{'widget': 'date'}"/></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-muted">Lembaga</th>
+                                            <td><t t-esc="dict(verdict.fields_get(allfields=['institution'])['institution']['selection'])[verdict.institution]"/></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table table-borderless table-sm">
+                                        <tr>
+                                            <th class="text-muted" width="40%">Kategori</th>
+                                            <td><t t-esc="verdict.kategori or '-'"/></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-muted">Status</th>
+                                            <td>
+                                                <span t-if="verdict.status" class="badge bg-info"><t t-esc="verdict.status"/></span>
+                                                <span t-else="">-</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <t t-if="verdict.deskripsi">
+                                <h5 class="border-bottom pb-2 mt-4">Amar / Deskripsi Singkat</h5>
+                                <div class="p-3 bg-light rounded text-justify">
+                                    <t t-esc="verdict.deskripsi"/>
+                                </div>
+                            </t>
+
+                            <t t-if="verdict.verdict_text">
+                                <h5 class="border-bottom pb-2 mt-4">Teks Putusan</h5>
+                                <div class="p-3 bg-light rounded text-justify" style="max-height: 500px; overflow-y: auto; white-space: pre-wrap; font-family: monospace; font-size: 0.9em;">
+                                    <t t-esc="verdict.verdict_text"/>
+                                </div>
+                            </t>
+
+                            <div class="mt-5 d-flex gap-2 justify-content-center">
+                                <a t-if="verdict.link_url" t-att-href="verdict.link_url" target="_blank" class="btn btn-outline-primary">
+                                    <i class="fa fa-external-link"/> Link Sumber Asli
+                                </a>
+                                <a t-if="verdict.file_url" t-att-href="verdict.file_url" target="_blank" class="btn btn-primary">
+                                    <i class="fa fa-download"/> Download PDF
+                                </a>
+                                <a t-if="verdict.txt_file" t-attf-href="/web/content/legal.verdict/#{verdict.id}/txt_file/#{verdict.txt_filename}?download=true" class="btn btn-secondary">
+                                    <i class="fa fa-file-text-o"/> Download Teks (.txt)
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Add link to main website menu -->
+    <record id="menu_verdicts" model="website.menu">
+        <field name="name">Putusan</field>
+        <field name="url">/verdicts</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence" type="int">40</field>
+    </record>
+
+</odoo>

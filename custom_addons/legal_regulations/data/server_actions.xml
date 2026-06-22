@@ -1,0 +1,14 @@
+<odoo>
+    <!-- <data>
+        <record id="action_recompute_regulation_references" model="ir.actions.server">
+            <field name="name">Hitung Ulang Relasi Pasal</field>
+            <field name="model_id" ref="legal_regulations.model_legal_regulation_pasal"/>
+            <field name="binding_model_id" ref="legal_regulations.model_legal_regulation_pasal"/>
+            <field name="state">code</field>
+            <field name="code">
+for record in records:
+    record._compute_references()
+            </field>
+        </record>
+    </data> -->
+</odoo>

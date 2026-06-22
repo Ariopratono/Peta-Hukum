@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form View -->
+        <record id="view_legal_scraper_form" model="ir.ui.view">
+            <field name="name">legal.scraper.form</field>
+            <field name="model">legal.scraper</field>
+            <field name="arch" type="xml">
+                <form string="Legal Scraper">
+                    <header>
+                        <button name="action_scrape" string="Scrape Data" type="object" class="oe_highlight" invisible="state not in ('draft', 'error')"/>
+                        <button name="action_reset" string="Reset to Draft" type="object" invisible="state not in ('done', 'error')"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,running,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Job Name" readonly="state != 'draft'"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="target_url" readonly="state != 'draft'"/>
+                            </group>
+                            <group>
+                                <field name="create_date" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Log">
+                                <field name="log" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="view_legal_scraper_tree" model="ir.ui.view">
+            <field name="name">legal.scraper.tree</field>
+            <field name="model">legal.scraper</field>
+            <field name="arch" type="xml">
+                <tree string="Legal Scrapers">
+                    <field name="name"/>
+                    <field name="target_url"/>
+                    <field name="state"/>
+                    <field name="create_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_legal_scraper" model="ir.actions.act_window">
+            <field name="name">Legal Scrapers</field>
+            <field name="res_model">legal.scraper</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_legal_scraper"
+                  name="Web Scraper"
+                  parent="legal_regulations.menu_legal_regulations_root"
+                  action="action_legal_scraper"
+                  sequence="100"/>
+    </data>
+</odoo>

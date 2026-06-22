@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_legal_verdict_user,legal.verdict.user,model_legal_verdict,base.group_user,1,1,1,1
+access_legal_verdict_public,legal.verdict.public,model_legal_verdict,base.group_public,1,0,0,0
+access_legal_verdict_scraper_user,legal.verdict.scraper.user,model_legal_verdict_scraper,base.group_user,1,1,1,1

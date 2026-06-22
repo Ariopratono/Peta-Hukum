@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="signup_role_field" inherit_id="auth_signup.signup" name="Sign up role field">
+        <xpath expr="//form" position="attributes">
+            <attribute name="enctype">multipart/form-data</attribute>
+        </xpath>
+        
+        <xpath expr="//div[hasclass('field-name')]" position="after">
+            <div class="mb-3 field-signup-role">
+                <label for="signup_role" class="form-label">Role</label>
+                <select name="signup_role" id="signup_role" class="form-control" required="required">
+                    <option value="User" t-att-selected="signup_role == 'User'">User</option>
+                    <option value="LBH" t-att-selected="signup_role == 'LBH'">LBH</option>
+                    <option value="Lawyer" t-att-selected="signup_role == 'Lawyer'">Lawyer</option>
+                    <option value="Notaris" t-att-selected="signup_role == 'Notaris'">Notaris</option>
+                    <option value="Kurator" t-att-selected="signup_role == 'Kurator'">Kurator Konsultan HKI</option>
+                    <!-- <option value="Hakim" t-att-selected="signup_role == 'Hakim'">Hakim</option>
+                    <option value="Jaksa" t-att-selected="signup_role == 'Jaksa'">Jaksa</option>
+                    <option value="Polisi" t-att-selected="signup_role == 'Polisi'">Polisi</option>
+                    <option value="Konsultan Hukum Lainnya" t-att-selected="signup_role == 'Konsultan Hukum Lainnya'">Konsultan Hukum Lainnya</option> -->
+                </select>
+            </div>
+            
+            <div id="expert_fields" style="display: none;">
+                <div class="mb-3 field-profile-image">
+                    <label for="profile_image" class="form-label">Profile Photo</label>
+                    <input type="file" name="profile_image" id="profile_image" class="form-control" accept="image/*"/>
+                </div>
+                <div class="mb-3 field-experience">
+                    <label for="experience" class="form-label">Experience (Years)</label>
+                    <input type="number" name="experience" id="experience" class="form-control" t-att-value="experience or 0"/>
+                </div>
+                <!-- <div class="mb-3 field-service-fee">
+                    <label for="service_fee" class="form-label">Service Fee (Rp)</label>
+                    <input type="number" name="service_fee" id="service_fee" class="form-control" t-att-value="service_fee or 0"/>
+                </div> -->
+                <div class="mb-3 field-description">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="description" id="description" class="form-control" rows="3"><t t-esc="description or ''"/></textarea>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                document.addEventListener("DOMContentLoaded", function() {
+                    const roleSelect = document.getElementById("signup_role");
+                    const expertFields = document.getElementById("expert_fields");
+                    
+                    function toggleExpertFields() {
+                        if (roleSelect.value !== "User") {
+                            expertFields.style.display = "block";
+                        } else {
+                            expertFields.style.display = "none";
+                        }
+                    }
+                    
+                    if (roleSelect &amp;&amp; expertFields) {
+                        roleSelect.addEventListener("change", toggleExpertFields);
+                        toggleExpertFields();
+                    }
+                });
+            </script>
+        </xpath>
+    </template>
+</odoo>

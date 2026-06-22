@@ -1,0 +1,127 @@
+.regulation-content-main {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: justify;
+}
+.regulation-content-main h3, 
+.regulation-content-main h4, 
+.regulation-content-main h5, 
+.regulation-content-main h6 {
+    scroll-margin-top: 100px;
+}
+#toc-nav .nav-link {
+    color: #333;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+#toc-nav .nav-link:hover {
+    background-color: #e9ecef;
+}
+#toc-nav .nav-link.active {
+    background-color: #0d6efd;
+    color: white;
+}
+.card-header h6 {
+    font-size: 0.9rem;
+}
+@media (max-width: 992px) {
+    .col-lg-2 { display: none; }
+    .col-lg-7 { width: 100%; }
+    .col-lg-3 { width: 100%; margin-top: 1rem; }
+}
+
+.toc-item:hover, .toc-sub-item:hover {
+    background-color: #f8f9fa;
+}
+.toc-item.active, .toc-sub-item.active {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    font-weight: 500;
+}
+.toc-sub-items {
+    border-left: 2px solid #dee2e6;
+    margin-left: 8px;
+}
+.toc-bab-item {
+    border-bottom: 1px solid #f0f0f0;
+}
+.toc-bab-item:last-child {
+    border-bottom: none;
+}
+
+/* 5-Level Collapsible Tree Styling */
+.border-start-dashed {
+    border-left: 1px dashed #dee2e6 !important;
+}
+.border-bottom-faint {
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+.toc-children {
+    padding-left: 8px !important;
+    margin-left: 8px !important;
+}
+.toc-node-wrapper {
+    margin-bottom: 2px;
+}
+.toc-node-row {
+    min-height: 28px;
+    border-radius: 4px;
+    transition: background-color 0.15s ease;
+}
+.toc-node-row:hover {
+    background-color: #f8f9fa;
+}
+.toc-toggle {
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+.toc-toggle:hover {
+    color: #0d6efd !important;
+}
+.toc-item-link, .toc-sub-item-link {
+    color: #495057 !important;
+    text-decoration: none !important;
+    padding: 4px 6px !important;
+    border-radius: 4px;
+}
+.toc-item-link.active, .toc-sub-item-link.active {
+    background-color: #e7f1ff !important;
+    color: #0d6efd !important;
+    font-weight: 600 !important;
+}
+.toc-bab-title {
+    font-size: 0.85rem !important;
+    color: #212529 !important;
+    text-transform: uppercase;
+}
+
+/* Hover Share Actions */
+.hover-highlight {
+    background-color: rgba(13, 110, 253, 0.05) !important;
+    border-radius: 4px;
+    box-shadow: -3px 0 0 #0d6efd;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+.share-toolbar button:hover {
+    background-color: #e9ecef !important;
+}
+
+/* Mobile Floating Action Button styling */
+.mobile-toc-fab-container {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.mobile-toc-fab {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.25) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.mobile-toc-fab:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
+}
+.mobile-toc-fab:active {
+    transform: scale(0.95);
+}
+
+/* Offcanvas custom overrides */
+#offcanvasToc {
+    border-right: none;
+    box-shadow: 4px 0 25px rgba(0,0,0,0.15);
+}

@@ -15,7 +15,7 @@
     """,
     'author': 'Legal Team',
     'website': 'https://yourwebsite.com',
-    'depends': ['website', 'portal', 'legal_regulations'],
+    'depends': ['website', 'portal', 'legal_regulations', 'legal_expert_directory'],
     'data': [
         'security/ir.model.access.csv',
         'views/legal_article_views.xml',
@@ -29,11 +29,14 @@
         'views/subscription_success_template.xml',
         'views/website_menu.xml',
         'views/regulations_templates.xml',
+        'views/portal_templates.xml',
     ],
     'assets': {
         'web.assets_frontend': [
             'legal_website/static/src/css/legal_website.css',
+            'legal_website/static/src/css/toc.css',
             'legal_website/static/src/js/legal_search.js',
+            'legal_website/static/src/js/toc.js',
         ],
     },
     'installable': True,

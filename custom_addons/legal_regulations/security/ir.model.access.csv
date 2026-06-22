@@ -12,3 +12,9 @@ access_legal_regulation_consolidation_v2_user,legal.regulation.consolidation.v2.
 access_legal_regulation_consolidation_v2_public,legal.regulation.consolidation.v2.public,model_legal_regulation_consolidation_v2,base.group_public,1,0,0,0
 access_consolidation_wizard_user,consolidation.wizard.user,model_consolidation_wizard,base.group_user,1,1,1,1
 access_consolidation_preview_wizard_user,consolidation.preview.wizard.user,model_consolidation_preview_wizard,base.group_user,1,1,1,1
+access_legal_regulation_pasal_user,legal.regulation.pasal.user,model_legal_regulation_pasal,base.group_user,1,1,1,1
+access_legal_regulation_pasal_public,legal.regulation.pasal.public,model_legal_regulation_pasal,base.group_public,1,0,0,0
+access_legal_regulation_ayat_user,legal.regulation.ayat.user,model_legal_regulation_ayat,base.group_user,1,1,1,1
+access_legal_regulation_ayat_public,legal.regulation.ayat.public,model_legal_regulation_ayat,base.group_public,1,0,0,0
+access_legal_regulation_huruf_user,legal.regulation.huruf.user,model_legal_regulation_huruf,base.group_user,1,1,1,1
+access_legal_regulation_huruf_public,legal.regulation.huruf.public,model_legal_regulation_huruf,base.group_public,1,0,0,0

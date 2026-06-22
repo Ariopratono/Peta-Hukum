@@ -98,6 +98,50 @@
                         </div>
                     </section>
                     
+                    <!-- Legal Experts Section -->
+                    <section class="expert-home-section">
+                        <div class="container text-center">
+                            <div class="section-icon">
+                                <i class="fa fa-balance-scale"></i>
+                            </div>
+                            <h2>Meet Our Legal Experts</h2>
+                            <p class="section-subtitle">
+                                Kami memiliki tim ahli hukum berpengalaman dengan keahlian beragam untuk membantu kebutuhan hukum Anda.
+                            </p>
+
+                            <div class="expert-home-grid">
+                                <t t-foreach="legal_experts[:5]" t-as="expert">
+                                    <div class="expert-card">
+                                        <a t-attf-href="/legal/expert/#{expert.id}">
+                                            <div class="expert-photo-wrapper">
+                                                <div class="expert-photo-circle">
+                                                    <t t-if="expert.profile_picture">
+                                                        <img t-att-src="image_data_uri(expert.profile_picture)"
+                                                             t-attf-alt="#{expert.name}"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <img src="/web/static/img/user_placeholder.jpg"
+                                                             t-attf-alt="#{expert.name}"/>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                            <div class="expert-card-name">
+                                                <t t-esc="expert.name"/>
+                                                <t t-if="expert.gelar">,
+                                                    <t t-esc="expert.gelar"/>
+                                                </t>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <div class="mt-4">
+                                <a href="/legal/experts" class="btn-view-more">VIEW MORE</a>
+                            </div>
+                        </div>
+                    </section>
+
                     <!-- Features Section -->
                     <section class="legal-features py-5">
                         <div class="container">

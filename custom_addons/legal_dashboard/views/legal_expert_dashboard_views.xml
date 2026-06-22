@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Legal Expert Graph View -->
+    <record id="view_legal_expert_graph" model="ir.ui.view">
+        <field name="name">legal.expert.graph</field>
+        <field name="model">legal.expert</field>
+        <field name="arch" type="xml">
+            <graph string="Legal Expert Statistics" type="bar">
+                <field name="role" type="row"/>
+                <field name="experience" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Legal Expert Pivot View -->
+    <record id="view_legal_expert_pivot" model="ir.ui.view">
+        <field name="name">legal.expert.pivot</field>
+        <field name="model">legal.expert</field>
+        <field name="arch" type="xml">
+            <pivot string="Legal Expert Pivot" display_quantity="1">
+                <field name="role" type="row"/>
+                <field name="ranking" type="measure"/>
+                <field name="handled_client" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Action for Legal Expert Board -->
+    <record id="action_legal_expert_dashboard" model="ir.actions.act_window">
+        <field name="name">Legal Experts Data</field>
+        <field name="res_model">legal.expert</field>
+        <field name="view_mode">graph,pivot,tree</field>
+        <field name="view_id" ref="view_legal_expert_graph"/>
+    </record>
+</odoo>

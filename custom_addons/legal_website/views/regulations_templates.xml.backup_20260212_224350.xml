@@ -1,0 +1,1179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Regulations List Template -->
+        <template id="regulations_list_template" name="Regulations List">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container my-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <h1 class="display-6 fw-bold text-uppercase">Peraturan Hukum Indonesia</h1>
+                            <p class="text-muted">Akses mudah ke ribuan peraturan hukum Indonesia yang selalu up-to-date</p>
+                        </div>
+                        
+                        <!-- Filter & Search Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-white">
+                                <a class="text-decoration-none text-dark fw-bold" data-bs-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false">
+                                    <i class="fa fa-filter me-2"></i>FILTER &amp; PENCARIAN
+                                </a>
+                            </div>
+                            <div class="collapse show" id="filterCollapse">
+                                <div class="card-body">
+                                    <form action="/regulations" method="get">
+                                        <div class="row g-3">
+                                            <!-- Kata Kunci -->
+                                            <div class="col-md-4">
+                                                <label class="form-label small">Kata Kunci</label>
+                                                <input type="text" name="search" class="form-control" t-att-value="search" placeholder="Cari peraturan..."/>
+                                            </div>
+                                            
+                                            <!-- Bidang Hukum -->
+                                            <div class="col-md-4">
+                                                <label class="form-label small">Bidang Hukum</label>
+                                                <select name="bidang" class="form-select">
+                                                    <option value="">Semua Bidang</option>
+                                                    <t t-foreach="bidang_options" t-as="bidang">
+                                                        <option t-att-value="bidang[0]" t-att-selected="'selected' if selected_bidang == bidang[0] else None">
+                                                            <t t-esc="bidang[1]"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Tipe Dokumen -->
+                                            <div class="col-md-4">
+                                                <label class="form-label small">Tipe Dokumen</label>
+                                                <select name="tipe" class="form-select">
+                                                    <option value="">Semua Tipe</option>
+                                                    <t t-foreach="tipe_options" t-as="tipe">
+                                                        <option t-att-value="tipe[0]" t-att-selected="'selected' if selected_tipe == tipe[0] else None">
+                                                            <t t-esc="tipe[1]"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Tahun -->
+                                            <div class="col-md-4">
+                                                <label class="form-label small">Tahun</label>
+                                                <select name="tahun" class="form-select">
+                                                    <option value="">Semua Tahun</option>
+                                                    <t t-foreach="year_options" t-as="year">
+                                                        <option t-att-value="year" t-att-selected="'selected' if int(selected_tahun or 0) == year else None">
+                                                            <t t-esc="year"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Status -->
+                                            <div class="col-md-4">
+                                                <label class="form-label small">Status</label>
+                                                <select name="status" class="form-select">
+                                                    <option value="">Semua Status</option>
+                                                    <option value="berlaku" t-att-selected="'selected' if selected_status == 'berlaku' else None">Berlaku</option>
+                                                    <option value="dicabut" t-att-selected="'selected' if selected_status == 'dicabut' else None">Dicabut</option>
+                                                    <option value="diubah" t-att-selected="'selected' if selected_status == 'diubah' else None">Diubah</option>
+                                                    <option value="tidak_berlaku" t-att-selected="'selected' if selected_status == 'tidak_berlaku' else None">Tidak Berlaku</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Buttons -->
+                                            <div class="col-md-4 d-flex align-items-end gap-2">
+                                                <button type="submit" class="btn btn-info text-white flex-grow-1">
+                                                    <i class="fa fa-search me-1"></i>Cari
+                                                </button>
+                                                <a href="/regulations" class="btn btn-warning flex-grow-1">
+                                                    <i class="fa fa-refresh me-1"></i>Reset
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Result Count -->
+                        <div class="mb-3">
+                            <p class="text-muted">
+                                Menampilkan <strong><t t-esc="total_count"/></strong> peraturan hukum dengan kata kunci "<strong><t t-esc="search or '-'"/></strong>"
+                            </p>
+                        </div>
+                        
+                        <!-- Regulations List -->
+                        <div class="regulations-list">
+                            <t t-foreach="regulations" t-as="regulation">
+                                <div class="card mb-3 border-start border-info border-4 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <h5 class="card-title text-primary mb-2">
+                                                    <a t-attf-href="/regulations/#{regulation.id}" class="text-decoration-none">
+                                                        <t t-esc="regulation.judul"/>
+                                                    </a>
+                                                </h5>
+                                                <p class="mb-2">
+                                                    <strong>
+                                                        <t t-esc="regulation.bentuk_singkat"/> No. <t t-esc="regulation.nomor"/> Tahun <t t-esc="regulation.tahun"/>
+                                                    </strong>
+                                                </p>
+                                                <div class="mb-2">
+                                                    <span t-attf-class="badge bg-#{regulation.status == 'berlaku' and 'success' or regulation.status == 'dicabut' and 'danger' or 'warning'} me-2">
+                                                        <t t-esc="dict(regulation._fields['status'].selection).get(regulation.status, regulation.status).upper()"/>
+                                                    </span>
+                                                    <span class="badge bg-info me-2">
+                                                        <t t-esc="dict(regulation._fields['tipe_dokumen'].selection).get(regulation.tipe_dokumen, regulation.tipe_dokumen)"/>
+                                                    </span>
+                                                </div>
+                                                <p class="small text-muted mb-0">
+                                                    <strong>Subjek:</strong> <t t-esc="regulation.subjek or '-'"/>
+                                                </p>
+                                                <p class="small text-muted mb-0">
+                                                    <strong>Sumber:</strong> <t t-esc="regulation.sumber or '-'"/>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center justify-content-end">
+                                                <a t-attf-href="/regulations/#{regulation.id}" class="btn btn-outline-primary btn-sm">
+                                                    <i class="fa fa-eye me-1"></i>Lihat Detail
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <t t-if="total_pages > 1">
+                            <nav aria-label="Page navigation" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    <t t-if="current_page > 1">
+                                        <li class="page-item">
+                                            <a t-attf-href="/regulations?page=#{current_page - 1}&amp;search=#{search}&amp;bidang=#{selected_bidang}&amp;tipe=#{selected_tipe}&amp;tahun=#{selected_tahun}&amp;status=#{selected_status}" 
+                                               class="page-link">
+                                                <i class="fa fa-chevron-left"></i>
+                                            </a>
+                                        </li>
+                                    </t>
+                                    
+                                    <t t-foreach="range(max(1, current_page - 2), min(total_pages + 1, current_page + 3))" t-as="page_num">
+                                        <li t-attf-class="page-item #{current_page == page_num and 'active' or ''}">
+                                            <a t-attf-href="/regulations?page=#{page_num}&amp;search=#{search}&amp;bidang=#{selected_bidang}&amp;tipe=#{selected_tipe}&amp;tahun=#{selected_tahun}&amp;status=#{selected_status}" 
+                                               class="page-link" t-esc="page_num"/>
+                                        </li>
+                                    </t>
+                                    
+                                    <t t-if="current_page &lt; total_pages">
+                                        <li class="page-item">
+                                            <a t-attf-href="/regulations?page=#{current_page + 1}&amp;search=#{search}&amp;bidang=#{selected_bidang}&amp;tipe=#{selected_tipe}&amp;tahun=#{selected_tahun}&amp;status=#{selected_status}" 
+                                               class="page-link">
+                                                <i class="fa fa-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </nav>
+                        </t>
+                        
+                        <!-- Social Share -->
+                        <div class="text-center mt-4">
+                            <a href="#" class="btn btn-outline-primary btn-sm rounded-circle me-2"><i class="fa fa-facebook"></i></a>
+                            <a href="#" class="btn btn-outline-info btn-sm rounded-circle me-2"><i class="fa fa-twitter"></i></a>
+                            <a href="#" class="btn btn-outline-primary btn-sm rounded-circle"><i class="fa fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        
+        <!-- Regulation Detail Template -->
+        <template id="regulation_detail_template" name="Detail Peraturan Hukum">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure oe_empty">
+                    <div class="container-fluid px-4 mt-3">
+                        <!-- Kembali ke Daftar - Top Left -->
+                        <div class="mb-3">
+                            <a href="/regulations" class="btn btn-outline-dark btn-sm">
+                                <i class="fa fa-arrow-left"></i> Kembali ke Daftar
+                            </a>
+                        </div>
+
+                        <!-- Breadcrumb -->
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/regulations">Peraturan Hukum</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Detail</li>
+                            </ol>
+                        </nav>
+
+                        <!-- JUDUL UTAMA DI ATAS -->
+                        <div class="text-center mb-4 py-4" style="background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%); border-radius: 10px;">
+                            <h1 class="text-white fw-bold mb-2" style="font-size: 1.8rem;">
+                                <t t-esc="regulation.judul"/>
+                            </h1>
+                            <p class="text-white-50 mb-0">
+                                <t t-esc="regulation.bentuk_singkat"/> Nomor <t t-esc="regulation.nomor"/> Tahun <t t-esc="regulation.tahun"/>
+                            </p>
+                            <div class="mt-2">
+                                <t t-if="regulation.status == 'berlaku'">
+                                    <span class="badge bg-success px-3 py-2">✓ BERLAKU</span>
+                                </t>
+                                <t t-elif="regulation.status == 'dicabut'">
+                                    <span class="badge bg-danger px-3 py-2">✗ DICABUT</span>
+                                </t>
+                                <t t-elif="regulation.status == 'tidak_berlaku'">
+                                    <span class="badge bg-warning text-dark px-3 py-2">⚠ TIDAK BERLAKU</span>
+                                </t>
+                                <t t-else="">
+                                    <span class="badge bg-secondary px-3 py-2">? UNKNOWN</span>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- MAIN 3-COLUMN LAYOUT -->
+                        <div class="row">
+                            <!-- LEFT SIDEBAR: Table of Contents -->
+                            <div class="col-lg-2">
+                                <div class="card sticky-top" style="top: 80px; max-height: calc(100vh - 100px); overflow-y: auto;">
+                                    <div class="card-header bg-dark text-white py-2">
+                                        <h6 class="mb-0"><i class="fa fa-list-ul"></i> Daftar Isi</h6>
+                                    </div>
+                                    <div class="card-body p-2" id="toc-container">
+                                        <nav id="toc-nav" class="nav flex-column">
+                                            <!-- Pembukaan -->
+                                            <a class="nav-link small py-1 px-2 toc-item active" href="#" data-search="PEMBUKAAN,Pembukaan">
+                                                <i class="fa fa-file-text-o fa-fw"></i> Pembukaan
+                                            </a>
+                                            
+                                            <!-- Dynamic BAB items will be generated by JS -->
+                                            <div id="toc-bab-container"></div>
+                                            
+                                            <!-- Penjelasan -->
+                                            <a class="nav-link small py-1 px-2 toc-item" href="#" data-search="PENJELASAN,Penjelasan">
+                                                <i class="fa fa-info-circle fa-fw"></i> Penjelasan
+                                            </a>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- CENTER: Isi Peraturan -->
+                            <div class="col-lg-7">
+                                <!-- Tab untuk Perubahan (jika ada) -->
+                                <t t-if="has_perubahan">
+                                    <ul class="nav nav-tabs mb-3" id="regulationTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="induk-tab" data-bs-toggle="tab" 
+                                                    data-bs-target="#induk-content" type="button" role="tab">
+                                                <i class="fa fa-file-text"></i> UU Induk
+                                            </button>
+                                        </li>
+                                        <t t-foreach="perubahan_list" t-as="perubahan">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" t-att-id="'perubahan-tab-' + str(perubahan_index)"
+                                                        data-bs-toggle="tab" 
+                                                        t-att-data-bs-target="'#perubahan-content-' + str(perubahan_index)" 
+                                                        type="button" role="tab">
+                                                    <i class="fa fa-edit"></i> 
+                                                    <t t-esc="perubahan.get('nama', 'Perubahan')"/>
+                                                </button>
+                                            </li>
+                                        </t>
+                                        <li class="nav-item" role="presentation" t-if="konsolidasi_html">
+                                            <button class="nav-link" id="konsolidasi-tab" data-bs-toggle="tab" 
+                                                    data-bs-target="#konsolidasi-content" type="button" role="tab">
+                                                <i class="fa fa-compress"></i> Konsolidasi
+                                            </button>
+                                        </li>
+                                    </ul>
+                                    
+                                    <!-- Tab Content -->
+                                    <div class="tab-content" id="regulationTabsContent">
+                                        <!-- Tab UU Induk -->
+                                        <div class="tab-pane fade show active" id="induk-content" role="tabpanel">
+                                            <div class="card">
+                                                <div class="card-body regulation-content-main" id="regulation-content-scroll" 
+                                                     style="max-height: calc(100vh - 250px); overflow-y: auto; line-height: 1.8;">
+                                                    <t t-if="regulation.isi_peraturan">
+                                                        <div id="section-pembukaan" class="content-section">
+                                                            <h3 class="section-title">PEMBUKAAN</h3>
+                                                        </div>
+                                                        <div id="section-batang-tubuh" class="content-section">
+                                                            <t t-raw="regulation.isi_peraturan"/>
+                                                        </div>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <p class="text-muted text-center py-5">Isi peraturan tidak tersedia.</p>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Tab Perubahan -->
+                                        <t t-foreach="perubahan_list" t-as="perubahan">
+                                            <div class="tab-pane fade" t-att-id="'perubahan-content-' + str(perubahan_index)" role="tabpanel">
+                                                <div class="card">
+                                                    <div class="card-body regulation-content-main" 
+                                                         style="max-height: calc(100vh - 250px); overflow-y: auto; line-height: 1.8;">
+                                                        <t t-if="perubahan.get('isi_html')">
+                                                            <t t-raw="perubahan.get('isi_html')"/>
+                                                        </t>
+                                                        <t t-elif="perubahan.get('isi_txt')">
+                                                            <pre style="white-space: pre-wrap; font-family: inherit;"><t t-esc="perubahan.get('isi_txt')"/></pre>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <p class="text-muted text-center py-5">Isi perubahan tidak tersedia.</p>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        
+                                        <!-- Tab Konsolidasi -->
+                                        <div class="tab-pane fade" id="konsolidasi-content" role="tabpanel" t-if="konsolidasi_html">
+                                            <div class="card">
+                                                <div class="card-body regulation-content-main" 
+                                                     style="max-height: calc(100vh - 250px); overflow-y: auto; line-height: 1.8;">
+                                                    <t t-raw="konsolidasi_html"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                                
+                                <!-- Tampilan Normal (tanpa perubahan) -->
+                                <t t-if="not has_perubahan">
+                                    <div class="card">
+                                        <div class="card-body regulation-content-main" id="regulation-content-scroll" 
+                                             style="max-height: calc(100vh - 200px); overflow-y: auto; line-height: 1.8;">
+                                            <t t-if="regulation.isi_peraturan">
+                                                <div id="section-pembukaan" class="content-section">
+                                                    <h3 class="section-title">PEMBUKAAN</h3>
+                                                </div>
+                                                <div id="section-batang-tubuh" class="content-section">
+                                                    <t t-raw="regulation.isi_peraturan"/>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <p class="text-muted text-center py-5">Isi peraturan tidak tersedia.</p>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                                
+                                <!-- Control Buttons -->
+                                <div class="mt-2 d-flex justify-content-between">
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="adjustFontSize(-1)">
+                                            <i class="fa fa-minus"></i> A
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary ms-1" onclick="adjustFontSize(1)">
+                                            <i class="fa fa-plus"></i> A
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="toggleFullscreen()">
+                                            <i class="fa fa-expand"></i> Layar Penuh
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- RIGHT SIDEBAR: Info & Klasifikasi -->
+                            <div class="col-lg-3">
+                                <!-- Informasi Dasar -->
+                                <div class="card mb-3">
+                                    <div class="card-header bg-primary text-white py-2">
+                                        <h6 class="mb-0"><i class="fa fa-info-circle"></i> Informasi Dasar</h6>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <table class="table table-sm table-borderless mb-0" style="font-size: 0.85rem;">
+                                            <tr>
+                                                <td class="text-muted" style="width: 40%;">Bentuk</td>
+                                                <td><strong><t t-esc="regulation.bentuk or '-'"/></strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Nomor</td>
+                                                <td><strong><t t-esc="regulation.nomor"/></strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Tahun</td>
+                                                <td><strong><t t-esc="regulation.tahun"/></strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">T.E.U.</td>
+                                                <td><t t-esc="regulation.teu or '-'"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Tempat Penetapan</td>
+                                                <td><t t-esc="regulation.tempat_penetapan or '-'"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Tgl Penetapan</td>
+                                                <td><t t-esc="regulation.tanggal_penetapan or '-'"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Tgl Pengundangan</td>
+                                                <td><t t-esc="regulation.tanggal_pengundangan or '-'"/></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- Klasifikasi -->
+                                <div class="card mb-3">
+                                    <div class="card-header bg-info text-white py-2">
+                                        <h6 class="mb-0"><i class="fa fa-tags"></i> Klasifikasi</h6>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <table class="table table-sm table-borderless mb-0" style="font-size: 0.85rem;">
+                                            <tr>
+                                                <td class="text-muted" style="width: 40%;">Bidang Hukum</td>
+                                                <td>
+                                                    <span class="badge bg-secondary">
+                                                        <t t-set="bidang_display" t-value="regulation.bidang"/>
+                                                        <t t-if="bidang_display and str(bidang_display) not in ['True', 'False', '1', '0']">
+                                                            <t t-esc="str(bidang_display).replace('_', ' ').title()"/>
+                                                        </t>
+                                                        <t t-else="">-</t>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Tipe Dokumen</td>
+                                                <td>
+                                                    <t t-set="tipe_display" t-value="regulation.tipe_dokumen"/>
+                                                    <t t-if="tipe_display and str(tipe_display) not in ['True', 'False', '1', '0']">
+                                                        <t t-esc="str(tipe_display).replace('_', ' ').title()"/>
+                                                    </t>
+                                                    <t t-else="">-</t>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Sumber</td>
+                                                <td><t t-esc="regulation.sumber or '-'"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Bahasa</td>
+                                                <td><t t-esc="regulation.bahasa or '-'"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Lokasi</td>
+                                                <td><t t-esc="regulation.lokasi or '-'"/></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- Subjek (jika ada) -->
+                                <div class="card mb-3" t-if="regulation.subjek">
+                                    <div class="card-header bg-secondary text-white py-2">
+                                        <h6 class="mb-0"><i class="fa fa-bookmark"></i> Subjek</h6>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <p class="mb-0 small"><t t-esc="regulation.subjek"/></p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Kata Kunci -->
+                                <div class="card mb-3" t-if="regulation.kata_kunci">
+                                    <div class="card-header bg-warning py-2">
+                                        <h6 class="mb-0"><i class="fa fa-key"></i> Kata Kunci</h6>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <t t-set="keywords" t-value="regulation.kata_kunci.split(',')"/>
+                                        <t t-foreach="keywords" t-as="keyword">
+                                            <span class="badge bg-light text-dark border me-1 mb-1"><t t-esc="keyword.strip()"/></span>
+                                        </t>
+                                    </div>
+                                </div>
+                                
+                                <!-- Download & Links - DINONAKTIFKAN
+                                <div class="card mb-3">
+                                    <div class="card-header bg-success text-white py-2">
+                                        <h6 class="mb-0"><i class="fa fa-download"></i> Unduh Dokumen</h6>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="d-grid gap-2">
+                                            <t t-if="regulation.file_pdf">
+                                                <a t-attf-href="/web/content?model=legal.regulation&amp;id=#{regulation.id}&amp;field=file_pdf&amp;filename_field=file_name&amp;download=true" 
+                                                   class="btn btn-danger btn-sm" target="_blank">
+                                                    <i class="fa fa-file-pdf-o"></i> Download PDF
+                                                </a>
+                                            </t>
+                                            <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+                                                <i class="fa fa-print"></i> Cetak
+                                            </button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="shareRegulation()">
+                                                <i class="fa fa-share-alt"></i> Bagikan
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                -->
+                                
+                                <!-- AKSI CEPAT - DI-COMMENT DAHULU
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0"><i class="fa fa-bolt"></i> Aksi Cepat</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <a href="/regulations" class="btn btn-outline-secondary btn-sm">
+                                                <i class="fa fa-arrow-left"></i> Kembali ke Daftar
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom CSS -->
+                <style>
+                    .regulation-content-main {
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        text-align: justify;
+                    }
+                    .regulation-content-main h3, 
+                    .regulation-content-main h4, 
+                    .regulation-content-main h5, 
+                    .regulation-content-main h6 {
+                        scroll-margin-top: 100px;
+                    }
+                    #toc-nav .nav-link {
+                        color: #333;
+                        border-radius: 4px;
+                        transition: all 0.2s;
+                    }
+                    #toc-nav .nav-link:hover {
+                        background-color: #e9ecef;
+                    }
+                    #toc-nav .nav-link.active {
+                        background-color: #0d6efd;
+                        color: white;
+                    }
+                    .card-header h6 {
+                        font-size: 0.9rem;
+                    }
+                    @media (max-width: 992px) {
+                        .col-lg-2 { display: none; }
+                        .col-lg-7 { width: 100%; }
+                        .col-lg-3 { width: 100%; margin-top: 1rem; }
+                    }
+                </style>
+
+                <!-- JavaScript -->
+                <script>
+                    function shareRegulation() {
+                        if (navigator.share) {
+                            navigator.share({
+                                title: document.title,
+                                text: 'Lihat peraturan ini',
+                                url: window.location.href
+                            });
+                        } else {
+                            navigator.clipboard.writeText(window.location.href).then(function() {
+                                alert('URL berhasil disalin ke clipboard!');
+                            });
+                        }
+                    }
+
+                    // Font size adjustment
+                    let currentFontSize = 16;
+                    function adjustFontSize(delta) {
+                        currentFontSize = Math.max(12, Math.min(24, currentFontSize + delta));
+                        document.querySelectorAll('.regulation-content-main').forEach(el => {
+                            el.style.fontSize = currentFontSize + 'px';
+                        });
+                    }
+
+                    // Fullscreen toggle
+                    function toggleFullscreen() {
+                        const content = document.querySelector('.regulation-content-main');
+                        if (content.style.maxHeight !== 'none') {
+                            content.style.maxHeight = 'none';
+                            content.style.position = 'fixed';
+                            content.style.top = '0';
+                            content.style.left = '0';
+                            content.style.right = '0';
+                            content.style.bottom = '0';
+                            content.style.zIndex = '9999';
+                            content.style.background = 'white';
+                            content.style.padding = '40px';
+                        } else {
+                            content.style.maxHeight = 'calc(100vh - 250px)';
+                            content.style.position = '';
+                            content.style.top = '';
+                            content.style.left = '';
+                            content.style.right = '';
+                            content.style.bottom = '';
+                            content.style.zIndex = '';
+                            content.style.padding = '';
+                        }
+                    }
+
+                    // Store TOC elements globally
+                    window.tocElements = {};
+                    
+                    // Toggle collapse for BAB items (only toggle, no scroll)
+                    window.toggleBab = function(babId, evt) {
+                        if (evt) {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                        }
+                        const subItems = document.getElementById('sub-' + babId);
+                        const icon = document.getElementById('icon-' + babId);
+                        if (subItems) {
+                            if (subItems.style.display === 'none') {
+                                subItems.style.display = 'block';
+                                if (icon) icon.className = 'fa fa-chevron-down fa-fw';
+                            } else {
+                                subItems.style.display = 'none';
+                                if (icon) icon.className = 'fa fa-chevron-right fa-fw';
+                            }
+                        }
+                        return false;
+                    };
+                    
+                    // Scroll to TOC element AND expand if it's a BAB
+                    window.scrollToTocElement = function(key, evt) {
+                        if (evt) {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                        }
+                        
+                        // If clicking a BAB, also expand it
+                        if (key.startsWith('BAB-')) {
+                            const subItems = document.getElementById('sub-' + key);
+                            const icon = document.getElementById('icon-' + key);
+                            if (subItems &amp;&amp; subItems.style.display === 'none') {
+                                subItems.style.display = 'block';
+                                if (icon) icon.className = 'fa fa-chevron-down fa-fw';
+                            }
+                        }
+                        
+                        const element = window.tocElements[key];
+                        const scrollContainer = document.querySelector('.regulation-content-main');
+                        
+                        if (element &amp;&amp; scrollContainer) {
+                            const containerRect = scrollContainer.getBoundingClientRect();
+                            const elementRect = element.getBoundingClientRect();
+                            const scrollTop = scrollContainer.scrollTop + (elementRect.top - containerRect.top) - 30;
+                            
+                            scrollContainer.scrollTo({
+                                top: scrollTop,
+                                behavior: 'smooth'
+                            });
+                            
+                            // Update active state
+                            document.querySelectorAll('.toc-item, .toc-sub-item').forEach(l => l.classList.remove('active'));
+                            if (evt &amp;&amp; evt.target) {
+                                const targetEl = evt.target.closest('a, span');
+                                if (targetEl) targetEl.classList.add('active');
+                            }
+                        }
+                        return false;
+                    };
+
+                    // Generate dynamic TOC from content
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const scrollContainer = document.querySelector('.regulation-content-main');
+                        const tocNav = document.getElementById('toc-nav');
+                        const tocBabContainer = document.getElementById('toc-bab-container');
+                        
+                        if (!scrollContainer || !tocBabContainer) return;
+                        
+                        // Find all BAB and Pasal in content
+                        const contentText = scrollContainer.innerHTML;
+                        const allElements = scrollContainer.querySelectorAll('*');
+                        
+                        // Structure to hold BAB -> Pasal mapping
+                        const structure = {};
+                        let currentBab = null;
+                        
+                        // Regex patterns
+                        const babPattern = /^BAB\s+([IVXLCDM]+|[0-9]+)/i;
+                        const pasalPattern = /^Pasal\s+(\d+[A-Z]?)/i;
+                        
+                        allElements.forEach(el => {
+                            const text = el.textContent.trim();
+                            const directText = Array.from(el.childNodes)
+                                .filter(node => node.nodeType === 3)
+                                .map(node => node.textContent.trim())
+                                .join(' ').trim();
+                            
+                            // Check for BAB
+                            const babMatch = directText.match(babPattern) || text.substring(0, 20).match(babPattern);
+                            if (babMatch &amp;&amp; !el.closest('.toc-item')) {
+                                const babNum = babMatch[1];
+                                const babKey = 'BAB-' + babNum;
+                                if (!structure[babKey]) {
+                                    structure[babKey] = {
+                                        element: el,
+                                        title: 'BAB ' + babNum,
+                                        pasals: []
+                                    };
+                                    currentBab = babKey;
+                                    window.tocElements[babKey] = el;
+                                }
+                            }
+                            
+                            // Check for Pasal
+                            const pasalMatch = directText.match(pasalPattern) || text.substring(0, 15).match(pasalPattern);
+                            if (pasalMatch &amp;&amp; currentBab &amp;&amp; !el.closest('.toc-item')) {
+                                const pasalNum = pasalMatch[1];
+                                const pasalKey = currentBab + '-Pasal-' + pasalNum;
+                                // Avoid duplicates
+                                if (!structure[currentBab].pasals.find(p => p.key === pasalKey)) {
+                                    structure[currentBab].pasals.push({
+                                        key: pasalKey,
+                                        element: el,
+                                        title: 'Pasal ' + pasalNum
+                                    });
+                                    window.tocElements[pasalKey] = el;
+                                }
+                            }
+                        });
+                        
+                        // Generate TOC HTML
+                        let tocHtml = '';
+                        Object.keys(structure).forEach(babKey => {
+                            const bab = structure[babKey];
+                            const hasPasals = bab.pasals.length > 0;
+                            
+                            tocHtml += '&lt;div class="toc-bab-item"&gt;';
+                            tocHtml += '&lt;a class="nav-link small py-1 px-2 toc-item d-flex align-items-center" href="javascript:void(0)" ';
+                            tocHtml += "onclick=\"scrollToTocElement('" + babKey + "', event); return false;\"&gt;";
+                            
+                            if (hasPasals) {
+                                tocHtml += "&lt;span class=\"me-1\" style=\"cursor:pointer\" onclick=\"toggleBab('" + babKey + "', event); return false;\"&gt;";
+                                tocHtml += '&lt;i id="icon-' + babKey + '" class="fa fa-chevron-right fa-fw"&gt;&lt;/i&gt;';
+                                tocHtml += '&lt;/span&gt;';
+                            } else {
+                                tocHtml += '&lt;i class="fa fa-bookmark-o fa-fw me-1"&gt;&lt;/i&gt;';
+                            }
+                            
+                            tocHtml += bab.title + '&lt;/a&gt;';
+                            
+                            // Sub-items (Pasals)
+                            if (hasPasals) {
+                                tocHtml += '&lt;div id="sub-' + babKey + '" class="toc-sub-items ps-3" style="display:none;"&gt;';
+                                bab.pasals.forEach(pasal => {
+                                    tocHtml += '&lt;span class="nav-link small py-0 px-2 toc-sub-item" style="cursor:pointer; font-size: 0.75rem;" ';
+                                    tocHtml += "onclick=\"scrollToTocElement('" + pasal.key + "', event); return false;\"&gt;";
+                                    tocHtml += '&lt;i class="fa fa-angle-right fa-fw"&gt;&lt;/i&gt; ' + pasal.title + '&lt;/span&gt;';
+                                });
+                                tocHtml += '&lt;/div&gt;';
+                            }
+                            
+                            tocHtml += '&lt;/div&gt;';
+                        });
+                        
+                        tocBabContainer.innerHTML = tocHtml;
+                        
+                        // Handle clicks on static TOC items (Pembukaan, Penjelasan)
+                        tocNav.addEventListener('click', function(e) {
+                            const link = e.target.closest('a.toc-item[data-search]');
+                            if (link) {
+                                e.preventDefault();
+                                const searchTerms = link.getAttribute('data-search');
+                                if (searchTerms) {
+                                    const terms = searchTerms.split(',').map(t => t.trim());
+                                    
+                                    for (let el of allElements) {
+                                        const text = el.textContent.trim().toUpperCase();
+                                        for (let term of terms) {
+                                            if (text.startsWith(term.toUpperCase()) || text.includes(term.toUpperCase())) {
+                                                const containerRect = scrollContainer.getBoundingClientRect();
+                                                const elementRect = el.getBoundingClientRect();
+                                                const scrollTop = scrollContainer.scrollTop + (elementRect.top - containerRect.top) - 30;
+                                                
+                                                scrollContainer.scrollTo({
+                                                    top: scrollTop,
+                                                    behavior: 'smooth'
+                                                });
+                                                
+                                                document.querySelectorAll('.toc-item, .toc-sub-item').forEach(l => l.classList.remove('active'));
+                                                link.classList.add('active');
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+                    
+                </script>
+                
+                <!-- Custom CSS for TOC -->
+                <style>
+                    .toc-item:hover, .toc-sub-item:hover {
+                        background-color: #f8f9fa;
+                    }
+                    .toc-item.active, .toc-sub-item.active {
+                        background-color: #e7f1ff;
+                        color: #0d6efd;
+                        font-weight: 500;
+                    }
+                    .toc-sub-items {
+                        border-left: 2px solid #dee2e6;
+                        margin-left: 8px;
+                    }
+                    .toc-bab-item {
+                        border-bottom: 1px solid #f0f0f0;
+                    }
+                    .toc-bab-item:last-child {
+                        border-bottom: none;
+                    }
+                </style>
+
+                <!-- ===== DEEP LINK / ANCHOR SYSTEM ===== -->
+                <style>
+                    /* Block-level linkable (headings, BAB, Pasal, full paragraphs) */
+                    .dl-block {
+                        position: relative;
+                        padding-left: 28px;
+                        margin-left: -28px;
+                        border-radius: 4px;
+                        transition: background-color 0.2s, box-shadow 0.2s;
+                    }
+                    .dl-block:hover {
+                        background-color: #f0f0f0;
+                        box-shadow: inset 3px 0 0 #6c757d;
+                    }
+
+                    /* Inline sentence linkable */
+                    .dl-sentence {
+                        border-radius: 3px;
+                        padding: 1px 3px;
+                        transition: background-color 0.2s;
+                    }
+                    .dl-sentence:hover {
+                        background-color: #e8e8e8;
+                    }
+
+                    /* Link button - block version */
+                    .dl-link-btn {
+                        display: none;
+                        position: absolute;
+                        left: 2px;
+                        top: 4px;
+                        background: #6c757d;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        width: 22px;
+                        height: 22px;
+                        font-size: 11px;
+                        cursor: pointer;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 10;
+                        opacity: 0;
+                        transition: opacity 0.2s;
+                        user-select: none;
+                    }
+                    .dl-block:hover > .dl-link-btn {
+                        display: inline-flex;
+                        opacity: 0.7;
+                    }
+                    .dl-link-btn:hover {
+                        opacity: 1 !important;
+                        background: #343a40;
+                    }
+
+                    /* Link button - sentence version (inline) */
+                    .dl-sentence > .dl-link-btn {
+                        position: static;
+                        left: auto;
+                        top: auto;
+                        width: 16px;
+                        height: 16px;
+                        font-size: 9px;
+                        vertical-align: middle;
+                        margin-right: 2px;
+                    }
+                    .dl-sentence:hover > .dl-link-btn {
+                        display: inline-flex;
+                        opacity: 0.7;
+                    }
+
+                    /* Highlight when navigating via deep link */
+                    .dl-highlight {
+                        background-color: #fff3cd !important;
+                        box-shadow: inset 4px 0 0 #ffc107, 0 0 8px rgba(255,193,7,0.3) !important;
+                        animation: dlFade 5s ease forwards;
+                    }
+                    @keyframes dlFade {
+                        0%, 60% { background-color: #fff3cd; }
+                        100% { background-color: transparent; }
+                    }
+
+                    /* Toast notification */
+                    .dl-toast {
+                        position: fixed;
+                        bottom: 24px;
+                        right: 24px;
+                        background: #198754;
+                        color: #fff;
+                        padding: 12px 24px;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        z-index: 99999;
+                        box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+                        pointer-events: none;
+                        animation: dlToastAnim 3s ease forwards;
+                    }
+                    @keyframes dlToastAnim {
+                        0% { opacity: 0; transform: translateY(20px); }
+                        10% { opacity: 1; transform: translateY(0); }
+                        75% { opacity: 1; }
+                        100% { opacity: 0; }
+                    }
+
+                    /* Don't show deep link stuff inside TOC sidebar */
+                    #toc-container .dl-block,
+                    #toc-container .dl-sentence { display: none; }
+                </style>
+
+                <!-- Deep Link JavaScript -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var content = document.querySelector('.regulation-content-main');
+                        if (!content) return;
+
+                        var dlC = 0;
+
+                        // Generate unique slug ID from text
+                        function dlId(text) {
+                            dlC++;
+                            var s = text.substring(0, 50).toLowerCase()
+                                .replace(/[^a-z0-9\s]/g, '').trim().replace(/\s+/g, '-');
+                            return 's' + dlC + (s ? '-' + s : '');
+                        }
+
+                        // Show toast notification
+                        function dlToast(msg) {
+                            var t = document.createElement('div');
+                            t.className = 'dl-toast';
+                            t.textContent = msg;
+                            document.body.appendChild(t);
+                            setTimeout(function() { if (t.parentNode) t.remove(); }, 3200);
+                        }
+
+                        // Copy link to clipboard
+                        function dlCopy(elId) {
+                            var url = window.location.origin + window.location.pathname + '#' + elId;
+                            if (navigator.clipboard <![CDATA[&&]]> navigator.clipboard.writeText) {
+                                navigator.clipboard.writeText(url).then(function() {
+                                    dlToast('✓ Link berhasil disalin!');
+                                });
+                            } else {
+                                var ta = document.createElement('textarea');
+                                ta.value = url;
+                                ta.style.position = 'fixed';
+                                ta.style.left = '-9999px';
+                                document.body.appendChild(ta);
+                                ta.select();
+                                document.execCommand('copy');
+                                document.body.removeChild(ta);
+                                dlToast('✓ Link berhasil disalin!');
+                            }
+                        }
+
+                        // Add link button to element
+                        function dlBtn(el) {
+                            var b = document.createElement('button');
+                            b.className = 'dl-link-btn';
+                            b.innerHTML = '<i class="fa fa-link"></i>';
+                            b.title = 'Salin link ke bagian ini';
+                            var id = el.id;
+                            b.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                history.replaceState(null, null, '#' + id);
+                                dlCopy(id);
+                            });
+                            el.insertBefore(b, el.firstChild);
+                        }
+
+                        // Wrap element as linkable block
+                        function dlWrap(el) {
+                            if (el.classList.contains('dl-block')) return;
+                            if (!el.id) el.id = dlId(el.textContent);
+                            el.classList.add('dl-block');
+                            el.style.position = 'relative';
+                            dlBtn(el);
+                        }
+
+                        // Get direct text content (not from children)
+                        function dlDirect(el) {
+                            var r = [];
+                            var ch = el.childNodes;
+                            for (var i = 0; i <![CDATA[<]]> ch.length; i++) {
+                                if (ch[i].nodeType === 3) r.push(ch[i].textContent.trim());
+                            }
+                            return r.join(' ').trim();
+                        }
+
+                        // Get all text nodes from element (recursive)
+                        function dlTextNodes(el) {
+                            var res = [];
+                            var ch = el.childNodes;
+                            for (var i = 0; i <![CDATA[<]]> ch.length; i++) {
+                                if (ch[i].nodeType === 3 <![CDATA[&&]]> ch[i].textContent.trim().length > 0) {
+                                    res.push(ch[i]);
+                                } else if (ch[i].nodeType === 1 <![CDATA[&&]]> !ch[i].classList.contains('dl-sentence')) {
+                                    var sub = dlTextNodes(ch[i]);
+                                    for (var j = 0; j <![CDATA[<]]> sub.length; j++) res.push(sub[j]);
+                                }
+                            }
+                            return res;
+                        }
+
+                        // ── 1. Process headings (h1-h6) ──
+                        content.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(function(el) {
+                            dlWrap(el);
+                        });
+
+                        // ── 2. Process big-text markers ──
+                        var bigRe = /^(BAB\s|Pasal\s|PEMBUKAAN|PENJELASAN|KETENTUAN|PENUTUP|Bagian\s|Paragraf\s)/i;
+                        content.querySelectorAll('p,div,span,b,strong,center').forEach(function(el) {
+                            if (el.classList.contains('dl-block')) return;
+                            if (el.closest('.dl-block')) return;
+                            var dt = dlDirect(el);
+                            if (bigRe.test(dt) <![CDATA[&&]]> dt.length <![CDATA[<]]> 200) {
+                                dlWrap(el);
+                            }
+                        });
+
+                        // ── 3. Paragraphs → split by sentence (per titik) ──
+                        content.querySelectorAll('p').forEach(function(p) {
+                            if (p.classList.contains('dl-block')) return;
+                            if (p.closest('table,pre,code,.dl-block')) return;
+                            var txt = p.textContent.trim();
+                            if (txt.length <![CDATA[<]]> 15) return;
+                            if (p.querySelector('.dl-block')) return;
+
+                            // If has complex children, wrap whole paragraph
+                            if (p.querySelector('a,img,table,div,ul,ol')) {
+                                dlWrap(p);
+                                return;
+                            }
+
+                            // Check if has multiple sentences
+                            if (txt.indexOf('. ') === -1) {
+                                dlWrap(p);
+                                return;
+                            }
+
+                            // Collect text nodes before modifying DOM
+                            var tns = dlTextNodes(p);
+
+                            tns.forEach(function(tn) {
+                                var text = tn.textContent;
+                                if (text.indexOf('. ') === -1) return;
+                                if (text.trim().length <![CDATA[<]]> 20) return;
+
+                                // Split by ". " keeping period with preceding text
+                                var rawParts = [];
+                                var rem = text;
+                                while (true) {
+                                    var di = rem.indexOf('. ');
+                                    if (di === -1) break;
+                                    rawParts.push(rem.substring(0, di + 1));
+                                    rem = rem.substring(di + 2);
+                                }
+                                if (rem.trim()) rawParts.push(rem);
+                                if (rawParts.length <![CDATA[<]]> 2) return;
+
+                                // Merge short segments (min 40 chars per sentence)
+                                var parts = [];
+                                var buffer = '';
+                                for (var k = 0; k <![CDATA[<]]> rawParts.length; k++) {
+                                    buffer += (buffer ? ' ' : '') + rawParts[k];
+                                    if (buffer.length >= 40 || k === rawParts.length - 1) {
+                                        parts.push(buffer);
+                                        buffer = '';
+                                    }
+                                }
+                                if (parts.length <![CDATA[<]]> 2) {
+                                    // Only 1 merged sentence, wrap whole paragraph
+                                    if (!p.classList.contains('dl-block')) dlWrap(p);
+                                    return;
+                                }
+
+                                // Create sentence spans
+                                var frag = document.createDocumentFragment();
+                                parts.forEach(function(part) {
+                                    var trimmed = part.trim();
+                                    if (trimmed.length <![CDATA[<]]> 10) {
+                                        frag.appendChild(document.createTextNode(part + ' '));
+                                        return;
+                                    }
+                                    var sp = document.createElement('span');
+                                    sp.className = 'dl-sentence';
+                                    sp.id = dlId(trimmed);
+                                    sp.textContent = part + ' ';
+                                    sp.style.position = 'relative';
+                                    sp.style.display = 'inline';
+                                    dlBtn(sp);
+                                    frag.appendChild(sp);
+                                });
+
+                                tn.parentNode.replaceChild(frag, tn);
+                            });
+                        });
+
+                        // ── 4. Handle URL hash (deep link navigation) ──
+                        function dlGoHash() {
+                            var h = window.location.hash.substring(1);
+                            if (!h) return;
+                            var tgt = document.getElementById(h);
+                            if (!tgt) return;
+
+                            var sc = document.querySelector('.regulation-content-main');
+                            if (!sc) return;
+
+                            setTimeout(function() {
+                                var cr = sc.getBoundingClientRect();
+                                var tr = tgt.getBoundingClientRect();
+                                sc.scrollTo({
+                                    top: sc.scrollTop + (tr.top - cr.top) - 60,
+                                    behavior: 'smooth'
+                                });
+                                tgt.classList.add('dl-highlight');
+                                setTimeout(function() { tgt.classList.remove('dl-highlight'); }, 5500);
+                            }, 700);
+                        }
+
+                        dlGoHash();
+                        window.addEventListener('hashchange', dlGoHash);
+                    });
+                </script>
+
+            </t>
+        </template>
+        
+        <!-- Empty Regulations Template (when model not available) -->
+        <template id="regulations_empty_template" name="Regulations Empty">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container my-5 text-center">
+                        <h2>Modul Peraturan Hukum Tidak Tersedia</h2>
+                        <p class="text-muted">Silakan hubungi administrator.</p>
+                    </div>
+                </div>
+            </t>
+        </template>
+        
+    </data>
+</odoo>

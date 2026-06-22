@@ -3,3 +3,4 @@ from . import main
 from . import subscription
 from . import regulations_controller
 from . import test_controller
+from . import portal

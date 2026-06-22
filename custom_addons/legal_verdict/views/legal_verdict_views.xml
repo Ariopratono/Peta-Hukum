@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Verdict Form View -->
+    <record id="view_legal_verdict_form" model="ir.ui.view">
+        <field name="name">legal.verdict.form</field>
+        <field name="model">legal.verdict</field>
+        <field name="arch" type="xml">
+            <form string="Legal Verdict">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nomor Putusan..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="institution"/>
+                            <field name="judul"/>
+                            <field name="tanggal_putusan"/>
+                        </group>
+                        <group>
+                            <field name="kategori"/>
+                            <field name="status"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Detail URLs">
+                            <group>
+                                <field name="link_url" widget="url"/>
+                                <field name="file_url" widget="url"/>
+                            </group>
+                        </page>
+                        <page string="Deskripsi/Amar">
+                            <field name="deskripsi"/>
+                        </page>
+                        <page string="Teks Putusan">
+                            <group>
+                                <field name="txt_filename" invisible="1"/>
+                                <field name="txt_file" filename="txt_filename"/>
+                            </group>
+                            <field name="verdict_text"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Verdict list View -->
+    <record id="view_legal_verdict_list" model="ir.ui.view">
+        <field name="name">legal.verdict.list</field>
+        <field name="model">legal.verdict</field>
+        <field name="arch" type="xml">
+            <list string="Legal Verdicts">
+                <field name="name"/>
+                <field name="institution"/>
+                <field name="judul"/>
+                <field name="tanggal_putusan"/>
+                <field name="kategori"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Verdict Search View -->
+    <record id="view_legal_verdict_search" model="ir.ui.view">
+        <field name="name">legal.verdict.search</field>
+        <field name="model">legal.verdict</field>
+        <field name="arch" type="xml">
+            <search string="Search Verdicts">
+                <field name="name"/>
+                <field name="judul"/>
+                <field name="institution"/>
+                <filter string="Mahkamah Konstitusi" name="filter_mk" domain="[('institution', '=', 'mk')]"/>
+                <filter string="Mahkamah Agung" name="filter_ma" domain="[('institution', '=', 'ma')]"/>
+                <group name="groupby">
+                    <filter string="Lembaga" name="group_institution" context="{'group_by':'institution'}"/>
+                    <filter string="Kategori" name="group_kategori" context="{'group_by':'kategori'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Scraper Form View -->
+    <record id="view_legal_verdict_scraper_form" model="ir.ui.view">
+        <field name="name">legal.verdict.scraper.form</field>
+        <field name="model">legal.verdict.scraper</field>
+        <field name="arch" type="xml">
+            <form string="Verdict Scraper">
+                <header>
+                    <button name="action_scrape" string="Run Scraper" type="object" class="oe_highlight" invisible="state == 'running'"/>
+                    <button name="action_reset" string="Reset to Draft" type="object" invisible="state not in ('draft', 'running')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Job Name..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="institution"/>
+                    </group>
+                    <notebook>
+                        <page string="Log Execution">
+                            <field name="log" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Scraper list View -->
+    <record id="view_legal_verdict_scraper_list" model="ir.ui.view">
+        <field name="name">legal.verdict.scraper.list</field>
+        <field name="model">legal.verdict.scraper</field>
+        <field name="arch" type="xml">
+            <list string="Verdict Scrapers">
+                <field name="name"/>
+                <field name="institution"/>
+                <field name="state"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_legal_verdict" model="ir.actions.act_window">
+        <field name="name">Putusan Hukum</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">legal.verdict</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_legal_verdict_search"/>
+    </record>
+
+    <record id="action_legal_verdict_scraper" model="ir.actions.act_window">
+        <field name="name">Verdict Scraper</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">legal.verdict.scraper</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_legal_verdict_root" name="Putusan Hukum" sequence="30" web_icon="legal_website,static/description/icon.png"/>
+
+    <menuitem id="menu_legal_verdict_data" name="Data Putusan" parent="menu_legal_verdict_root" action="action_legal_verdict" sequence="10"/>
+    <menuitem id="menu_legal_verdict_scraper" name="Scraper Job" parent="menu_legal_verdict_root" action="action_legal_verdict_scraper" sequence="20"/>
+
+</odoo>

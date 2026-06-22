@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_legal_expert_public,legal.expert.public,model_legal_expert,base.group_public,1,0,0,0
+access_legal_expert_user,legal.expert.user,model_legal_expert,base.group_user,1,1,1,1

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="legal_dashboard_board_view" model="ir.ui.view">
+        <field name="name">legal.dashboard.board.view</field>
+        <field name="model">board.board</field>
+        <field name="arch" type="xml">
+            <form string="Legal Dashboard">
+                <board style="1-1">
+                    <column>
+                        <action
+                            string="Legal Expert by Role"
+                            name="%(legal_dashboard.action_legal_expert_dashboard)d" />
+                    </column>
+                    <column>
+                        <action
+                            string="User Subscriptions by Plan"
+                            name="%(legal_dashboard.action_user_subscription_dashboard)d" />
+                    </column>
+                </board>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_legal_dashboard" model="ir.actions.act_window">
+        <field name="name">Legal Dashboard</field>
+        <field name="res_model">board.board</field>
+        <field name="view_mode">form</field>
+        <field name="usage">menu</field>
+        <field name="view_id" ref="legal_dashboard_board_view"/>
+    </record>
+
+    <menuitem id="menu_legal_dashboard_root"
+              name="Legal Dashboard"
+              web_icon="board,static/description/icon.png"
+              sequence="10"/>
+
+    <menuitem id="menu_legal_dashboard"
+              name="Dashboard"
+              parent="menu_legal_dashboard_root"
+              action="action_legal_dashboard"
+              sequence="1"/>
+</odoo>

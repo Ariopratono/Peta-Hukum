@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ir_cron_scrape_legal_blog" model="ir.cron">
+            <field name="name">Automatic Blog Scraper (Legal News)</field>
+            <field name="model_id" ref="model_legal_blog_scraper"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_scrape_blog()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

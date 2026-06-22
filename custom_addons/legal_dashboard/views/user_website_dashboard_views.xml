@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- User Subscription Graph View -->
+    <record id="view_user_subscription_graph" model="ir.ui.view">
+        <field name="name">user.subscription.graph</field>
+        <field name="model">user.subscription</field>
+        <field name="arch" type="xml">
+            <graph string="User Subscription Statistics" type="pie">
+                <field name="plan_id" type="row"/>
+                <field name="usage_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- User Subscription Pivot View -->
+    <record id="view_user_subscription_pivot" model="ir.ui.view">
+        <field name="name">user.subscription.pivot</field>
+        <field name="model">user.subscription</field>
+        <field name="arch" type="xml">
+            <pivot string="User Subscription Pivot">
+                <field name="plan_id" type="row"/>
+                <field name="start_date" type="col" interval="month"/>
+                <field name="usage_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Action for User Subscription Board -->
+    <record id="action_user_subscription_dashboard" model="ir.actions.act_window">
+        <field name="name">User Subscriptions Data</field>
+        <field name="res_model">user.subscription</field>
+        <field name="view_mode">graph,pivot,tree</field>
+        <field name="view_id" ref="view_user_subscription_graph"/>
+    </record>
+</odoo>

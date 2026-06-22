@@ -1,0 +1,507 @@
+/* ===================================================
+   Legal Expert Directory - Modern Styling
+   =================================================== */
+
+/* ----- Directory Page Header ----- */
+.expert-directory-header {
+    background: linear-gradient(135deg, #cc2222 0%, #a31b1b 100%);
+    padding: 3rem 0;
+    color: #fff;
+    margin-bottom: 2rem;
+}
+
+.expert-directory-header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.expert-directory-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+/* ----- Filter Buttons ----- */
+.expert-filter-bar {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 2.5rem;
+}
+
+.expert-filter-bar .btn {
+    border-radius: 50px;
+    padding: 0.4rem 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.expert-filter-bar .btn-filter-active {
+    background: #cc2222;
+    border-color: #cc2222;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(204, 34, 34, 0.3);
+}
+
+.expert-filter-bar .btn-filter {
+    background: transparent;
+    border: 1.5px solid #dee2e6;
+    color: #495057;
+}
+
+.expert-filter-bar .btn-filter:hover {
+    border-color: #cc2222;
+    color: #cc2222;
+    background: rgba(204, 34, 34, 0.05);
+}
+
+/* ----- Expert Grid ----- */
+.expert-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2rem 1.5rem;
+    padding-bottom: 3rem;
+}
+
+@media (max-width: 1199px) {
+    .expert-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 991px) {
+    .expert-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .expert-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .expert-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem 0.75rem;
+    }
+}
+
+/* ----- Expert Card (Circular Photo Style) ----- */
+.expert-card {
+    text-align: center;
+    padding: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.expert-card:hover {
+    transform: translateY(-4px);
+}
+
+.expert-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.expert-photo-wrapper {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 1rem;
+    position: relative;
+}
+
+.expert-photo-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: #e9ecef;
+    overflow: hidden;
+    border: 4px solid #f0f0f0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.expert-card:hover .expert-photo-circle {
+    border-color: #cc2222;
+    box-shadow: 0 6px 20px rgba(204, 34, 34, 0.2);
+}
+
+.expert-photo-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.expert-card-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+}
+
+.expert-card-spec {
+    font-size: 0.8rem;
+    color: #cc2222;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@media (max-width: 767px) {
+    .expert-photo-wrapper,
+    .expert-photo-circle {
+        width: 120px;
+        height: 120px;
+    }
+    .expert-card-name {
+        font-size: 0.85rem;
+    }
+    .expert-card-spec {
+        font-size: 0.75rem;
+    }
+}
+
+/* ====================================
+   Expert Detail Page
+   ==================================== */
+
+/* ----- Detail Hero Header (Blue) ----- */
+.expert-detail-hero {
+    background: linear-gradient(135deg, #cc2222 0%, #a31b1b 100%);
+    padding: 1.5rem 0 7rem 0;
+    color: #fff;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.expert-detail-hero .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.expert-detail-hero .breadcrumb-item,
+.expert-detail-hero .breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+
+.expert-detail-hero .breadcrumb-item.active {
+    color: #fff;
+}
+
+.expert-detail-hero .breadcrumb-item + .breadcrumb-item::before {
+    content: ">";
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ----- Detail Profile Section ----- */
+.expert-detail-profile {
+    margin-top: -5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.expert-detail-photo-wrapper {
+    width: 200px;
+    height: 200px;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.expert-detail-photo {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid #fff;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    background: #e9ecef;
+}
+
+.expert-detail-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.expert-detail-info {
+    padding-top: 2.5rem;
+    padding-left: 2rem;
+}
+
+.expert-detail-info h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.expert-detail-specializations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.expert-detail-specializations .spec-tag {
+    color: #cc2222;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.expert-detail-specializations .spec-divider {
+    color: #adb5bd;
+    font-size: 0.9rem;
+}
+
+.btn-share {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid #dee2e6;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    background: #fff;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-share:hover {
+    border-color: #cc2222;
+    color: #cc2222;
+    background: rgba(204, 34, 34, 0.05);
+}
+
+@media (max-width: 767px) {
+    .expert-detail-profile .d-flex {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .expert-detail-info {
+        padding-left: 0;
+        padding-top: 1.5rem;
+    }
+    .expert-detail-photo-wrapper {
+        width: 160px;
+        height: 160px;
+    }
+    .expert-detail-photo {
+        width: 160px;
+        height: 160px;
+    }
+    .expert-detail-specializations {
+        justify-content: center;
+    }
+}
+
+/* ----- Detail Info Cards ----- */
+.expert-info-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f0f0f0;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.expert-info-card h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #cc2222;
+    display: inline-block;
+}
+
+.expert-info-row {
+    display: flex;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.expert-info-row:last-child {
+    border-bottom: none;
+}
+
+.expert-info-label {
+    font-weight: 600;
+    color: #6c757d;
+    width: 140px;
+    flex-shrink: 0;
+    font-size: 0.9rem;
+}
+
+.expert-info-value {
+    color: #2c3e50;
+    font-size: 0.9rem;
+}
+
+.expert-stat-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.expert-stat-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f0f0f0;
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.expert-stat-card .stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #cc2222;
+}
+
+.expert-stat-card .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    display: block;
+}
+
+.expert-stat-card .stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 767px) {
+    .expert-stat-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ----- Availability Badge ----- */
+.availability-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.availability-badge.available {
+    background: #d4edda;
+    color: #155724;
+}
+
+.availability-badge.unavailable {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.availability-badge .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.availability-badge.available .dot {
+    background: #28a745;
+}
+
+.availability-badge.unavailable .dot {
+    background: #dc3545;
+}
+
+/* ====================================
+   Homepage Expert Section
+   ==================================== */
+.expert-home-section {
+    padding: 4rem 0;
+    background: #fafbfc;
+}
+
+.expert-home-section h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2c3e50;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.expert-home-section .section-subtitle {
+    color: #6c757d;
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+}
+
+.expert-home-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.expert-home-grid .expert-card {
+    flex: 0 0 180px;
+    max-width: 180px;
+}
+
+.expert-home-grid .expert-photo-wrapper,
+.expert-home-grid .expert-photo-circle {
+    width: 140px;
+    height: 140px;
+}
+
+.btn-view-more {
+    display: inline-block;
+    padding: 0.6rem 2.5rem;
+    border: 2px solid #2c3e50;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.btn-view-more:hover {
+    background: #2c3e50;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* ----- Section Divider Icon ----- */
+.section-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f0c27f, #4b1248);
+    color: #fff;
+    font-size: 1.5rem;
+}

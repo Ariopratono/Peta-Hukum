@@ -1,0 +1,105 @@
+/* Premium Styling for Odoo Dashboard Actions */
+
+.o_dashboard {
+    background-color: #f8fafc !important; /* Premium light slate background */
+    padding: 16px !important;
+}
+
+.o-dashboard-action {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+    margin: 16px 12px !important;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.o-dashboard-action:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04) !important;
+    transform: translateY(-2px) !important;
+}
+
+.o-dashboard-action-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+    padding: 14px 20px !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    border-bottom: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+.o-dashboard-action-header span {
+    color: #ffffff !important;
+    font-family: 'Outfit', 'Inter', -apple-system, sans-serif !important;
+    letter-spacing: -0.01em !important;
+}
+
+.o-dashboard-action-header .btn {
+    color: rgba(255, 255, 255, 0.85) !important;
+    background: transparent !important;
+    border: none !important;
+    font-size: 14px !important;
+    padding: 6px 10px !important;
+    border-radius: 6px !important;
+    transition: all 0.2s !important;
+}
+
+.o-dashboard-action-header .btn:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Fix Graph Views inside Board columns */
+.o-dashboard-action .o_content > .o_graph_renderer {
+    min-width: 0 !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    border-top: none !important;
+}
+
+.o-dashboard-action .o_graph_renderer .o_graph_canvas_container {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 320px !important;
+    position: relative !important;
+    padding: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.o-dashboard-action .o_graph_renderer canvas {
+    width: 100% !important;
+    height: 320px !important;
+    max-width: 100% !important;
+}
+
+/* Make sure the scrollbar on o_content is nice and thin */
+.o-dashboard-action .o_view_controller .o_content {
+    max-height: 80vh !important;
+    background: #ffffff !important;
+    overflow: auto !important;
+}
+
+.o-dashboard-action .o_view_controller .o_content::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.o-dashboard-action .o_view_controller .o_content::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.o-dashboard-action .o_view_controller .o_content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.o-dashboard-action .o_view_controller .o_content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}

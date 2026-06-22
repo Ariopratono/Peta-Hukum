@@ -17,42 +17,23 @@
             </field>
         </record>
 
-        <record id="legal_article_view_form" model="ir.ui.view">
-            <field name="name">legal.article.form</field>
+        <!-- <record id="legal_article_search" model="ir.ui.view">
+            <field name="name">legal.article.search</field>
             <field name="model">legal.article</field>
             <field name="arch" type="xml">
-                <form string="Legal Article">
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="name" placeholder="Judul artikel..."/>
-                                <field name="category_id"/>
-                                <field name="tag_ids" widget="many2many_tags"/>
-                                <field name="author_id"/>
-                            </group>
-                            <group>
-                                <field name="publish_date"/>
-                                <field name="view_count" readonly="1"/>
-                                <field name="website_published"/>
-                            </group>
-                        </group>
-                        <notebook>
-                            <page string="Konten">
-                                <field name="summary" placeholder="Ringkasan artikel..."/>
-                                <field name="content" widget="html"/>
-                            </page>
-                            <page string="SEO">
-                                <group>
-                                    <field name="website_meta_title"/>
-                                    <field name="website_meta_description"/>
-                                    <field name="website_meta_keywords"/>
-                                </group>
-                            </page>
-                        </notebook>
-                    </sheet>
-                </form>
+                <search string="Cari Artikel Hukum">
+                    <field name="name" string="Judul" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="category_id"/>
+                    <field name="author_id"/>
+                    <filter string="Published" name="published" domain="[('website_published', '=', True)]"/>
+                    <filter string="Draft" name="unpublished" domain="[('website_published', '=', False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Kategori" name="group_by_category" context="{'group_by': 'category_id'}"/>
+                        <filter string="Penulis" name="group_by_author" context="{'group_by': 'author_id'}"/>
+                    </group>
+                </search>
             </field>
-        </record>
+        </record> -->
 
         <!-- Legal Category Views -->
         <record id="legal_category_view_tree" model="ir.ui.view">

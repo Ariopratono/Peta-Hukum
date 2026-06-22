@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add breadcrumbs for the new pages -->
+    <template id="portal_breadcrumbs_custom" name="Portal layout : custom menu entries" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'expert_profile'" class="breadcrumb-item active">
+                Expert Profile
+            </li>
+            <li t-if="page_name == 'user_profile'" class="breadcrumb-item active">
+                User Profile
+            </li>
+        </xpath>
+    </template>
+
+    <!-- Add links to the portal dashboard -->
+    <template id="portal_my_home_custom_menu" name="Show Custom Profile" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
+        <xpath expr="//div[@id='portal_common_category']" position="replace">
+            <div class="o_portal_category row g-2 mt-3" id="portal_common_category">
+                <!-- For Experts -->
+            <t t-if="request.env.user.signup_role and request.env.user.signup_role != 'User'">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Expert Profile</t>
+                    <t t-set="text">Manage your expert details and photo</t>
+                    <t t-set="url" t-value="'/my/expert-profile'"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </t>
+            <!-- For Regular Users -->
+            <t t-if="not request.env.user.signup_role or request.env.user.signup_role == 'User'">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">User Profile</t>
+                    <t t-set="text">Manage your personal details and photo</t>
+                    <t t-set="url" t-value="'/my/user-profile'"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </t>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Expert Profile Template -->
+    <template id="portal_expert_profile" name="Expert Profile">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title">Expert Profile</t>
+            
+            <form action="/my/expert-profile" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                
+                <div class="row o_custom_portal_details">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <t t-if="success_message">
+                                    <div class="alert alert-success" role="alert">
+                                        <t t-esc="success_message"/>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <div class="mb-3 col-xl-6">
+                                <label class="col-form-label" for="name">Name</label>
+                                <input type="text" name="name" class="form-control" t-att-value="user.name" required="required"/>
+                            </div>
+
+                            <div class="mb-3 col-xl-6">
+                                <label class="col-form-label" for="email">Email</label>
+                                <input type="email" name="email" class="form-control" t-att-value="user.email" readonly="readonly"/>
+                            </div>
+
+                            <div class="mb-3 col-xl-6">
+                                <label class="col-form-label" for="phone">Phone</label>
+                                <input type="tel" name="phone" class="form-control" t-att-value="user.phone"/>
+                            </div>
+
+                            <div class="mb-3 col-xl-6">
+                                <label class="col-form-label" for="profile_image">Profile Photo</label>
+                                <input type="file" name="profile_image" id="profile_image" class="form-control" accept="image/*"/>
+                                <t t-if="user.image_1920">
+                                    <small class="text-muted">You already have a profile photo. Uploading a new one will replace it.</small>
+                                </t>
+                            </div>
+
+                            <div class="mb-3 col-xl-6">
+                                <label class="col-form-label" for="experience">Experience (Years)</label>
+                                <input type="number" name="experience" id="experience" class="form-control" t-att-value="user.experience or 0"/>
+                            </div>
+
+                            <div class="mb-3 col-xl-12">
+                                <label class="col-form-label" for="description">Description</label>
+                                <textarea name="description" id="description" class="form-control" rows="4"><t t-esc="user.description or ''"/></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="clearfix">
+                            <button type="submit" class="btn btn-primary float-end mb32 ">
+                                Confirm
+                                <span class="fa fa-long-arrow-right" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </t>
+    </template>
+
+    <!-- User Profile Template -->
+    <template id="portal_user_profile" name="User Profile">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title">User Profile</t>
+            
+            <form action="/my/user-profile" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                
+                <div class="row o_custom_portal_details">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <t t-if="success_message">
+                                    <div class="alert alert-success" role="alert">
+                                        <t t-esc="success_message"/>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <div class="mb-3 col-xl-6">
+                                <label class="col-form-label" for="name">Name</label>
+                                <input type="text" name="name" class="form-control" t-att-value="user.name" required="required"/>
+                            </div>
+
+                            <div class="mb-3 col-xl-6">
+                                <label class="col-form-label" for="email">Email</label>
+                                <input type="email" name="email" class="form-control" t-att-value="user.email" readonly="readonly"/>
+                            </div>
+
+                            <div class="mb-3 col-xl-6">
+                                <label class="col-form-label" for="phone">Phone</label>
+                                <input type="tel" name="phone" class="form-control" t-att-value="user.phone"/>
+                            </div>
+
+                            <div class="mb-3 col-xl-6">
+                                <label class="col-form-label" for="profile_image">Profile Photo</label>
+                                <input type="file" name="profile_image" id="profile_image" class="form-control" accept="image/*"/>
+                                <t t-if="user.image_1920">
+                                    <small class="text-muted">You already have a profile photo. Uploading a new one will replace it.</small>
+                                </t>
+                            </div>
+                        </div>
+                        
+                        <div class="clearfix">
+                            <button type="submit" class="btn btn-primary float-end mb32 ">
+                                Confirm
+                                <span class="fa fa-long-arrow-right" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </t>
+    </template>
+</odoo>

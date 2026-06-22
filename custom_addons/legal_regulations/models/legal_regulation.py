@@ -210,8 +210,8 @@ class LegalRegulation(models.Model):
                 main_content_lines.append(line)
         
         if penjelasan_lines:
-            _logger.info(f"[OK] Found Penjelasan section with {len(penjelasan_lines)} lines - will NOT merge these")
-            _logger.info(f"[OK] Main content has {len(main_content_lines)} lines - will merge these")
+            _logger.info(f"✓ Found Penjelasan section with {len(penjelasan_lines)} lines - will NOT merge these")
+            _logger.info(f"✓ Main content has {len(main_content_lines)} lines - will merge these")
         
         # SECOND: Only merge main content (NOT penjelasan)
         text_to_merge = '\n'.join(main_content_lines)
@@ -267,7 +267,7 @@ class LegalRegulation(models.Model):
                 if standalone_pasal_pattern.match(current_stripped):
                     merged_lines.append(current_line)
                     i += 1
-                    _logger.info(f"  [OK] Preserving standalone Pasal header: '{current_stripped}'")
+                    _logger.info(f"  ✓ Preserving standalone Pasal header: '{current_stripped}'")
                     continue
                 
                 # Check if we should merge with next line
@@ -295,7 +295,7 @@ class LegalRegulation(models.Model):
                         i += 1
                         continue
                     
-                    # FIX: Jika line adalah nomor (ex: '8.') dan next line bukan header Pasal -> merge
+                    # FIX: Jika line adalah nomor (ex: '8.') dan next line bukan header Pasal → merge
                     if re.match(r'^\s*\d+\.\s*$', current_stripped):
                         if not re.match(r'^\s*Pasal\s+\d+[A-Z]?', next_line, re.IGNORECASE):
                             should_merge = True
@@ -353,7 +353,7 @@ class LegalRegulation(models.Model):
                         
                         # Log only first 5 merges per pass to avoid spam
                         if merge_count <= 5:
-                            _logger.info(f"  [OK] Merge #{merge_count} ({merge_reason}) at line {i}:")
+                            _logger.info(f"  ✓ Merge #{merge_count} ({merge_reason}) at line {i}:")
                             _logger.info(f"    '{current_stripped[:50]}...'")
                             _logger.info(f"    + '{next_line[:50]}...'")
                         
@@ -374,15 +374,15 @@ class LegalRegulation(models.Model):
             if merge_count == 0:
                 break
         
-        _logger.info(f"[DONE] Sentence merging complete: {total_merges} total merges in {pass_num} passes")
+        _logger.info(f"✅ Sentence merging complete: {total_merges} total merges in {pass_num} passes")
         
         # THIRD: Reconstruct full text with merged main content + untouched penjelasan
         if penjelasan_lines:
             final_text = text_to_merge + '\n' + '\n'.join(penjelasan_lines)
-            _logger.info(f"[OK] Reconstructed text: {len(text_to_merge.split(chr(10)))} main lines + {len(penjelasan_lines)} penjelasan lines")
+            _logger.info(f"✓ Reconstructed text: {len(text_to_merge.split(chr(10)))} main lines + {len(penjelasan_lines)} penjelasan lines")
         else:
             final_text = text_to_merge
-            _logger.info(f"[OK] No Penjelasan section found, returning merged text only")
+            _logger.info(f"✓ No Penjelasan section found, returning merged text only")
         
         _logger.info("=" * 80)
         
@@ -392,6 +392,14 @@ class LegalRegulation(models.Model):
         """Fix words that are broken with spaces in the middle"""
         import re
         
+        # Excluded words and Roman numerals that should never be merged
+        EXCLUDED_WORDS = {'bab', 'bagian', 'pasal', 'ayat', 'uu', 'no', 'tahun', 'dan', 'atau'}
+        ROMAN_RE = re.compile(r'^[IVXLCDM]+$', re.IGNORECASE)
+        
+        def should_skip(w):
+            w_lower = w.lower()
+            return w_lower in EXCLUDED_WORDS or bool(ROMAN_RE.match(w_lower))
+            
         # Common Indonesian word patterns that might be broken
         
         # Pattern 1: Fix broken words with 1-3 letter chunks separated by single space
@@ -402,6 +410,10 @@ class LegalRegulation(models.Model):
             def check_and_merge(match):
                 word1 = match.group(1)
                 word2 = match.group(2)
+                
+                if should_skip(word1) or should_skip(word2):
+                    return match.group(0)
+                    
                 combined = word1 + word2
                 
                 # Common Indonesian prefixes that indicate word should be merged
@@ -440,9 +452,16 @@ class LegalRegulation(models.Model):
         pattern_multi = r'\b([a-zA-Z]{2,4})\s([a-zA-Z]{1,3})\s([a-zA-Z]{2,5})\b'
         
         def merge_three_chunks(match):
-            combined = match.group(1) + match.group(2) + match.group(3)
+            word1 = match.group(1)
+            word2 = match.group(2)
+            word3 = match.group(3)
+            
+            if should_skip(word1) or should_skip(word2) or should_skip(word3):
+                return match.group(0)
+                
+            combined = word1 + word2 + word3
             # If middle segment is very short (1-2 chars), likely broken
-            if len(match.group(2)) <= 2 and len(combined) >= 6:
+            if len(word2) <= 2 and len(combined) >= 6:
                 return combined
             return match.group(0)
         
@@ -481,6 +500,10 @@ class LegalRegulation(models.Model):
         if not text or not text.strip():
             return ""
         
+        # Split merged BAB and Roman numerals, e.g. "BABIIASAS" -> "BAB II ASAS"
+        text = re.sub(r'\b(BAB|BAGIAN)([IVXLCDM]+)(?=[A-Z\d])', r'\1 \2 ', text, flags=re.IGNORECASE)
+        text = re.sub(r'\b(BAB|BAGIAN)([IVXLCDM]+)\b', r'\1 \2', text, flags=re.IGNORECASE)
+
         # Fix broken words first
         text = self._fix_broken_words(text)
         
@@ -511,6 +534,23 @@ class LegalRegulation(models.Model):
         penjelasan_umum_alternative_pat = re.compile(r'^\s*I\.\s+UMUM\s*$', re.IGNORECASE)
         # Pattern for subtitle "Dalam Undang-Undang ini yang dimaksud dengan:"
         subtitle_pattern = re.compile(r'^\s*Dalam\s+Undang-Undang\s+ini\s+yang\s+dimaksud\s+dengan:\s*$', re.IGNORECASE)
+
+        # --- NEW PATTERNS START ---
+        # Pattern for generic regulation title: "UNDANG-UNDANG REPUBLIK INDONESIA NOMOR ... TENTANG ..."
+        title_pattern = re.compile(r'^(.*)\s+TENTANG\s+(.*)$', re.IGNORECASE)
+
+        # Pattern for "DENGAN RAHMAT TUHAN YANG MAHA ESA PRESIDEN REPUBLIK INDONESIA"
+        dengan_rahmat_pattern = re.compile(r'^\s*DENGAN\s+RAHMAT\s+TUHAN\s+YANG\s+MAHA\s+ESA\s+PRESIDEN\s+REPUBLIK\s+INDONESIA,?\s*$', re.IGNORECASE)
+
+        # Pattern for "Dengan Persetujuan Bersama DEWAN PERWAKILAN RAKYAT REPUBLIK INDONESIA dan PRESIDEN REPUBLIK INDONESIA"
+        persetujuan_pattern = re.compile(r'^\s*Dengan\s+Persetujuan\s+Bersama\s+DEWAN\s+PERWAKILAN\s+RAKYAT\s+REPUBLIK\s+INDONESIA\s+dan\s+PRESIDEN\s+REPUBLIK\s+INDONESIA\s*$', re.IGNORECASE)
+
+        # Pattern for signature block elements (right-aligned)
+        signature_pattern = re.compile(r'^\s*(Disahkan\s+di\s+|Ditetapkan\s+di\s+|PRESIDEN\s+REPUBLIK\s+INDONESIA,?|MENTERI\s+|DR\.\s+H\.\s+).*$', re.IGNORECASE)
+
+        # Let's override BAB / Section parsing logic
+        bab_pattern_precise = re.compile(r'^\s*(BAB|BAGIAN)\s+([IVXLCDM]+|\d+)\s+(.+)$', re.IGNORECASE)
+        # --- NEW PATTERNS END ---
 
         def flush_current_paragraph():
             nonlocal current_paragraph, in_list
@@ -561,12 +601,23 @@ class LegalRegulation(models.Model):
             )
             penjelasan_lines = []
             in_penjelasan_block = False
+        
+        in_header = True
+        just_saw_bab = False
 
         for line in lines:
             # PRESERVE LEADING SPACES for layout preservation
             # Count leading spaces before stripping
             leading_spaces = len(line) - len(line.lstrip())
             stripped = line.strip()
+            indent_px = leading_spaces * 8
+            
+            # Check for header end conditions
+            if in_header and stripped:
+                if (re.match(r'^\s*(Mengingat|Menimbang|Memperhatikan|Menetapkan|Memutuskan|MEMUTUSKAN)\s*:?', stripped, re.IGNORECASE) or
+                        re.match(r'^\s*(BAB|BAGIAN|PARAGRAF)\s+', stripped, re.IGNORECASE) or
+                        re.match(r'^\s*Pasal\s+', stripped, re.IGNORECASE)):
+                    in_header = False
             
             # Handle penjelasan block rendering
             if in_penjelasan_block:
@@ -592,6 +643,83 @@ class LegalRegulation(models.Model):
                     penjelasan_lines = ['📘 [Penjelasan Umum]:']
                 else:
                     penjelasan_lines = [line]
+                continue
+
+
+            # Check if this line is the title of the BAB (immediately following a standalone BAB header)
+            if just_saw_bab and stripped:
+                if (stripped.isupper() and 
+                        not re.match(r'^(Pasal|PASAL|BAB|BAGIAN|PARAGRAF|Mengingat|Menimbang|Memperhatikan|Menetapkan|Memutuskan|MEMUTUSKAN)\b', stripped, re.IGNORECASE)):
+                    flush_current_paragraph()
+                    html_parts.append(f'<h5 class="mb-2" style="text-align: center;"><strong>{stripped}</strong></h5>')
+                    if stripped.endswith(',') or re.search(r'\b(DAN|ATAU|TENTANG)\s*$', stripped):
+                        just_saw_bab = True
+                    else:
+                        just_saw_bab = False
+                    continue
+                else:
+                    just_saw_bab = False
+
+            # 1. Check for Regulation Title
+            title_match = title_pattern.match(stripped)
+            # Make sure it actually looks like a regulation title (has "NOMOR" and "TAHUN" or similar)
+            if title_match and re.search(r'(NOMOR|NO\.)', stripped, re.IGNORECASE):
+                flush_current_paragraph()
+                part1 = title_match.group(1).strip()
+                part2 = title_match.group(2).strip()
+                html_parts.append(f'<p style="text-align: center; font-weight: bold;">{part1}</p>')
+                html_parts.append(f'<p style="text-align: center; font-weight: bold;">TENTANG</p>')
+                html_parts.append(f'<p style="text-align: center; font-weight: bold;">{part2}</p>')
+                continue
+
+            # 2. Check for "DENGAN RAHMAT TUHAN YANG MAHA ESA PRESIDEN REPUBLIK INDONESIA"
+            if dengan_rahmat_pattern.match(stripped):
+                flush_current_paragraph()
+                html_parts.append('<p style="text-align: center;">DENGAN RAHMAT TUHAN YANG MAHA ESA</p>')
+                html_parts.append('<p style="text-align: center;">PRESIDEN REPUBLIK INDONESIA,</p>')
+                continue
+
+            # Standalone DENGAN RAHMAT TUHAN YANG MAHA ESA or PRESIDEN REPUBLIK INDONESIA in header
+            if in_header:
+                if re.match(r'^\s*DENGAN\s+RAHMAT\s+TUHAN\s+YANG\s+MAHA\s+ESA\s*$', stripped, re.IGNORECASE):
+                    flush_current_paragraph()
+                    html_parts.append('<p style="text-align: center;">DENGAN RAHMAT TUHAN YANG MAHA ESA</p>')
+                    continue
+                if re.match(r'^\s*PRESIDEN\s+REPUBLIK\s+INDONESIA,?\s*$', stripped, re.IGNORECASE):
+                    flush_current_paragraph()
+                    html_parts.append('<p style="text-align: center;">PRESIDEN REPUBLIK INDONESIA,</p>')
+                    continue
+
+            # 3. Check for "Dengan Persetujuan Bersama DEWAN PERWAKILAN RAKYAT REPUBLIK INDONESIA dan PRESIDEN REPUBLIK INDONESIA"
+            if persetujuan_pattern.match(stripped):
+                flush_current_paragraph()
+                html_parts.append('<p style="text-align: center;">Dengan Persetujuan Bersama DEWAN PERWAKILAN RAKYAT REPUBLIK INDONESIA</p>')
+                html_parts.append('<p style="text-align: center;">dan</p>')
+                html_parts.append('<p style="text-align: center;">PRESIDEN REPUBLIK INDONESIA</p>')
+                continue
+
+            # 4. Check for MEMUTUSKAN standing alone or with colon
+            if re.match(r'^\s*MEMUTUSKAN\s*:?\s*$', stripped, re.IGNORECASE):
+                flush_current_paragraph()
+                html_parts.append(f'<p style="text-align: center; font-weight: bold;">{stripped}</p>')
+                continue
+
+            # 5. Check for Signature Blocks (right-aligned)
+            if signature_pattern.match(stripped) and len(stripped) > 5:
+                flush_current_paragraph()
+                html_parts.append(f'<p style="text-align: right;">{stripped}</p>')
+                continue
+
+            # 6. Check for BAB with Title inline (e.g. "BAB I KETENTUAN UMUM")
+            bab_match = bab_pattern_precise.match(stripped)
+            if bab_match:
+                flush_current_paragraph()
+                bab_type = bab_match.group(1).upper()
+                bab_num = bab_match.group(2)
+                bab_title = bab_match.group(3)
+                html_parts.append(f'<h5 class="mt-3 mb-2" style="text-align: center;"><strong>{bab_type} {bab_num}</strong></h5>')
+                html_parts.append(f'<h5 class="mb-2" style="text-align: center;"><strong>{bab_title}</strong></h5>')
+                just_saw_bab = False
                 continue
 
             # Preserve empty lines as paragraph breaks
@@ -785,7 +913,7 @@ class LegalRegulation(models.Model):
                     html_parts.append('</ul>')
                     in_list = False
                 
-                html_parts.append(f'<h5 class="mt-3 mb-2"><strong>{stripped}</strong></h5>')
+                html_parts.append(f'<h5 class="mt-3 mb-2" style="text-align: center;"><strong>{stripped}</strong></h5>')
                 continue
             elif section_match and not is_pasal_line:
                 # Section header lain (BAB, BAGIAN, dll) atau Pasal dengan teks tambahan
@@ -819,7 +947,11 @@ class LegalRegulation(models.Model):
                         html_parts.append('</ul>')
                         in_list = False
                     
-                    html_parts.append(f'<h5 class="mt-3 mb-2"><strong>{stripped}</strong></h5>')
+                    html_parts.append(f'<h5 class="mt-3 mb-2" style="text-align: center;"><strong>{stripped}</strong></h5>')
+                    if re.match(r'^\s*(BAB|BAGIAN)\b', stripped, re.IGNORECASE):
+                        just_saw_bab = True
+                    else:
+                        just_saw_bab = False
                     continue
             
             # Check for ALL CAPS header
@@ -876,19 +1008,26 @@ class LegalRegulation(models.Model):
                     in_list = True
                 
                 # Add list item with ORIGINAL numbering and hanging indent
-                # Use table display for perfect alignment
-                # For list items, DON'T add margin-left (already controlled by <ul>)
-                # Just use table display for proper alignment
                 number = numbering_match.group(1)
                 content = numbering_match.group(2)
-                html_parts.append(f'<li style="margin-bottom: 0.5rem; display: table; width: 100%;"><span style="display: table-cell; width: 2rem; font-weight: bold; vertical-align: top;">{number}</span><span style="display: table-cell; word-wrap: break-word;">{content}</span></li>')
+
+                # Determine extra margin based on number type (huruf vs angka)
+                # default margin is handled by the ul
+                margin_left_extra = ""
+                # If it's a lowercase letter like "a.", "b."
+                if re.match(r'^[a-z]\.$', number):
+                    margin_left_extra = " margin-left: 2rem;"
+                # If it's a number like "1.", "2."
+                elif re.match(r'^\d+\.$', number):
+                    margin_left_extra = " margin-left: 4rem;"
+
+                html_parts.append(f'<li style="margin-bottom: 0.5rem; display: table; width: 100%;{margin_left_extra}"><span style="display: table-cell; width: 2rem; font-weight: bold; vertical-align: top;">{number}</span><span style="display: table-cell; word-wrap: break-word;">{content}</span></li>')
                 continue
             
             # If not a special pattern, accumulate into current paragraph
             # This preserves line breaks within sections
             # Store with indentation info
             if leading_spaces > 0:
-                indent_px = leading_spaces * 8
                 current_paragraph.append((stripped, indent_px))
             else:
                 current_paragraph.append((stripped, 0))
@@ -922,38 +1061,44 @@ class LegalRegulation(models.Model):
         return ''.join(html_parts)
     
     def _extract_text_from_pdf(self, pdf_data):
-        """Extract text content from PDF file - extract plain text then format with _format_text_to_html"""
+        """Extract text content from PDF file with improved formatting - uses advanced PDFExtractor"""
         try:
+            # Import the advanced PDF parser
+            from .parser import PDFExtractor
+            
             # Decode base64 PDF data
             pdf_bytes = base64.b64decode(pdf_data)
             
-            # Use PyMuPDF to extract plain text (consistent with TXT extraction)
-            _logger.info("Extracting plain text from PDF via PyMuPDF...")
-            import fitz
-            doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-            text = "\n".join([page.get_text("text") for page in doc])
-            doc.close()
+            # Use the advanced PDFExtractor
+            _logger.info("Using advanced PDFExtractor for PDF text extraction...")
+            extractor = PDFExtractor(pdf_bytes)
+            
+            # First try layout-preserving extraction
+            _logger.info("=" * 80)
+            _logger.info("LAYOUT-PRESERVING EXTRACTION STARTED")
+            _logger.info("=" * 80)
+            text = extractor.extract_text_with_layout()
             
             if text.strip():
-                _logger.info(f"PyMuPDF extracted {len(text)} characters of plain text")
+                _logger.info(f"✅ Layout extraction SUCCESS: {len(text)} characters")
+                _logger.info("First 500 chars of layout extraction:")
+                _logger.info(text[:500])
+            else:
+                _logger.warning("⚠️ Layout extraction returned empty, falling back to auto extraction...")
+                text = extractor.extract_text_auto()
+                _logger.info(f"Auto extraction: {len(text)} characters")
+            
+            if text.strip():
+                _logger.info(f"PDFExtractor successfully extracted {len(text)} characters")
                 
-                # Format using the same _format_text_to_html used by TXT extraction
+                # Format the extracted text with our HTML formatter
                 formatted_text = self._format_text_to_html(text)
                 
-                result = f'<div class="txt-content" style="line-height: 1.8;">{formatted_text}</div>'
+                result = f'<div class="pdf-content" style="line-height: 1.8;">{formatted_text}</div>'
                 return result
             else:
-                _logger.warning("PyMuPDF returned empty text, trying PDFExtractor fallback...")
-                # Fallback to PDFExtractor
-                from .parser import PDFExtractor
-                extractor = PDFExtractor(pdf_bytes)
-                text = extractor.extract_text_with_layout()
-                if not text.strip():
-                    text = extractor.extract_text_auto()
-                if text.strip():
-                    formatted_text = self._format_text_to_html(text)
-                    return f'<div class="txt-content" style="line-height: 1.8;">{formatted_text}</div>'
-                return '<p class="text-warning"><strong>Perhatian:</strong> Tidak dapat mengekstrak teks dari PDF ini.</p>'
+                _logger.warning("PDFExtractor returned empty text")
+                return '<p class="text-warning"><strong>Perhatian:</strong> Tidak dapat mengekstrak teks dari PDF ini. PDF mungkin berisi gambar atau format yang tidak didukung.</p>'
                 
         except ImportError as ie:
             # Fallback to old method if parser.py or its dependencies not available
@@ -1546,7 +1691,7 @@ class LegalRegulation(models.Model):
                 
                 # Check if content is ONLY "Cukup jelas" (with optional trailing period/whitespace)
                 if re.match(r'^\s*cukup\s+jelas\.?\s*$', content, re.IGNORECASE):
-                    _logger.info(f"  [NO] Content is only 'Cukup jelas' - discarding")
+                    _logger.info(f"  🚫 Content is only 'Cukup jelas' - discarding")
                     return None
                 
                 # First, check for "TAMBAHAN LEMBARAN NEGARA" and truncate at last period before it
@@ -1557,7 +1702,7 @@ class LegalRegulation(models.Model):
                     last_period_idx = content_before_tambahan.rfind('.')
                     if last_period_idx > 0:
                         content = content[:last_period_idx + 1].strip()
-                        _logger.info(f"  [CUT] Truncated at last period before 'TAMBAHAN LEMBARAN NEGARA'")
+                        _logger.info(f"  ✂️ Truncated at last period before 'TAMBAHAN LEMBARAN NEGARA'")
                 
                 # Check if "Cukup jelas" appears in content - cut everything after it
                 # Use case-insensitive search
@@ -1579,14 +1724,14 @@ class LegalRegulation(models.Model):
                     
                     # If nothing meaningful before "Cukup jelas", return None
                     if len(before_cukup) < 10:
-                        _logger.info(f"  [NO] Content before 'Cukup jelas' too short ({len(before_cukup)} chars) - discarding")
+                        _logger.info(f"  🚫 Content before 'Cukup jelas' too short ({len(before_cukup)} chars) - discarding")
                         return None
                     
                     return before_cukup
                 
                 # Check for "PRESIDEN REPUBLIK INDONESIA-X" pattern (footer/header leak)
                 if re.match(r'^PRESIDEN\s+REPUBLIK\s+INDONESIA-\d+', content.strip(), re.IGNORECASE):
-                    _logger.info(f"  [NO] Found 'PRESIDEN REPUBLIK INDONESIA-X' footer - discarding: '{content[:80]}...'")
+                    _logger.info(f"  🚫 Found 'PRESIDEN REPUBLIK INDONESIA-X' footer - discarding: '{content[:80]}...'")
                     return None
                 
                 return content
@@ -1607,7 +1752,7 @@ class LegalRegulation(models.Model):
                 # Detect start of Penjelasan section
                 if penjelasan_section_pat.match(line):
                     in_penjelasan_section = True
-                    _logger.info(f"[OK] Found Penjelasan section at line {i}: {line}")
+                    _logger.info(f"✓ Found Penjelasan section at line {i}: {line}")
                     i += 1
                     continue
                 
@@ -1626,7 +1771,7 @@ class LegalRegulation(models.Model):
                         current_penjelasan_key = 'umum'
                         current_penjelasan_context = {'pasal': None, 'ayat': None}
                         current_penjelasan_buffer = []
-                        _logger.info(f"\n-> Found 'I. UMUM' - collecting Penjelasan Umum content")
+                        _logger.info(f"\n→ Found 'I. UMUM' - collecting Penjelasan Umum content")
                         i += 1
                         continue
                     
@@ -1643,14 +1788,14 @@ class LegalRegulation(models.Model):
                         # Reset context for Pasal Demi Pasal
                         current_penjelasan_key = None
                         current_penjelasan_buffer = []
-                        _logger.info(f"\n-> Found 'II. PASAL DEMI PASAL' - ending Penjelasan Umum")
+                        _logger.info(f"\n→ Found 'II. PASAL DEMI PASAL' - ending Penjelasan Umum")
                         i += 1
                         continue
                     
                     # IMPORTANT: Skip multi-pasal format (e.g., "Pasal 5, 6 dan 7.") - this is NOT a header
                     # Also skip its content (usually "Sudah cukup terang, tidak memperlukan penjelasan")
                     if multi_pasal_pat.match(line):
-                        _logger.info(f"  [SKIP] Skipping multi-pasal format: {line.strip()}")
+                        _logger.info(f"  ⏭️ Skipping multi-pasal format: {line.strip()}")
                         
                         # First, save current buffer (for previous Pasal) before skipping
                         if current_penjelasan_key and current_penjelasan_buffer:
@@ -1711,10 +1856,10 @@ class LegalRegulation(models.Model):
                         # This ensures "Pasal 458" in PENJELASAN section is recognized as "45B"
                         if pasal_num == '458':
                             pasal_num = '45B'
-                            _logger.info(f"  [OK] OCR fix: Pasal 458 -> Pasal 45B in PENJELASAN section")
+                            _logger.info(f"  ✓ OCR fix: Pasal 458 → Pasal 45B in PENJELASAN section")
                         elif pasal_num == '457':
                             pasal_num = '45A'
-                            _logger.info(f"  [OK] OCR fix: Pasal 457 -> Pasal 45A in PENJELASAN section")
+                            _logger.info(f"  ✓ OCR fix: Pasal 457 → Pasal 45A in PENJELASAN section")
                         
                         current_penjelasan_context = {'pasal': pasal_num, 'ayat': None}
                         
@@ -1736,11 +1881,11 @@ class LegalRegulation(models.Model):
                         if has_immediate_ayat_or_huruf:
                             # Don't set pasal key - pasal has no direct explanation
                             current_penjelasan_key = None
-                            _logger.info(f"\n-> Pasal {pasal_num} context started (no pasal-level explanation, has Ayat/Huruf)")
+                            _logger.info(f"\n→ Pasal {pasal_num} context started (no pasal-level explanation, has Ayat/Huruf)")
                         else:
                             # Set pasal key - pasal has explanation
                             current_penjelasan_key = f'pasal_{pasal_num}'
-                            _logger.info(f"\n-> Pasal {pasal_num} context started (has pasal-level explanation)")
+                            _logger.info(f"\n→ Pasal {pasal_num} context started (has pasal-level explanation)")
                         
                         current_penjelasan_buffer = []
                         
@@ -1765,7 +1910,7 @@ class LegalRegulation(models.Model):
                         if ayat_num == '1' and current_ayat and current_ayat != '1':
                             # We found "Ayat (1)" but we already processed other ayats
                             # This means implicit new Pasal - STOP collecting for previous Pasal
-                            _logger.warning(f"  [WARN] IMPLICIT PASAL BOUNDARY DETECTED!")
+                            _logger.warning(f"  ⚠️ IMPLICIT PASAL BOUNDARY DETECTED!")
                             _logger.warning(f"     Found 'Ayat (1)' but current context is Pasal {current_penjelasan_context['pasal']} Ayat ({current_ayat})")
                             _logger.warning(f"     This indicates start of NEW Pasal without header")
                             _logger.warning(f"     DISCARDING current buffer to prevent cross-contamination")
@@ -1801,7 +1946,7 @@ class LegalRegulation(models.Model):
                                 if current_penjelasan_key in penjelasan_map:
                                     existing_preview = penjelasan_map[current_penjelasan_key][:80]
                                     new_preview = filtered_content[:80]
-                                    _logger.warning(f"  [WARN] DUPLICATE KEY DETECTED: [{current_penjelasan_key}]")
+                                    _logger.warning(f"  ⚠️ DUPLICATE KEY DETECTED: [{current_penjelasan_key}]")
                                     _logger.warning(f"     FIRST (kept): {existing_preview}...")
                                     _logger.warning(f"     DUPLICATE (ignored): {new_preview}...")
                                     _logger.warning(f"     Keeping FIRST occurrence, ignoring duplicate Ayat header")
@@ -1829,11 +1974,11 @@ class LegalRegulation(models.Model):
                         if has_immediate_huruf:
                             # Don't set ayat key - ayat has no direct explanation, has Huruf
                             current_penjelasan_key = None
-                            _logger.info(f"  -> Ayat ({ayat_num}) context started (no ayat-level explanation, has Huruf)")
+                            _logger.info(f"  → Ayat ({ayat_num}) context started (no ayat-level explanation, has Huruf)")
                         else:
                             # Set ayat key - ayat has explanation
                             current_penjelasan_key = f"pasal_{pasal_num}_ayat_{ayat_num}"
-                            _logger.info(f"  -> Ayat ({ayat_num}) context started (has ayat-level explanation)")
+                            _logger.info(f"  → Ayat ({ayat_num}) context started (has ayat-level explanation)")
                         
                         current_penjelasan_buffer = []
                         
@@ -1880,7 +2025,7 @@ class LegalRegulation(models.Model):
                                     penjelasan_map[key2] = filtered_content
                                     _logger.info(f"  Also saved to [{key2}]: {filtered_content[:50]}... (combined huruf)")
                             else:
-                                _logger.info(f"  [WARN] Skipped [{current_penjelasan_key}]: content too short ({len(filtered_content) if filtered_content else 0} chars) after cleaning")
+                                _logger.info(f"  ⚠️ Skipped [{current_penjelasan_key}]: content too short ({len(filtered_content) if filtered_content else 0} chars) after cleaning")
                         
                         pasal_num = current_penjelasan_context['pasal']
                         ayat_num = current_penjelasan_context['ayat']
@@ -1889,7 +2034,7 @@ class LegalRegulation(models.Model):
                             # "Huruf j dan k" - save for both j and k
                             huruf1 = huruf_combined_match.group(1)
                             huruf2 = huruf_combined_match.group(2)
-                            _logger.info(f"    -> Combined Huruf {huruf1} dan {huruf2} context started (Pasal {pasal_num} Ayat {ayat_num})")
+                            _logger.info(f"    → Combined Huruf {huruf1} dan {huruf2} context started (Pasal {pasal_num} Ayat {ayat_num})")
                             # We'll collect the content and save it for BOTH huruf
                             current_penjelasan_key = f"pasal_{pasal_num}_ayat_{ayat_num}_huruf_{huruf1}"  # Start with first
                             current_penjelasan_context['huruf_combined'] = (huruf1, huruf2)  # Track both
@@ -1898,7 +2043,7 @@ class LegalRegulation(models.Model):
                             huruf = huruf_match.group(1) if huruf_match else huruf_period_match.group(1)
                             current_penjelasan_key = f"pasal_{pasal_num}_ayat_{ayat_num}_huruf_{huruf}"
                             current_penjelasan_context.pop('huruf_combined', None)  # Clear combined flag
-                            _logger.info(f"    -> Huruf {huruf} context started (Pasal {pasal_num} Ayat {ayat_num})")
+                            _logger.info(f"    → Huruf {huruf} context started (Pasal {pasal_num} Ayat {ayat_num})")
                         
                         current_penjelasan_buffer = []
                         
@@ -1917,7 +2062,7 @@ class LegalRegulation(models.Model):
                             current_penjelasan_buffer = []
                             # Set key to None to prevent saving
                             current_penjelasan_key = None
-                            _logger.info(f"  [WARN] Found 'Cukup jelas' - clearing buffer and key")
+                            _logger.info(f"  ⚠ Found 'Cukup jelas' - clearing buffer and key")
                             i += 1
                             continue
                         
@@ -1956,7 +2101,7 @@ class LegalRegulation(models.Model):
                         _logger.info(f"  Also saved to [{key2}]: {content[:50]}... (combined huruf)")
 
             
-            _logger.info(f"\n[OK] Total penjelasan collected: {len(penjelasan_map)}")
+            _logger.info(f"\n✓ Total penjelasan collected: {len(penjelasan_map)}")
             for key in sorted(penjelasan_map.keys()):
                 _logger.info(f"  - {key}: {penjelasan_map[key][:60]}...")
             
@@ -2285,31 +2430,17 @@ class LegalRegulation(models.Model):
         try:
             # Decode base64 TXT data to bytes
             txt_bytes = base64.b64decode(txt_data)
-
-            # DETECT: If the "TXT" file is actually a PDF binary
-            if txt_bytes[:5] == b'%PDF-':
-                _logger.warning("file_txt contains PDF binary data, extracting plain text via PyMuPDF...")
+            text = None
+            # Try common encodings
+            for enc in ('utf-8', 'utf-16', 'cp1252', 'latin-1'):
                 try:
-                    import fitz
-                    doc = fitz.open(stream=txt_bytes, filetype="pdf")
-                    text = "\n".join([page.get_text("text") for page in doc])
-                    doc.close()
-                    _logger.info(f"Extracted {len(text)} chars plain text from PDF binary in file_txt")
-                except ImportError:
-                    _logger.error("PyMuPDF (fitz) not installed! Cannot extract text from PDF binary in file_txt")
-                    return '<p class="text-danger"><strong>Error:</strong> PyMuPDF tidak terinstall untuk mengekstrak PDF.</p>'
-            else:
-                text = None
-                # Try common encodings
-                for enc in ('utf-8', 'utf-16', 'cp1252', 'latin-1'):
-                    try:
-                        text = txt_bytes.decode(enc)
-                        break
-                    except Exception:
-                        continue
-                if text is None:
-                    # Fallback with replacement
-                    text = txt_bytes.decode('utf-8', errors='replace')
+                    text = txt_bytes.decode(enc)
+                    break
+                except Exception:
+                    continue
+            if text is None:
+                # Fallback with replacement
+                text = txt_bytes.decode('utf-8', errors='replace')
 
             # Normalize newlines
             text = text.replace('\r\n', '\n').replace('\r', '\n')
@@ -2408,7 +2539,7 @@ class LegalRegulation(models.Model):
             before_fix = text
             text = re.sub(r'^([a-z])\.\s*$\n\s*(.+)', r'\1. \2', text, flags=re.MULTILINE)
             if text != before_fix:
-                _logger.info("  [OK] Fixed broken huruf enumeration (standalone letter on one line, content on next)")
+                _logger.info("  ✓ Fixed broken huruf enumeration (standalone letter on one line, content on next)")
             
             # FIX: Separate "Pasal 1 Dalam Undang-Undang..." into two lines
             # Also handle Roman numerals like "Pasal I Dalam Undang-Undang..."
@@ -2608,20 +2739,13 @@ class LegalRegulation(models.Model):
 
     @api.onchange('file_txt')
     def _onchange_file_txt(self):
-        """Store TXT file without auto-overwriting existing content.
-        User can manually re-extract using 'Re-Extract' button."""
+        """Auto-extract text from TXT"""
         if self.file_txt:
-            _logger.info(f"TXT file uploaded for regulation {self.id or 'new'} (stored without auto-extract)")
-            # Only auto-extract if content is empty or default placeholder
-            current = (self.isi_peraturan or '').strip()
-            is_empty = not current or current == '<p>Isi peraturan belum tersedia</p>' or len(current) < 50
-            if is_empty:
-                extracted_text = self._extract_text_from_txt(self.file_txt)
-                if extracted_text and '<strong>Error:</strong>' not in extracted_text:
-                    self.isi_peraturan = extracted_text
-                    _logger.info(f"Auto-extracted text from TXT for empty record ({len(extracted_text)} characters)")
-            else:
-                _logger.info(f"Existing content preserved ({len(current)} chars). Use 'Re-Extract' button to overwrite.")
+            _logger.info(f"TXT uploaded for regulation {self.id or 'new'}")
+            extracted_text = self._extract_text_from_txt(self.file_txt)
+            if extracted_text and '<strong>Error:</strong>' not in extracted_text:
+                self.isi_peraturan = extracted_text
+                _logger.info(f"Successfully extracted text from TXT ({len(extracted_text)} characters)")
         else:
             # TXT removed - clear only if no PDF and no DOCX exists
             if not self.file_pdf and not self.file_docx:
@@ -2630,24 +2754,22 @@ class LegalRegulation(models.Model):
     
     @api.onchange('file_pdf')
     def _onchange_file_pdf(self):
-        """Store PDF file without auto-overwriting existing content.
-        User can manually re-extract using 'Re-Extract' button."""
+        """Auto-extract text from PDF when uploaded"""
         if self.file_pdf:
-            _logger.info(f"PDF file uploaded for regulation {self.id or 'new'} (stored without auto-extract)")
-            # Only auto-extract if content is empty or default placeholder
-            current = (self.isi_peraturan or '').strip()
-            is_empty = not current or current == '<p>Isi peraturan belum tersedia</p>' or len(current) < 50
-            if is_empty:
-                extracted_text = self._extract_text_from_pdf(self.file_pdf)
-                if extracted_text and '<strong>Error:</strong>' not in extracted_text:
-                    self.isi_peraturan = extracted_text
-                    _logger.info(f"Auto-extracted text from PDF for empty record ({len(extracted_text)} characters)")
+            _logger.info(f"PDF uploaded for regulation {self.id or 'new'}, extracting text...")
+            extracted_text = self._extract_text_from_pdf(self.file_pdf)
+            
+            if extracted_text and '<strong>Error:</strong>' not in extracted_text:
+                self.isi_peraturan = extracted_text
+                _logger.info(f"Successfully extracted text from PDF ({len(extracted_text)} characters)")
             else:
-                _logger.info(f"Existing content preserved ({len(current)} chars). Use 'Re-Extract' button to overwrite.")
+                _logger.warning("Failed to extract text from PDF or PDF contains no text")
+                if not self.isi_peraturan or self.isi_peraturan == '<p>Isi peraturan belum tersedia</p>':
+                    self.isi_peraturan = extracted_text
         else:
-            # File PDF dihapus - clear content jika tidak ada DOCX dan TXT
-            if not self.file_docx and not self.file_txt:
-                _logger.info(f"PDF removed and no DOCX/TXT present for regulation {self.id or 'new'}, clearing content")
+            # File PDF dihapus - clear content jika tidak ada DOCX
+            if not self.file_docx:
+                _logger.info(f"PDF removed and no DOCX present for regulation {self.id or 'new'}, clearing content")
                 self.isi_peraturan = '<p>Isi peraturan belum tersedia</p>'
     
     @api.onchange('bentuk')
@@ -2853,34 +2975,23 @@ class LegalRegulation(models.Model):
                 _logger.info(f"PDF deleted and no DOCX/TXT present for regulation ID {self.id}, clearing content")
         
         # Priority: TXT > DOCX > PDF
-        # Only auto-extract if isi_peraturan is NOT already set with real content
         if vals.get('file_txt') and not file_txt_deleted:
             try:
                 if 'isi_peraturan' not in vals:
-                    current_content = (self.isi_peraturan or '').strip()
-                    is_empty = not current_content or current_content == '<p>Isi peraturan belum tersedia</p>' or len(current_content) < 50
-                    if is_empty:
-                        extracted_text = self._extract_text_from_txt(vals['file_txt'])
-                        if extracted_text and '<strong>Error:</strong>' not in extracted_text:
-                            vals['isi_peraturan'] = extracted_text
-                            _logger.info(f"Auto-extracted TXT text for regulation ID {self.id} (was empty)")
-                    else:
-                        _logger.info(f"File TXT uploaded for regulation ID {self.id} but existing content preserved ({len(current_content)} chars). Use 'Re-Extract' button.")
+                    extracted_text = self._extract_text_from_txt(vals['file_txt'])
+                    if extracted_text and '<strong>Error:</strong>' not in extracted_text:
+                        vals['isi_peraturan'] = extracted_text
+                        _logger.info(f"Auto-extracted TXT text for regulation ID {self.id}")
             except Exception as e:
                 _logger.error(f"Failed to process TXT during write: {e}")
         elif vals.get('file_docx') and not file_docx_deleted:
             try:
-                # Extract text from DOCX only if content is empty
+                # Extract text from DOCX
                 if 'isi_peraturan' not in vals:
-                    current_content = (self.isi_peraturan or '').strip()
-                    is_empty = not current_content or current_content == '<p>Isi peraturan belum tersedia</p>' or len(current_content) < 50
-                    if is_empty:
-                        extracted_text = self._extract_text_from_docx(vals['file_docx'])
-                        if extracted_text and '<strong>Error:</strong>' not in extracted_text:
-                            vals['isi_peraturan'] = extracted_text
-                            _logger.info(f"Auto-extracted DOCX text for regulation ID {self.id} (was empty)")
-                    else:
-                        _logger.info(f"File DOCX uploaded for regulation ID {self.id} but existing content preserved. Use 'Re-Extract' button.")
+                    extracted_text = self._extract_text_from_docx(vals['file_docx'])
+                    if extracted_text and '<strong>Error:</strong>' not in extracted_text:
+                        vals['isi_peraturan'] = extracted_text
+                        _logger.info(f"Auto-extracted DOCX text for regulation ID {self.id}")
                 
                 # Convert DOCX to PDF for download
                 pdf_data = self._convert_docx_to_pdf(vals['file_docx'])
@@ -2890,18 +3001,13 @@ class LegalRegulation(models.Model):
             except Exception as e:
                 _logger.error(f"Failed to process DOCX during write: {e}")
         
-        # Fallback: Extract from PDF if uploaded manually and content is empty
+        # Fallback: Extract from PDF if uploaded manually
         elif vals.get('file_pdf') and not file_pdf_deleted and 'isi_peraturan' not in vals:
             try:
-                current_content = (self.isi_peraturan or '').strip()
-                is_empty = not current_content or current_content == '<p>Isi peraturan belum tersedia</p>' or len(current_content) < 50
-                if is_empty:
-                    extracted_text = self._extract_text_from_pdf(vals['file_pdf'])
-                    if extracted_text and '<strong>Error:</strong>' not in extracted_text:
-                        vals['isi_peraturan'] = extracted_text
-                        _logger.info(f"Auto-extracted PDF text for regulation ID {self.id} (was empty)")
-                else:
-                    _logger.info(f"File PDF uploaded for regulation ID {self.id} but existing content preserved. Use 'Re-Extract' button.")
+                extracted_text = self._extract_text_from_pdf(vals['file_pdf'])
+                if extracted_text and '<strong>Error:</strong>' not in extracted_text:
+                    vals['isi_peraturan'] = extracted_text
+                    _logger.info(f"Auto-extracted PDF text for regulation ID {self.id}")
             except Exception as e:
                 _logger.error(f"Failed to auto-extract PDF during write: {e}")
         
@@ -3071,6 +3177,133 @@ class LegalRegulation(models.Model):
                         self._cr.execute(f"ALTER TABLE legal_regulation ADD COLUMN {field_name} INTEGER DEFAULT {default_value}")
                         
             self._cr.commit()
+            
+            # 1. Re-extract for any records that failed due to the indent_px error
+            self._cr.execute("SELECT id FROM legal_regulation WHERE isi_peraturan LIKE '%indent_px%'")
+            failed_ids = [row[0] for row in self._cr.fetchall()]
+            if failed_ids:
+                _logger.info(f"[MIGRATION] Re-extracting content for {len(failed_ids)} records that failed with indent_px error...")
+                for rec_id in failed_ids:
+                    rec = self.browse(rec_id)
+                    try:
+                        extracted_html = ""
+                        if rec.file_txt:
+                            # Decode and format text
+                            txt_bytes = base64.b64decode(rec.file_txt)
+                            try:
+                                txt_text = txt_bytes.decode('utf-8')
+                            except UnicodeDecodeError:
+                                txt_text = txt_bytes.decode('latin-1')
+                            extracted_html = rec._format_text_to_html(txt_text)
+                            extracted_html = f'<div class="txt-content" style="line-height: 1.8;">{extracted_html}</div>'
+                        elif rec.file_docx:
+                            extracted_html = rec._extract_text_from_docx(rec.file_docx)
+                        elif rec.file_pdf:
+                            extracted_html = rec._extract_text_from_pdf(rec.file_pdf)
+                        
+                        if extracted_html:
+                            rec.write({'isi_peraturan': extracted_html})
+                            _logger.info(f"[MIGRATION] Successfully re-extracted regulation ID {rec_id}")
+                    except Exception as ex:
+                        _logger.error(f"[MIGRATION] Failed to re-extract regulation ID {rec_id}: {ex}")
+                self._cr.commit()
+
+            # 2. Migration to split "DENGAN RAHMAT TUHAN..." in existing records
+            self._cr.execute("SELECT id, isi_peraturan FROM legal_regulation WHERE isi_peraturan IS NOT NULL AND isi_peraturan != ''")
+            records = self._cr.fetchall()
+            
+            pattern_single = re.compile(
+                r'(<p[^>]*>)?\s*DENGAN\s+RAHMAT\s+TUHAN\s+YANG\s+MAHA\s+ESA(?:<br\s*/?>|\s)+PRESIDEN\s+REPUBLIK\s+INDONESIA,?\s*(</p>)?',
+                re.IGNORECASE
+            )
+            pattern_split = re.compile(
+                r'(<p[^>]*>)?\s*DENGAN\s+RAHMAT\s+TUHAN\s+YANG\s+MAHA\s+ESA\s*(</p>)?\s*(?:<br\s*/?>|\s)*\s*(<p[^>]*>)?\s*PRESIDEN\s+REPUBLIK\s+INDONESIA,?\s*(</p>)?',
+                re.IGNORECASE
+            )
+            pattern_h6_split = re.compile(
+                r'(<h\d[^>]*>)?\s*(?:<strong>)?\s*DENGAN\s+RAHMAT:?\s*(?:</strong>)?\s*(</h\d>)?\s*'
+                r'(<p[^>]*>)?\s*TUHAN\s+YANG\s+MAHA\s+ESA,?\s*(</p>)?\s*'
+                r'(<p[^>]*>)?\s*PRESIDEN\s+REPUBLIK\s+INDONESIA,?\s*(</p>)?',
+                re.IGNORECASE
+            )
+            pattern_cleanup = re.compile(
+                r'<p[^>]*>\s*<p[^>]*>\s*DENGAN\s+RAHMAT\s+TUHAN\s+YANG\s+MAHA\s+ESA\s*</p>\s*<p[^>]*>\s*PRESIDEN\s+REPUBLIK\s+INDONESIA,?\s*</p>\s*(</p>)?',
+                re.IGNORECASE
+            )
+            
+            replacement = '<p style="text-align: center;">DENGAN RAHMAT TUHAN YANG MAHA ESA</p><p style="text-align: center;">PRESIDEN REPUBLIK INDONESIA,</p>'
+            
+            updated_count = 0
+            for rec_id, isi in records:
+                if not isi:
+                    continue
+                if replacement in isi:
+                    # Clean up double tags if they exist even if correct replacement is in text
+                    new_isi = pattern_cleanup.sub(replacement, isi)
+                    if new_isi != isi:
+                        self._cr.execute("UPDATE legal_regulation SET isi_peraturan = %s WHERE id = %s", (new_isi, rec_id))
+                        updated_count += 1
+                    continue
+                
+                if 'DENGAN RAHMAT' in isi.upper() and 'PRESIDEN REPUBLIK' in isi.upper():
+                    new_isi = pattern_cleanup.sub(replacement, isi)
+                    
+                    if replacement not in new_isi:
+                        new_isi = pattern_single.sub(replacement, new_isi)
+                        new_isi = pattern_split.sub(replacement, new_isi)
+                        new_isi = pattern_h6_split.sub(replacement, new_isi)
+                        
+                    if new_isi != isi:
+                        self._cr.execute("UPDATE legal_regulation SET isi_peraturan = %s WHERE id = %s", (new_isi, rec_id))
+                        updated_count += 1
+            
+            if updated_count > 0:
+                _logger.info(f"[MIGRATION] Successfully updated {updated_count} existing regulation records with centered DENGAN RAHMAT split.")
+                self._cr.commit()
+                
+            # 3. Migration to split and center BAB / BAGIAN headers in existing records
+            self._cr.execute("SELECT id, isi_peraturan FROM legal_regulation WHERE isi_peraturan IS NOT NULL AND isi_peraturan != ''")
+            records = self._cr.fetchall()
+            
+            pattern_single_bab = re.compile(
+                r'(<p[^>]*>|<h\d[^>]*>|<strong>|<li[^>]*>)?\s*(BAB|BAGIAN)([IVXLCDM]+)([^<]*?)(</p>|</h\d>|</strong>|</li>)?',
+                re.IGNORECASE
+            )
+            
+            def repl_bab(match):
+                open_tag = match.group(1) or ''
+                word = match.group(2).upper()
+                num = match.group(3).upper()
+                title = (match.group(4) or '').strip()
+                close_tag = match.group(5) or ''
+                
+                # Clean title
+                title = re.sub(r'^[\s\-.:,]+', '', title).strip()
+                
+                if title:
+                    return f'<p style="text-align: center; font-weight: bold;">{word} {num}</p><p style="text-align: center; font-weight: bold;">{title}</p>'
+                else:
+                    return f'<p style="text-align: center; font-weight: bold;">{word} {num}</p>'
+            
+            pattern_next_line_bab = re.compile(
+                r'(<(?:p|h\d)[^>]*>\s*(?:<strong>)?\s*(?:BAB|BAGIAN)\s+[IVXLCDM]+\s*(?:</strong>)?\s*(?:</(?:p|h\d)>))\s*(<p[^>]*>)\s*([A-Z\s,&\-()]{3,})\s*(</p>)'
+            )
+            
+            updated_bab_count = 0
+            for rec_id, isi in records:
+                if not isi:
+                    continue
+                
+                new_isi = pattern_single_bab.sub(repl_bab, isi)
+                new_isi = pattern_next_line_bab.sub(r'\1<p style="text-align: center; font-weight: bold;">\3</p>', new_isi)
+                
+                if new_isi != isi:
+                    self._cr.execute("UPDATE legal_regulation SET isi_peraturan = %s WHERE id = %s", (new_isi, rec_id))
+                    updated_bab_count += 1
+            
+            if updated_bab_count > 0:
+                _logger.info(f"[MIGRATION] Successfully updated {updated_bab_count} existing regulation records with centered BAB headers split.")
+                self._cr.commit()
             
         except Exception as e:
             # Jika ada error, log tapi jangan crash
